@@ -10,6 +10,15 @@
 		B90E99F421331096000550FF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E99F321331096000550FF /* AppDelegate.swift */; };
 		B90E99F621331098000550FF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B90E99F521331098000550FF /* Assets.xcassets */; };
 		B90E99F921331098000550FF /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = B90E99F721331098000550FF /* MainMenu.xib */; };
+		B90E9A0221331189000550FF /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0121331189000550FF /* Constants.swift */; };
+		B90E9A042133138E000550FF /* FacePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A032133138D000550FF /* FacePlayer.swift */; };
+		B90E9A0C21331408000550FF /* FaceTrackerCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0521331408000550FF /* FaceTrackerCapture.swift */; };
+		B90E9A0D21331408000550FF /* FaceTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0621331408000550FF /* FaceTracker.swift */; };
+		B90E9A0E21331408000550FF /* FaceTrackerDebug.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0721331408000550FF /* FaceTrackerDebug.swift */; };
+		B90E9A0F21331408000550FF /* FacePlayerLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0821331408000550FF /* FacePlayerLayer.swift */; };
+		B90E9A1021331408000550FF /* CIFaceFeature+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0921331408000550FF /* CIFaceFeature+Extension.swift */; };
+		B90E9A1121331408000550FF /* CIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0A21331408000550FF /* CIImage+Extension.swift */; };
+		B90E9A1221331408000550FF /* FaceRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0B21331408000550FF /* FaceRecorder.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +28,15 @@
 		B90E99F821331098000550FF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		B90E99FA21331098000550FF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B90E99FB21331098000550FF /* Detektor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Detektor.entitlements; sourceTree = "<group>"; };
+		B90E9A0121331189000550FF /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		B90E9A032133138D000550FF /* FacePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacePlayer.swift; sourceTree = "<group>"; };
+		B90E9A0521331408000550FF /* FaceTrackerCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceTrackerCapture.swift; sourceTree = "<group>"; };
+		B90E9A0621331408000550FF /* FaceTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceTracker.swift; sourceTree = "<group>"; };
+		B90E9A0721331408000550FF /* FaceTrackerDebug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceTrackerDebug.swift; sourceTree = "<group>"; };
+		B90E9A0821331408000550FF /* FacePlayerLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacePlayerLayer.swift; sourceTree = "<group>"; };
+		B90E9A0921331408000550FF /* CIFaceFeature+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CIFaceFeature+Extension.swift"; sourceTree = "<group>"; };
+		B90E9A0A21331408000550FF /* CIImage+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CIImage+Extension.swift"; sourceTree = "<group>"; };
+		B90E9A0B21331408000550FF /* FaceRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceRecorder.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,7 +69,16 @@
 		B90E99F221331096000550FF /* Detektor */ = {
 			isa = PBXGroup;
 			children = (
+				B90E9A0121331189000550FF /* Constants.swift */,
 				B90E99F321331096000550FF /* AppDelegate.swift */,
+				B90E9A032133138D000550FF /* FacePlayer.swift */,
+				B90E9A0821331408000550FF /* FacePlayerLayer.swift */,
+				B90E9A0921331408000550FF /* CIFaceFeature+Extension.swift */,
+				B90E9A0A21331408000550FF /* CIImage+Extension.swift */,
+				B90E9A0B21331408000550FF /* FaceRecorder.swift */,
+				B90E9A0621331408000550FF /* FaceTracker.swift */,
+				B90E9A0521331408000550FF /* FaceTrackerCapture.swift */,
+				B90E9A0721331408000550FF /* FaceTrackerDebug.swift */,
 				B90E99F521331098000550FF /* Assets.xcassets */,
 				B90E99F721331098000550FF /* MainMenu.xib */,
 				B90E99FA21331098000550FF /* Info.plist */,
@@ -92,6 +119,11 @@
 				TargetAttributes = {
 					B90E99EF21331096000550FF = {
 						CreatedOnToolsVersion = 9.4.1;
+						SystemCapabilities = {
+							com.apple.Sandbox = {
+								enabled = 0;
+							};
+						};
 					};
 				};
 			};
@@ -130,7 +162,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B90E9A1221331408000550FF /* FaceRecorder.swift in Sources */,
+				B90E9A1121331408000550FF /* CIImage+Extension.swift in Sources */,
+				B90E9A042133138E000550FF /* FacePlayer.swift in Sources */,
 				B90E99F421331096000550FF /* AppDelegate.swift in Sources */,
+				B90E9A0F21331408000550FF /* FacePlayerLayer.swift in Sources */,
+				B90E9A0D21331408000550FF /* FaceTracker.swift in Sources */,
+				B90E9A0C21331408000550FF /* FaceTrackerCapture.swift in Sources */,
+				B90E9A0221331189000550FF /* Constants.swift in Sources */,
+				B90E9A0E21331408000550FF /* FaceTrackerDebug.swift in Sources */,
+				B90E9A1021331408000550FF /* CIFaceFeature+Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -265,7 +306,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Detektor/Detektor.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = L4EP9C7V6L;
@@ -276,6 +317,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = at.palacz.Detektor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
@@ -284,7 +326,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Detektor/Detektor.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = L4EP9C7V6L;
@@ -295,6 +337,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = at.palacz.Detektor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
