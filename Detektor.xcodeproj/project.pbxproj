@@ -19,6 +19,8 @@
 		B90E9A1021331408000550FF /* CIFaceFeature+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0921331408000550FF /* CIFaceFeature+Extension.swift */; };
 		B90E9A1121331408000550FF /* CIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0A21331408000550FF /* CIImage+Extension.swift */; };
 		B90E9A1221331408000550FF /* FaceRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0B21331408000550FF /* FaceRecorder.swift */; };
+		B9829DA32146913800837BB4 /* CALayerMatrix.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9829DA22146913800837BB4 /* CALayerMatrix.swift */; };
+		B9829DA5214695F700837BB4 /* AppDelegateFullscreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9829DA4214695F700837BB4 /* AppDelegateFullscreen.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +39,8 @@
 		B90E9A0921331408000550FF /* CIFaceFeature+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CIFaceFeature+Extension.swift"; sourceTree = "<group>"; };
 		B90E9A0A21331408000550FF /* CIImage+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CIImage+Extension.swift"; sourceTree = "<group>"; };
 		B90E9A0B21331408000550FF /* FaceRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceRecorder.swift; sourceTree = "<group>"; };
+		B9829DA22146913800837BB4 /* CALayerMatrix.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CALayerMatrix.swift; sourceTree = "<group>"; };
+		B9829DA4214695F700837BB4 /* AppDelegateFullscreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegateFullscreen.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,8 +75,10 @@
 			children = (
 				B90E9A0121331189000550FF /* Constants.swift */,
 				B90E99F321331096000550FF /* AppDelegate.swift */,
+				B9829DA4214695F700837BB4 /* AppDelegateFullscreen.swift */,
 				B90E9A032133138D000550FF /* FacePlayer.swift */,
 				B90E9A0821331408000550FF /* FacePlayerLayer.swift */,
+				B9829DA22146913800837BB4 /* CALayerMatrix.swift */,
 				B90E9A0921331408000550FF /* CIFaceFeature+Extension.swift */,
 				B90E9A0A21331408000550FF /* CIImage+Extension.swift */,
 				B90E9A0B21331408000550FF /* FaceRecorder.swift */,
@@ -163,12 +169,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				B90E9A1221331408000550FF /* FaceRecorder.swift in Sources */,
+				B9829DA5214695F700837BB4 /* AppDelegateFullscreen.swift in Sources */,
 				B90E9A1121331408000550FF /* CIImage+Extension.swift in Sources */,
 				B90E9A042133138E000550FF /* FacePlayer.swift in Sources */,
 				B90E99F421331096000550FF /* AppDelegate.swift in Sources */,
 				B90E9A0F21331408000550FF /* FacePlayerLayer.swift in Sources */,
 				B90E9A0D21331408000550FF /* FaceTracker.swift in Sources */,
 				B90E9A0C21331408000550FF /* FaceTrackerCapture.swift in Sources */,
+				B9829DA32146913800837BB4 /* CALayerMatrix.swift in Sources */,
 				B90E9A0221331189000550FF /* Constants.swift in Sources */,
 				B90E9A0E21331408000550FF /* FaceTrackerDebug.swift in Sources */,
 				B90E9A1021331408000550FF /* CIFaceFeature+Extension.swift in Sources */,

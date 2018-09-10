@@ -14,7 +14,7 @@ extension FaceTracker {
                           height: sideLength/cleanAperture.size.width*cleanAperture.size.height)
         preview.frame = CGRect(origin: layer.bounds.origin, size: size)
         preview.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
-        preview.videoGravity = .resizeAspectFill
+        preview.videoGravity = .resize
         layer.addSublayer(preview)
         previewLayer = preview
         

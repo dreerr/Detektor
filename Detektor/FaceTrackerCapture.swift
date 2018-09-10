@@ -47,7 +47,7 @@ extension FaceTracker: AVCaptureVideoDataOutputSampleBufferDelegate {
                     let layer = CALayer()
                     layer.contentsGravity = kCAGravityResize
                     layer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
-                    layer.masksToBounds = true
+                    //layer.masksToBounds = true
                     previews[id] = layer
                     delegate?.addPreview(layer, id: id)
                 }

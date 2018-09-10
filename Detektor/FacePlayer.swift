@@ -47,7 +47,7 @@ class FacePlayer: NSObject {
                                                 self.appendToQueue($0.object as! URL)
         }
         
-        fillQueue(10)
+        fillQueue(5)
     }
 
     
@@ -82,23 +82,6 @@ class FacePlayer: NSObject {
             }
             collectionIndex = (collectionIndex+1)%collection.count
             print("collectionIndex", collectionIndex)
-//            let asset = AVAsset(url: collection[index])
-//            let keys = ["tracks", "duration"]
-//            asset.loadValuesAsynchronously(forKeys: keys) {
-//                var failed = false
-//                for key in keys {
-//                    var error: NSError?
-//                    let status = asset.statusOfValue(forKey: key, error: &error)
-//                    if status == .failed {
-//                        print("Failed to load key: \(key), error: \(String(describing: error))")
-//                        failed = true
-//                    }
-//                }
-//                if !failed {
-//                    let item = AVPlayerItem(asset: asset)
-//                    self.queue.insert(item, at: 0)
-//                }
-//            }
         }
     }
 

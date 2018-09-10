@@ -8,7 +8,7 @@ import Cocoa
 import CoreGraphics
 
 struct Constants {
-    static let aspectRatio: Float = 1/(1920*3/1080)
+    static let aspectRatio: Float = 1/((1920*3)/1080) // 24px Tile Compensation
     static let videoHeight = 320.0
     static let videoSize: CGSize = CGSize(width: videoHeight*Double(aspectRatio), height: videoHeight)
     static let directoryName = "Detektor"
