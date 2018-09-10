@@ -34,9 +34,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         window.isMovableByWindowBackground = true
         window.makeKeyAndOrderFront(nil)
         guard let windowLayer = window.contentView?.layer else {return}
-        windowLayer.backgroundColor = NSColor.black.cgColor
+        windowLayer.backgroundColor = NSColor.gray.cgColor
         let layer = CALayer()
         layer.frame = windowLayer.bounds
+        layer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
         windowLayer.addSublayer(layer)
         player = FacePlayer(withLayers: [layer])
     }

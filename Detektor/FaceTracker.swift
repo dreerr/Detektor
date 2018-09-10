@@ -10,12 +10,15 @@
 import Cocoa
 import Foundation
 import AVFoundation
+import Vision
 
 class FaceTracker: NSObject {
     let captureSession = AVCaptureSession()
     var captureDevice: AVCaptureDevice?
     var previewLayer: AVCaptureVideoPreviewLayer?
     var previewLayerRects = CALayer()
+    
+    // OLD
     let detector = CIDetector(ofType: CIDetectorTypeFace,
                                   context: nil,
                                   options: [CIDetectorAccuracy : CIDetectorAccuracyLow,
@@ -29,8 +32,15 @@ class FaceTracker: NSObject {
     var queue: DispatchQueue?
     var isTracking = true
     
+    // Vision requests
+    private var detectionRequests: [VNDetectFaceRectanglesRequest]?
+    private var trackingRequests: [VNTrackObjectRequest]?
+    lazy var sequenceRequestHandler = VNSequenceRequestHandler()
+    
     override init() {
         super.init()
+        self.prepareVisionRequest()
+        
         // Get AVCaptureDevice
         if let device = (AVCaptureDevice.devices(withNameContaining: "USB 2.0 Camera")?.first) {
             guard let format = device.formats.filter({ (format) -> Bool in
@@ -80,7 +90,42 @@ class FaceTracker: NSObject {
         output.setSampleBufferDelegate(self, queue: queue)
         captureSession.startRunning()
     }
+    
+    fileprivate func prepareVisionRequest() {
+        
+        //self.trackingRequests = []
+        var requests = [VNTrackObjectRequest]()
+        
+        let faceDetectionRequest = VNDetectFaceRectanglesRequest(completionHandler: { (request, error) in
+            
+            if error != nil {
+                print("FaceDetection error: \(String(describing: error)).")
+            }
+            
+            guard let faceDetectionRequest = request as? VNDetectFaceRectanglesRequest,
+                let results = faceDetectionRequest.results as? [VNFaceObservation] else {
+                    return
+            }
+            DispatchQueue.main.async {
+                // Add the observations to the tracking list
+                for observation in results {
+                    let faceTrackingRequest = VNTrackObjectRequest(detectedObjectObservation: observation)
+                    requests.append(faceTrackingRequest)
+                }
+                self.trackingRequests = requests
+            }
+        })
+        
+        // Start with detection.  Find face, then track it.
+        self.detectionRequests = [faceDetectionRequest]
+        
+        self.sequenceRequestHandler = VNSequenceRequestHandler()
+        
+        //self.setupVisionDrawingLayers()
+    }
 }
+
+
 
 extension AVCaptureDevice {
     static func devices(withNameContaining name: String) -> [AVCaptureDevice]? {

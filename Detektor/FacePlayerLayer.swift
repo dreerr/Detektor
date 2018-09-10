@@ -24,7 +24,7 @@ class FacePlayerLayer: NSObject {
         super.init()
         
         // Setup players and layers
-        playerLayer.videoGravity = .resizeAspectFill
+        playerLayer.videoGravity = .resize
         playerLayer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
         playerLayer.frame = layer.bounds
         layer.addSublayer(playerLayer)
