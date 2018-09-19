@@ -1,51 +1,40 @@
-//
-//  FaceTracker.swift
-//  Observers
-//
-//  Created by Julian on 23.01.18.
-//  Copyright © 2018 Julian Palacz. All rights reserved.
-//
-
-
 import Cocoa
 import Foundation
 import AVFoundation
-import Vision
+import VideoToolbox
 
-class FaceTracker: NSObject {
+class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     let captureSession = AVCaptureSession()
     var captureDevice: AVCaptureDevice?
     var previewLayer: AVCaptureVideoPreviewLayer?
     var previewLayerRects = CALayer()
     
-    // OLD
     let detector = CIDetector(ofType: CIDetectorTypeFace,
-                                  context: nil,
-                                  options: [CIDetectorAccuracy : CIDetectorAccuracyLow,
-                                            CIDetectorTracking: true,
-                                            CIDetectorMinFeatureSize: 0.01,
-                                            CIDetectorNumberOfAngles: 1])
+                              context: nil,
+                              options: [CIDetectorAccuracy : CIDetectorAccuracyHigh,
+                                        CIDetectorTracking: true,
+                                        CIDetectorMinFeatureSize: 0.01,
+                                        CIDetectorNumberOfAngles: 3])
+    var detectorFeatures: [CIFeature]?
     let context = CIContext()
     var recordings = [Int32 : FaceRecorder]()
     var previews = [Int32 : CALayer]()
     var delegate: FaceTrackerProtocol?
     var queue: DispatchQueue?
+    let detectorQueue = DispatchQueue(label: "Face Recognition Queue", qos:.default)
     var isTracking = true
     
-    // Vision requests
-    private var detectionRequests: [VNDetectFaceRectanglesRequest]?
-    private var trackingRequests: [VNTrackObjectRequest]?
-    lazy var sequenceRequestHandler = VNSequenceRequestHandler()
     
     override init() {
         super.init()
-        self.prepareVisionRequest()
         
         // Get AVCaptureDevice
         if let device = (AVCaptureDevice.devices(withNameContaining: "USB 2.0 Camera")?.first) {
             guard let format = device.formats.filter({ (format) -> Bool in
+                print(format)
                 let dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
                 return dimensions.width == 1280 && dimensions.height == 720
+                //                return dimensions.width == 1920 && dimensions.height == 1080
             }).first else { return }
             try! device.lockForConfiguration()
             device.activeFormat = format
@@ -53,7 +42,7 @@ class FaceTracker: NSObject {
             captureDevice = device
         }
         if captureDevice == nil {
-            if let device = (AVCaptureDevice.devices(withNameContaining: "FaceTime HD Camera")?.first) {
+            if let device = (AVCaptureDevice.devices(withNameContaining: "FaceTime")?.first) {
                 try! device.lockForConfiguration()
                 let fps = CMTimeMake(20, 600) // 30 fps
                 device.activeVideoMinFrameDuration = fps
@@ -72,11 +61,10 @@ class FaceTracker: NSObject {
         } catch let error as NSError {
             print("Error: no valid camera input in \(error.domain)")
         }
-
+        
         // Configure AVCaptureVideoDataOutput and set Delegate
         let output = AVCaptureVideoDataOutput()
         //output.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String : NSNumber(value: Constants.pixelFormat)]
-        //output.alwaysDiscardsLateVideoFrames = true
         captureSession.addOutput(output)
         captureSession.commitConfiguration()
         
@@ -85,50 +73,98 @@ class FaceTracker: NSObject {
                               qos: .userInteractive,
                               autoreleaseFrequency: .workItem,
                               target: nil)
-//        queue = DispatchQueue.global(qos: .userInteractive)
+        //        queue = DispatchQueue.global(qos: .userInteractive)
         
         output.setSampleBufferDelegate(self, queue: queue)
         captureSession.startRunning()
     }
     
-    fileprivate func prepareVisionRequest() {
+    
+    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        // Check if we should track
+        guard isTracking == true else {return}
         
-        //self.trackingRequests = []
-        var requests = [VNTrackObjectRequest]()
+        // Get Image Buffer
+        guard let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
+        let timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
+        let attachments = CMCopyDictionaryOfAttachments(kCFAllocatorDefault, sampleBuffer, kCMAttachmentMode_ShouldPropagate)
+        var ciImage = CIImage(cvImageBuffer: imageBuffer, options: attachments as! [String : Any]?)
         
-        let faceDetectionRequest = VNDetectFaceRectanglesRequest(completionHandler: { (request, error) in
-            
-            if error != nil {
-                print("FaceDetection error: \(String(describing: error)).")
-            }
-            
-            guard let faceDetectionRequest = request as? VNDetectFaceRectanglesRequest,
-                let results = faceDetectionRequest.results as? [VNFaceObservation] else {
-                    return
-            }
-            DispatchQueue.main.async {
-                // Add the observations to the tracking list
-                for observation in results {
-                    let faceTrackingRequest = VNTrackObjectRequest(detectedObjectObservation: observation)
-                    requests.append(faceTrackingRequest)
+        // Recognize faces on other queue
+        detectorQueue.async {
+            let options: [String : Any] = [CIDetectorTypeFace: true]
+            self.detectorFeatures = self.detector?.features(in: ciImage, options: options)
+        }
+        guard let features = detectorFeatures else { return }
+        drawDebug(features) // only executed if connected
+        
+        // Collect all IDs to check for orphans
+        var currentIDs = [Int32]()
+        
+        // Apply filter to image
+        ciImage = ciImage.applyingFilter("CIColorControls", parameters: ["inputBrightness": 0.0,
+                                                                         "inputContrast": 1.1,
+                                                                         "inputSaturation": 0.0])
+            .applyingFilter("CIExposureAdjust", parameters: ["inputEV": 0.5])
+        
+        
+        
+        detectorQueue.sync {
+            for feature in features {
+                guard let faceFeature = feature as? CIFaceFeature else {continue}
+                if(faceFeature.hasTrackingFrameCount) {
+                    // Keep track of the ID
+                    let id = faceFeature.trackingID
+                    currentIDs.append(id)
+                    if(faceFeature.trackingFrameCount == 1) {
+                        // Initialize Face Recorder & Previews instances for each face found with frameCount==1
+                        print("new face", id)
+                        
+                        // TODO: Limit number of recordings
+                        recordings[id] = FaceRecorder(withFaceSide: CIFaceSide.left, time: timestamp)
+                        
+                        // Add preview layer
+                        let layer = CALayer()
+                        layer.contentsGravity = kCAGravityResize
+                        layer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
+                        layer.removeAllAnimations()
+                        //layer.masksToBounds = true
+                        previews[id] = layer
+                        delegate?.addPreview(layer, id: id)
+                    }
+                    //
+                    let image = ciImage.croppedAndScaledToFace(faceFeature, faceSide: .left)
+                    guard let buffer = image.createPixelBuffer(withContext: context) else {continue}
+                    
+                    // Append image to recording
+                    if let recording = self.recordings[id] {
+                        recording.append(buffer, time: timestamp)
+                    }
+                    
+                    // Add image to preview layer
+                    guard let preview = previews[id] else {continue}
+                    DispatchQueue(label: "Image Display Queue", qos:.background).async {
+                        var cgImage: CGImage?
+                        VTCreateCGImageFromCVPixelBuffer(buffer, nil, &cgImage)
+                        DispatchQueue.main.async {
+                            preview.contents = cgImage
+                        }
+                    }
                 }
-                self.trackingRequests = requests
             }
-        })
+        }
         
-        // Start with detection.  Find face, then track it.
-        self.detectionRequests = [faceDetectionRequest]
-        
-        self.sequenceRequestHandler = VNSequenceRequestHandler()
-        
-        //self.setupVisionDrawingLayers()
+        // Check for orphans and properly remove them (calls deinit)
+        for orphan in Set(previews.keys).subtracting(currentIDs) {
+            print("lost face", orphan)
+            delegate?.removePreview(id: orphan)
+            previews.removeValue(forKey: orphan)
+            recordings.removeValue(forKey: orphan)
+        }
     }
 }
 
-
-
-extension AVCaptureDevice {
-    static func devices(withNameContaining name: String) -> [AVCaptureDevice]? {
-        return AVCaptureDevice.devices().filter { return $0.localizedName.contains(name) }
-    }
+protocol FaceTrackerProtocol {
+    func addPreview(_ preview: CALayer, id: Int32)
+    func removePreview(id: Int32)
 }

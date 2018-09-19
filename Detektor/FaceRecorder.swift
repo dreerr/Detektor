@@ -1,11 +1,3 @@
-//
-//  FaceRecorder.swift
-//  Observers
-//
-//  Created by Julian on 23.01.18.
-//  Copyright © 2018 Julian Palacz. All rights reserved.
-//
-
 import Foundation
 import AVFoundation
 

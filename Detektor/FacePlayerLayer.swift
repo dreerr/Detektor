@@ -1,11 +1,3 @@
-//
-//  FacePlayerLayer.swift
-//  Observers
-//
-//  Created by Julian on 28.01.18.
-//  Copyright © 2018 Julian Palacz. All rights reserved.
-//
-
 import Foundation
 import AVFoundation
 import Cocoa
@@ -27,6 +19,8 @@ class FacePlayerLayer: NSObject {
         playerLayer.videoGravity = .resize
         playerLayer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
         playerLayer.frame = layer.bounds
+        playerLayer.removeAllAnimations()
+        layer.removeAllAnimations()
         layer.addSublayer(playerLayer)
         
         // Play next item available

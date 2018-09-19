@@ -1,11 +1,3 @@
-//
-//  FacePlayer.swift
-//  Observers
-//
-//  Created by Julian on 24.01.18.
-//  Copyright © 2018 Julian Palacz. All rights reserved.
-//
-
 import Foundation
 import AVFoundation
 import Cocoa
@@ -15,6 +7,7 @@ class FacePlayer: NSObject {
     var queue = [AVPlayerItem]()
     var faceLayers = [FacePlayerLayer]()
     var faceLayersLive = [Int32: FacePlayerLayer]()
+    var previewLayers = [Int32: CALayer]()
     var tracker: FaceTracker?
     var collectionIndex = 0
 
@@ -103,21 +96,35 @@ class FacePlayer: NSObject {
             tracker?.isTracking = isPlaying
         }
     }
-
+    
+    // Update all Layers with faces and players
+    func updatePreviews() {
+        // Switch Players on for faces we lost
+        for orphan in Set(faceLayersLive.keys).subtracting(Set(previewLayers.keys)) {
+            faceLayersLive[orphan]?.switchPlay()
+            faceLayersLive.removeValue(forKey: orphan)
+        }
+        
+        // Assign new faces to free players
+        for newbie in Set(previewLayers.keys).subtracting(Set(faceLayersLive.keys)) {
+            if let layer = getBestLayerForLive() {
+                layer.switchLive(previewLayers[newbie]!)
+                faceLayersLive[newbie] = layer
+            }
+        }
+        
+        
+    }
 }
 
 // Delegate Extension to communicate with FaceTracker
 extension FacePlayer: FaceTrackerProtocol {
     func addPreview(_ preview: CALayer, id: Int32) {
-        if let layer = self.getBestLayerForLive() {
-            layer.switchLive(preview)
-            self.faceLayersLive[id] = layer
-        }
+        previewLayers[id] = preview
+        updatePreviews()
     }
     func removePreview(id: Int32) {
-        if let layer = self.faceLayersLive[id] {
-            layer.switchPlay()
-            self.faceLayersLive.removeValue(forKey: id)
-        }
+        previewLayers.removeValue(forKey: id)
+        updatePreviews()
     }
 }

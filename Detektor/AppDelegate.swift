@@ -2,7 +2,6 @@ import Cocoa
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
-    
     var player: FacePlayer?
     var matrixLayers = [CALayerMatrix]()
     var windows = [NSWindow]()
@@ -15,7 +14,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         guard let screen = NSScreen.screens.last else {return}
         let window = NSWindow(contentRect: NSMakeRect(screen.frame.origin.x,
                                                       screen.frame.origin.y,
-                                                      screen.frame.size.width,
+                                                      screen.frame.size.width*(CGFloat(Constants.aspectRatio)),
                                                       screen.frame.size.height),
                               styleMask: [.closable, .resizable],
                               backing: .buffered,
@@ -41,7 +40,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Initialize FacePlayer with the sublayers of CALayerMatrix array
         player = FacePlayer(withLayers: layerTiles)
         
-        self.toggleFullscreen(self)
+        //self.toggleFullscreen(self)
     }
     
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -72,5 +71,40 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let script = NSAppleScript(source: source)
         script?.executeAndReturnError(nil)
         //        NSApp.terminate(nil)
+    }
+    
+    @IBAction func toggleFullscreen(_ sender: Any) {
+        setFullscreen(windows[0].contentView?.isInFullScreenMode==false)
+    }
+    
+    func setFullscreen(_ goFullscreen:Bool) {
+        if(goFullscreen) {
+            //NSCursor.hide()
+            //            NSApp.presentationOptions = [
+            //                .disableProcessSwitching,
+            //                .disableForceQuit,
+            //                .disableHideApplication,
+            //                .disableSessionTermination,
+            //                .hideDock,
+            //                .fullScreen
+            //            ]
+            for (_, window) in windows.enumerated() {
+                guard let view = window.contentView else {continue}
+                guard let screen = window.screen else{continue}
+                view.enterFullScreenMode(screen,
+                                         withOptions: [NSView.FullScreenModeOptionKey.fullScreenModeSetting: true,
+                                                       NSView.FullScreenModeOptionKey.fullScreenModeAllScreens: false])
+                guard let layer = view.layer?.sublayers?[0] else {continue}
+                layer.frame =  layer.superlayer!.bounds
+            }
+        } else {
+            NSCursor.unhide()
+            NSApp.presentationOptions = []
+            windows.forEach({ (window) in
+                window.contentView?.exitFullScreenMode(options: [NSView.FullScreenModeOptionKey.fullScreenModeSetting: false])
+                guard let layer = window.contentView?.layer?.sublayers?[0] else {return}
+                layer.frame =  layer.superlayer!.bounds
+            })
+        }
     }
 }

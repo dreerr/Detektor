@@ -1,11 +1,3 @@
-//
-//  CALayerMatrix.swift
-//  Observers
-//
-//  Created by Julian on 25.01.18.
-//  Copyright © 2018 Julian Palacz. All rights reserved.
-//
-
 import Foundation
 import Cocoa
 
