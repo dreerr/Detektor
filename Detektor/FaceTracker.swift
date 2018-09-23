@@ -68,7 +68,7 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         captureSession.commitConfiguration()
         
         // Create queue with high QoS and autorelease frequency
-        queue = DispatchQueue(label: "at.palacz.observers.samplebuffer-queue",
+        queue = DispatchQueue(label: "Capture Queue",
                               qos: .userInteractive,
                               autoreleaseFrequency: .workItem,
                               target: nil)
