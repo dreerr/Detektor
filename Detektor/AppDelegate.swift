@@ -47,7 +47,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Finish all recordings
         // DISCUSS: It is odd that deinit does not take care of that but whatever
         guard let tracker = player?.tracker else {return}
-        tracker.recordings.values.forEach{ $0.finishRecording() }
+        tracker.faces.values.forEach{ $0.finishRecording() }
     }
     
     // Toggle play/pause of all videos and live footage

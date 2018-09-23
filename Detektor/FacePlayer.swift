@@ -6,11 +6,13 @@ class FacePlayer: NSObject {
     var collection = [URL]()
     var queue = [AVPlayerItem]()
     var faceLayers = [FacePlayerLayer]()
-    var faceLayersLive = [Int32: FacePlayerLayer]()
-    var previewLayers = [Int32: CALayer]()
+//    var playersLive = [Int32: FacePlayerLayer]()
+    var faces = [Int32: Face]()
     var tracker: FaceTracker?
     var collectionIndex = 0
-
+    var currentFaceIndex = 0 // HACK
+    //weak var faceIndexTimer: Timer? // HACK
+    
     init(withLayers layers: [CALayer]) {
         super.init()
         // Scan for movies
@@ -41,6 +43,11 @@ class FacePlayer: NSObject {
         }
         
         fillQueue(5)
+        
+        _ = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true, block: {_ in
+            self.currentFaceIndex+=1
+            self.updateLayers()
+        })
     }
 
     
@@ -98,33 +105,43 @@ class FacePlayer: NSObject {
     }
     
     // Update all Layers with faces and players
-    func updatePreviews() {
-        // Switch Players on for faces we lost
-        for orphan in Set(faceLayersLive.keys).subtracting(Set(previewLayers.keys)) {
-            faceLayersLive[orphan]?.switchPlay()
-            faceLayersLive.removeValue(forKey: orphan)
+    func updateLayers() {
+        print("updating layers for \(faces.count) faces")
+        let faceLayer = faceLayers[0]
+        if(faces.count == 0) {
+            faceLayer.switchPlay()
+        } else {
+            let index = Int(currentFaceIndex%faces.count)
+            print("selecting face \(index)")
+            let layer = Array(faces)[index].value.preview
+            faceLayer.switchLive(layer)
         }
         
-        // Assign new faces to free players
-        for newbie in Set(previewLayers.keys).subtracting(Set(faceLayersLive.keys)) {
-            if let layer = getBestLayerForLive() {
-                layer.switchLive(previewLayers[newbie]!)
-                faceLayersLive[newbie] = layer
-            }
-        }
-        
-        
+// DISABLED BECAUSE NOT ENOUGH BRAIN RESSOURCES TO THINK N TO N
+//        // Switch Players on for faces we lost
+//        for orphan in Set(playersLive.keys).subtracting(Set(faces.keys)) {
+//            playersLive[orphan]?.switchPlay()
+//            playersLive.removeValue(forKey: orphan)
+//        }
+//
+//        // Assign new faces to free players
+//        for newbie in Set(faces.keys).subtracting(Set(playersLive.keys)) {
+//            if let layer = getBestLayerForLive() {
+//                layer.switchLive(faces[newbie]!.preview)
+//                playersLive[newbie] = layer
+//            }
+//        }
     }
 }
 
 // Delegate Extension to communicate with FaceTracker
 extension FacePlayer: FaceTrackerProtocol {
-    func addPreview(_ preview: CALayer, id: Int32) {
-        previewLayers[id] = preview
-        updatePreviews()
+    func addFace(_ face: Face, id: Int32) {
+        faces[id] = face
+        updateLayers()
     }
-    func removePreview(id: Int32) {
-        previewLayers.removeValue(forKey: id)
-        updatePreviews()
+    func removeFace(id: Int32) {
+        faces.removeValue(forKey: id)
+        updateLayers()
     }
 }

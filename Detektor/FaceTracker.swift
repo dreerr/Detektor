@@ -11,14 +11,13 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     
     let detector = CIDetector(ofType: CIDetectorTypeFace,
                               context: nil,
-                              options: [CIDetectorAccuracy : CIDetectorAccuracyHigh,
+                              options: [CIDetectorAccuracy : CIDetectorAccuracyLow,
                                         CIDetectorTracking: true,
                                         CIDetectorMinFeatureSize: 0.01,
-                                        CIDetectorNumberOfAngles: 3])
+                                        CIDetectorNumberOfAngles: 1])
     var detectorFeatures: [CIFeature]?
     let context = CIContext()
-    var recordings = [Int32 : FaceRecorder]()
-    var previews = [Int32 : CALayer]()
+    var faces = [Int32 : Face]()
     var delegate: FaceTrackerProtocol?
     var queue: DispatchQueue?
     let detectorQueue = DispatchQueue(label: "Face Recognition Queue", qos:.default)
@@ -107,64 +106,38 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
                                                                          "inputSaturation": 0.0])
             .applyingFilter("CIExposureAdjust", parameters: ["inputEV": 0.5])
         
-        
-        
         detectorQueue.sync {
-            for feature in features {
+            for (index, feature) in features.enumerated() {
                 guard let faceFeature = feature as? CIFaceFeature else {continue}
                 if(faceFeature.hasTrackingFrameCount) {
                     // Keep track of the ID
                     let id = faceFeature.trackingID
                     currentIDs.append(id)
-                    if(faceFeature.trackingFrameCount == 1) {
-                        // Initialize Face Recorder & Previews instances for each face found with frameCount==1
+                    if(!faces.keys.contains(id) && faceFeature.trackingFrameCount > 10) {
+                        // Initialize Face instance for each new face that stayed longer than 10 frames
                         print("new face", id)
-                        
-                        // TODO: Limit number of recordings
-                        recordings[id] = FaceRecorder(withFaceSide: CIFaceSide.left, time: timestamp)
-                        
-                        // Add preview layer
-                        let layer = CALayer()
-                        layer.contentsGravity = kCAGravityResize
-                        layer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
-                        layer.removeAllAnimations()
-                        //layer.masksToBounds = true
-                        previews[id] = layer
-                        delegate?.addPreview(layer, id: id)
+                        let face = Face(recording: (index == 0), time: timestamp)
+                        delegate?.addFace(face, id: id)
+                        faces[id] = face
                     }
-                    //
+                    guard let face = faces[id] else { continue }
                     let image = ciImage.croppedAndScaledToFace(faceFeature, faceSide: .left)
-                    guard let buffer = image.createPixelBuffer(withContext: context) else {continue}
-                    
-                    // Append image to recording
-                    if let recording = self.recordings[id] {
-                        recording.append(buffer, time: timestamp)
-                    }
-                    
-                    // Add image to preview layer
-                    guard let preview = previews[id] else {continue}
-                    DispatchQueue(label: "Image Display Queue", qos:.background).async {
-                        var cgImage: CGImage?
-                        VTCreateCGImageFromCVPixelBuffer(buffer, nil, &cgImage)
-                        DispatchQueue.main.async {
-                            preview.contents = cgImage
-                        }
-                    }
+                    guard let buffer = image.createPixelBuffer(withContext: context) else { continue }
+                    face.append(buffer, time: timestamp)
                 }
             }
         }
         
         // Check for orphans and properly remove them (calls deinit)
-        for orphan in Set(previews.keys).subtracting(currentIDs) {
+        for orphan in Set(faces.keys).subtracting(currentIDs) {
             print("lost face", orphan)
-            delegate?.removePreview(id: orphan)
-            previews.removeValue(forKey: orphan)
-            recordings.removeValue(forKey: orphan)
+            delegate?.removeFace(id: orphan)
+            faces.removeValue(forKey: orphan)
         }
     }
 }
 
 protocol FaceTrackerProtocol {
-    func addPreview(_ preview: CALayer, id: Int32)
-    func removePreview(id: Int32)
+    func addFace(_ face: Face, id: Int32)
+    func removeFace(id: Int32)
 }
