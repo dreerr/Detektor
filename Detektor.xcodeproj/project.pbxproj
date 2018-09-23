@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B9034330215815B500509ED6 /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = B903432F215815B400509ED6 /* Icon.icns */; };
 		B90E99F421331096000550FF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E99F321331096000550FF /* AppDelegate.swift */; };
 		B90E99F621331098000550FF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B90E99F521331098000550FF /* Assets.xcassets */; };
 		B90E99F921331098000550FF /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = B90E99F721331098000550FF /* MainMenu.xib */; };
@@ -21,6 +22,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B903432F215815B400509ED6 /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Icon.icns; sourceTree = "<group>"; };
 		B90E99F021331096000550FF /* Detektor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Detektor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B90E99F321331096000550FF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B90E99F521331098000550FF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -80,6 +82,7 @@
 				B90E99FB21331098000550FF /* Detektor.entitlements */,
 				B90E99FA21331098000550FF /* Info.plist */,
 				B90E99F721331098000550FF /* MainMenu.xib */,
+				B903432F215815B400509ED6 /* Icon.icns */,
 			);
 			path = Detektor;
 			sourceTree = "<group>";
@@ -147,6 +150,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B9034330215815B500509ED6 /* Icon.icns in Resources */,
 				B90E99F621331098000550FF /* Assets.xcassets in Resources */,
 				B90E99F921331098000550FF /* MainMenu.xib in Resources */,
 			);
