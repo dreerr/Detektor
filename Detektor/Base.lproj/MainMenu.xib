@@ -56,6 +56,15 @@
                                     <action selector="terminate:" target="-1" id="Te7-pn-YzF"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Shutdown" id="8Qs-F4-1S4">
+                                <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="terminateAndShutdown:" target="-1" id="Bdb-XM-g8x"/>
+                                </connections>
+                            </menuItem>
                         </items>
                     </menu>
                 </menuItem>
