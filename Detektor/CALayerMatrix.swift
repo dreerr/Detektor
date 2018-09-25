@@ -11,7 +11,7 @@ class CALayerMatrix: CALayer {
         self.cols = cols
         self.rows = rows
         self.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
-        self.backgroundColor = NSColor.gray.cgColor
+        self.backgroundColor = NSColor.black.cgColor
         
         observer = observe(\.bounds, changeHandler: { _,_ in self.layoutSublayers() })
         matrix(cols: cols, rows: rows)
