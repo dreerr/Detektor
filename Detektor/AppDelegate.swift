@@ -40,7 +40,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Initialize FacePlayer with the sublayers of CALayerMatrix array
         player = FacePlayer(withLayers: layerTiles)
         
-        //self.toggleFullscreen(self)
+        self.toggleFullscreen(self)
     }
     
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -67,7 +67,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
     @IBAction func terminateAndShutdown(_ sender: Any) {
-        let source = "tell application \"Finder\"\nshut down\nend tell\ntell application \"Observers\" to quit"
+        let source = "tell application \"Finder\"\nshut down\nend tell\ntell application \"Detektor\" to quit"
         let script = NSAppleScript(source: source)
         script?.executeAndReturnError(nil)
         //        NSApp.terminate(nil)
@@ -79,7 +79,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func setFullscreen(_ goFullscreen:Bool) {
         if(goFullscreen) {
-            //NSCursor.hide()
+            NSCursor.hide()
             //            NSApp.presentationOptions = [
             //                .disableProcessSwitching,
             //                .disableForceQuit,
