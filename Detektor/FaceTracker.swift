@@ -14,7 +14,8 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
                               options: [CIDetectorAccuracy : CIDetectorAccuracyHigh,
                                         CIDetectorTracking: true,
                                         CIDetectorMinFeatureSize: 0.01,
-                                        CIDetectorNumberOfAngles: 1])
+                                        CIDetectorNumberOfAngles: 1,
+                                        CIDetectorMaxFeatureCount: 4])
     var detectorFeatures: [CIFeature]?
     let context = CIContext()
     var faces = [Int32 : Face]()
@@ -32,8 +33,8 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
             guard let format = device.formats.filter({ (format) -> Bool in
                 print(format)
                 let dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
-                return dimensions.width == 1280 && dimensions.height == 720
-                //                return dimensions.width == 1920 && dimensions.height == 1080
+//                return dimensions.width == 1280 && dimensions.height == 720
+                return dimensions.width == 1920 && dimensions.height == 1080
             }).first else { return }
             try! device.lockForConfiguration()
             device.activeFormat = format
@@ -107,18 +108,20 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
             .applyingFilter("CIExposureAdjust", parameters: ["inputEV": 0.5])
         
         detectorQueue.sync {
-            for (index, feature) in features.enumerated() {
+            var isFirst = true
+            for feature in features {
                 guard let faceFeature = feature as? CIFaceFeature else {continue}
-                if(faceFeature.hasTrackingFrameCount) {
+                if(faceFeature.hasTrackingFrameCount && faceFeature.trackingFrameCount > 10) {
                     // Keep track of the ID
                     let id = faceFeature.trackingID
                     currentIDs.append(id)
-                    if(!faces.keys.contains(id) && faceFeature.trackingFrameCount > 10) {
+                    if(!faces.keys.contains(id)) {
                         // Initialize Face instance for each new face that stayed longer than 10 frames
                         print("new face", id)
-                        let face = Face(recording: (index == 0), time: timestamp)
+                        let face = Face(recording: isFirst, time: timestamp)
                         delegate?.addFace(face, id: id)
                         faces[id] = face
+                        isFirst = false
                     }
                     guard let face = faces[id] else { continue }
                     let image = ciImage.croppedAndScaledToFace(faceFeature, faceSide: .left)
