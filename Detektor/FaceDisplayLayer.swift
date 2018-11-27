@@ -2,21 +2,21 @@ import Foundation
 import AVFoundation
 import Cocoa
 
-class FacePlayerLayer: NSObject {
+class FaceDisplayLayer: NSObject {
     var layer: CALayer
     var liveLayer: CALayer?
     var playerLayer: AVPlayerLayer
-    var parent: FacePlayer
+    var parent: FaceDisplay
     var player = AVQueuePlayer() // Maybe only AVPlayer?
 
-    init(layer: CALayer, facePlayer: FacePlayer) {
+    init(layer: CALayer, facePlayer: FaceDisplay) {
         self.layer = layer
         self.parent = facePlayer
         self.playerLayer = AVPlayerLayer(player: player)
         super.init()
         
         // Setup players and layers
-        playerLayer.videoGravity = .resize
+        playerLayer.videoGravity = .resizeAspect
         playerLayer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
         playerLayer.frame = layer.bounds
         playerLayer.removeAllAnimations()
@@ -53,22 +53,25 @@ class FacePlayerLayer: NSObject {
 
     func switchLive(_ live:CALayer) {
         // Connect a CALayer to display live preview
+        layer.sublayers?.forEach({ (layer) in layer.removeFromSuperlayer()})
         liveLayer = live
         player.pause()
         liveLayer!.frame = layer.bounds
         layer.addSublayer(liveLayer!)
         DispatchQueue.main.async {
             self.layer.setNeedsDisplay()
+            self.layer.setNeedsLayout()
         }
     }
     
     func switchPlay() {
         // Disconnect live preview and contiune playing items
-        liveLayer?.removeFromSuperlayer()
-        liveLayer = nil
+        layer.sublayers?.forEach({ (layer) in layer.removeFromSuperlayer()})
+        layer.addSublayer(playerLayer)
         player.play()
         DispatchQueue.main.async {
             self.layer.setNeedsDisplay()
+            self.layer.setNeedsLayout()
         }
     }
 }

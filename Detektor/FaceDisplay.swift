@@ -2,10 +2,10 @@ import Foundation
 import AVFoundation
 import Cocoa
 
-class FacePlayer: NSObject {
+class FaceDisplay: NSObject {
     var collection = [URL]()
     var queue = [AVPlayerItem]()
-    var faceLayers = [FacePlayerLayer]()
+    var faceLayers = [FaceDisplayLayer]()
 //    var playersLive = [Int32: FacePlayerLayer]()
     var faces = [Int32: Face]()
     var tracker: FaceTracker?
@@ -28,10 +28,10 @@ class FacePlayer: NSObject {
             .forEach{appendToQueue($0)}
         
         
-        // Setup FacePlayerLayers
-        layers.forEach { faceLayers.append(FacePlayerLayer(layer: $0, facePlayer: self)) }
+        // Setup FaceDisplayLayers
+        layers.forEach { faceLayers.append(FaceDisplayLayer(layer: $0, facePlayer: self)) }
         
-        // Initialize FaceTracker (after FacePlayerLayers are initialized)
+        // Initialize FaceTracker (after FaceDisplayLayers are initialized)
         tracker = FaceTracker()
         tracker?.delegate = self
        
@@ -86,7 +86,7 @@ class FacePlayer: NSObject {
     }
 
     // Get a free layer to display a live image on
-    func getBestLayerForLive() -> FacePlayerLayer? {
+    func getBestLayerForLive() -> FaceDisplayLayer? {
         let faceLayersNotLive = faceLayers.filter({
             return $0.liveLayer == nil
         })
@@ -135,7 +135,7 @@ class FacePlayer: NSObject {
 }
 
 // Delegate Extension to communicate with FaceTracker
-extension FacePlayer: FaceTrackerProtocol {
+extension FaceDisplay: FaceTrackerProtocol {
     func addFace(_ face: Face, id: Int32) {
         faces[id] = face
         updateLayers()

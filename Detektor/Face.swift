@@ -40,7 +40,7 @@ class Face: NSObject {
         }
         
         // Setup preview layer
-        preview.contentsGravity = kCAGravityResize
+        preview.contentsGravity = kCAGravityResizeAspect
         preview.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
         preview.removeAllAnimations()
         

@@ -12,10 +12,10 @@
 		B90E99F621331098000550FF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B90E99F521331098000550FF /* Assets.xcassets */; };
 		B90E99F921331098000550FF /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = B90E99F721331098000550FF /* MainMenu.xib */; };
 		B90E9A0221331189000550FF /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0121331189000550FF /* Constants.swift */; };
-		B90E9A042133138E000550FF /* FacePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A032133138D000550FF /* FacePlayer.swift */; };
+		B90E9A042133138E000550FF /* FaceDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A032133138D000550FF /* FaceDisplay.swift */; };
 		B90E9A0D21331408000550FF /* FaceTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0621331408000550FF /* FaceTracker.swift */; };
 		B90E9A0E21331408000550FF /* FaceTrackerDebug.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0721331408000550FF /* FaceTrackerDebug.swift */; };
-		B90E9A0F21331408000550FF /* FacePlayerLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0821331408000550FF /* FacePlayerLayer.swift */; };
+		B90E9A0F21331408000550FF /* FaceDisplayLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0821331408000550FF /* FaceDisplayLayer.swift */; };
 		B90E9A1121331408000550FF /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0A21331408000550FF /* Extensions.swift */; };
 		B90E9A1221331408000550FF /* Face.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0B21331408000550FF /* Face.swift */; };
 		B9829DA32146913800837BB4 /* CALayerMatrix.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9829DA22146913800837BB4 /* CALayerMatrix.swift */; };
@@ -30,10 +30,10 @@
 		B90E99FA21331098000550FF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B90E99FB21331098000550FF /* Detektor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Detektor.entitlements; sourceTree = "<group>"; };
 		B90E9A0121331189000550FF /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
-		B90E9A032133138D000550FF /* FacePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacePlayer.swift; sourceTree = "<group>"; };
+		B90E9A032133138D000550FF /* FaceDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceDisplay.swift; sourceTree = "<group>"; };
 		B90E9A0621331408000550FF /* FaceTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceTracker.swift; sourceTree = "<group>"; };
 		B90E9A0721331408000550FF /* FaceTrackerDebug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceTrackerDebug.swift; sourceTree = "<group>"; };
-		B90E9A0821331408000550FF /* FacePlayerLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacePlayerLayer.swift; sourceTree = "<group>"; };
+		B90E9A0821331408000550FF /* FaceDisplayLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceDisplayLayer.swift; sourceTree = "<group>"; };
 		B90E9A0A21331408000550FF /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		B90E9A0B21331408000550FF /* Face.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Face.swift; sourceTree = "<group>"; };
 		B9829DA22146913800837BB4 /* CALayerMatrix.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CALayerMatrix.swift; sourceTree = "<group>"; };
@@ -76,8 +76,8 @@
 				B90E9A0B21331408000550FF /* Face.swift */,
 				B90E9A0621331408000550FF /* FaceTracker.swift */,
 				B90E9A0721331408000550FF /* FaceTrackerDebug.swift */,
-				B90E9A032133138D000550FF /* FacePlayer.swift */,
-				B90E9A0821331408000550FF /* FacePlayerLayer.swift */,
+				B90E9A032133138D000550FF /* FaceDisplay.swift */,
+				B90E9A0821331408000550FF /* FaceDisplayLayer.swift */,
 				B90E99F521331098000550FF /* Assets.xcassets */,
 				B90E99FB21331098000550FF /* Detektor.entitlements */,
 				B90E99FA21331098000550FF /* Info.plist */,
@@ -165,9 +165,9 @@
 			files = (
 				B90E9A1221331408000550FF /* Face.swift in Sources */,
 				B90E9A1121331408000550FF /* Extensions.swift in Sources */,
-				B90E9A042133138E000550FF /* FacePlayer.swift in Sources */,
+				B90E9A042133138E000550FF /* FaceDisplay.swift in Sources */,
 				B90E99F421331096000550FF /* AppDelegate.swift in Sources */,
-				B90E9A0F21331408000550FF /* FacePlayerLayer.swift in Sources */,
+				B90E9A0F21331408000550FF /* FaceDisplayLayer.swift in Sources */,
 				B90E9A0D21331408000550FF /* FaceTracker.swift in Sources */,
 				B9829DA32146913800837BB4 /* CALayerMatrix.swift in Sources */,
 				B90E9A0221331189000550FF /* Constants.swift in Sources */,
@@ -310,6 +310,11 @@
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/Mac",
+					"$(PROJECT_DIR)/Detektor",
+				);
 				INFOPLIST_FILE = Detektor/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -330,6 +335,11 @@
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/Mac",
+					"$(PROJECT_DIR)/Detektor",
+				);
 				INFOPLIST_FILE = Detektor/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

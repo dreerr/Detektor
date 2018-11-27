@@ -2,20 +2,21 @@ import Cocoa
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
-    var player: FacePlayer?
+    var player: FaceDisplay?
     var matrixLayers = [CALayerMatrix]()
     var windows = [NSWindow]()
     var inFullscreen = false
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        observeShutdownDialog()
         var layerTiles = [CALayer]()
         
         // Create new window
         guard let screen = NSScreen.screens.last else {return}
         let window = NSWindow(contentRect: NSMakeRect(screen.frame.origin.x,
                                                       screen.frame.origin.y,
-                                                      screen.frame.size.width*(CGFloat(Constants.aspectRatio)),
-                                                      screen.frame.size.height),
+                                                      screen.frame.size.height*CGFloat(1080.0/1920.0), //screen.frame.size.width*(CGFloat(Constants.aspectRatio)),
+                                                      screen.frame.size.height), //screen.frame.size.height),
                               styleMask: [.closable, .resizable],
                               backing: .buffered,
                               defer: false)
@@ -35,12 +36,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         windowLayer.addSublayer(layerMatrix)
         matrixLayers.append(layerMatrix)
         layerTiles.append(contentsOf: layerMatrix.sublayers!)
-
-    
-        // Initialize FacePlayer with the sublayers of CALayerMatrix array
-        player = FacePlayer(withLayers: layerTiles)
         
-        self.toggleFullscreen(self)
+        layerMatrix.sublayerTransform = CATransform3DMakeScale(3.0, 1.0, 1.0)
+        // Initialize FacePlayer with the sublayers of CALayerMatrix array
+        player = FaceDisplay(withLayers: layerTiles)
+        //self.toggleFullscreen(self)
+        
+        // Observe Sleep Status
+        let notificationCenter = NSWorkspace.shared.notificationCenter
+        notificationCenter.addObserver(forName: NSWorkspace.willSleepNotification, object: nil, queue: nil) { _ in
+            print("Sleep")
+            //self.setFullscreen(false)
+        }
+
+        notificationCenter.addObserver(forName: NSWorkspace.didWakeNotification, object: nil, queue: nil) { _ in
+            print("Wake up")
+            //self.setFullscreen(true)
+        }
     }
     
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -73,6 +85,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         //        NSApp.terminate(nil)
     }
     
+    func observeShutdownDialog() {
+        let notification = "com.apple.shutdownInitiated" as CFString
+        let observer = UnsafeRawPointer(Unmanaged.passUnretained(self).toOpaque())
+
+        CFNotificationCenterAddObserver(CFNotificationCenterGetDistributedCenter(), observer, { (center, observer, name, _, userInfo) in
+            let mySelf = Unmanaged<AppDelegate>.fromOpaque(observer!).takeUnretainedValue()
+            mySelf.pressCancel()
+        }, notification, nil, .deliverImmediately)
+    }
+    
+    func pressCancel() {
+        __NSBeep()
+    }
+    
     @IBAction func toggleFullscreen(_ sender: Any) {
         setFullscreen(windows[0].contentView?.isInFullScreenMode==false)
     }
@@ -90,7 +116,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             //            ]
             for (_, window) in windows.enumerated() {
                 guard let view = window.contentView else {continue}
-                guard let screen = window.screen else{continue}
+                guard let screen = window.screen else {continue}
                 view.enterFullScreenMode(screen,
                                          withOptions: [NSView.FullScreenModeOptionKey.fullScreenModeSetting: true,
                                                        NSView.FullScreenModeOptionKey.fullScreenModeAllScreens: false])
@@ -106,5 +132,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 layer.frame =  layer.superlayer!.bounds
             })
         }
+        windows.first?.makeKeyAndOrderFront(self)
     }
 }
