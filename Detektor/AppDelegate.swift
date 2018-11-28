@@ -6,6 +6,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var matrixLayers = [CALayerMatrix]()
     var windows = [NSWindow]()
     var inFullscreen = false
+
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         observeShutdownDialog()
@@ -28,8 +29,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         windowLayer.backgroundColor = NSColor.black.cgColor
         windowLayer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
         
-        
-        // Initialize CALayerMatrix
+        // Initialize CALayerMatrix and append to window
         let layerMatrix = CALayerMatrix(withCols: 1, rows: 1)
         layerMatrix.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
         layerMatrix.frame = windowLayer.bounds
@@ -37,7 +37,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         matrixLayers.append(layerMatrix)
         layerTiles.append(contentsOf: layerMatrix.sublayers!)
         
-        layerMatrix.sublayerTransform = CATransform3DMakeScale(3.0, 1.0, 1.0)
+        // Transform layer for streched screen: Make it three times bigger then squeeze
+        windowLayer.sublayerTransform = CATransform3DMakeScale(1.0, 1.0/3.0, 1.0)
+        layerMatrix.frame = NSRect(origin: windowLayer.bounds.origin, size: CGSize(width: windowLayer.bounds.width, height: windowLayer.bounds.height*3.0))
+        
+        
+        // Init debug OSD
+        _ = OSDLogLayer(withLayer: layerMatrix)
+        print("Observer v1.0")
+        
         // Initialize FacePlayer with the sublayers of CALayerMatrix array
         player = FaceDisplay(withLayers: layerTiles)
         //self.toggleFullscreen(self)
@@ -48,7 +56,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             print("Sleep")
             //self.setFullscreen(false)
         }
-
         notificationCenter.addObserver(forName: NSWorkspace.didWakeNotification, object: nil, queue: nil) { _ in
             print("Wake up")
             //self.setFullscreen(true)

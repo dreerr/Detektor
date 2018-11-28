@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		B9034330215815B500509ED6 /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = B903432F215815B400509ED6 /* Icon.icns */; };
+		B9085D5E21AD565C006A6E14 /* OSDLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9085D5D21AD565C006A6E14 /* OSDLog.swift */; };
 		B90E99F421331096000550FF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E99F321331096000550FF /* AppDelegate.swift */; };
 		B90E99F621331098000550FF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B90E99F521331098000550FF /* Assets.xcassets */; };
 		B90E99F921331098000550FF /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = B90E99F721331098000550FF /* MainMenu.xib */; };
@@ -23,6 +24,7 @@
 
 /* Begin PBXFileReference section */
 		B903432F215815B400509ED6 /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Icon.icns; sourceTree = "<group>"; };
+		B9085D5D21AD565C006A6E14 /* OSDLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSDLog.swift; sourceTree = "<group>"; };
 		B90E99F021331096000550FF /* Detektor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Detektor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B90E99F321331096000550FF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B90E99F521331098000550FF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -70,6 +72,7 @@
 			isa = PBXGroup;
 			children = (
 				B90E99F321331096000550FF /* AppDelegate.swift */,
+				B9085D5D21AD565C006A6E14 /* OSDLog.swift */,
 				B9829DA22146913800837BB4 /* CALayerMatrix.swift */,
 				B90E9A0121331189000550FF /* Constants.swift */,
 				B90E9A0A21331408000550FF /* Extensions.swift */,
@@ -168,6 +171,7 @@
 				B90E9A042133138E000550FF /* FaceDisplay.swift in Sources */,
 				B90E99F421331096000550FF /* AppDelegate.swift in Sources */,
 				B90E9A0F21331408000550FF /* FaceDisplayLayer.swift in Sources */,
+				B9085D5E21AD565C006A6E14 /* OSDLog.swift in Sources */,
 				B90E9A0D21331408000550FF /* FaceTracker.swift in Sources */,
 				B9829DA32146913800837BB4 /* CALayerMatrix.swift in Sources */,
 				B90E9A0221331189000550FF /* Constants.swift in Sources */,

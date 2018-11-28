@@ -8,6 +8,7 @@ class FaceDisplayLayer: NSObject {
     var playerLayer: AVPlayerLayer
     var parent: FaceDisplay
     var player = AVQueuePlayer() // Maybe only AVPlayer?
+    var isPlaying = true
 
     init(layer: CALayer, facePlayer: FaceDisplay) {
         self.layer = layer
@@ -24,12 +25,12 @@ class FaceDisplayLayer: NSObject {
         layer.addSublayer(playerLayer)
         
         // Play next item available
-        self.insert(parent.nextPlayerItem())
+        self.insertNextPlayerItem()
     }
     
-    func insert(_ playerItem:AVPlayerItem?) {
+    func insertNextPlayerItem() {
         // Insert item on the playlist and start playing
-        if let item = playerItem {
+        if let item = self.parent.getNextPlayerItem() {
             self.player.insert(item, after: nil)
             self.player.play()
             NotificationCenter.default.addObserver(self,
@@ -39,7 +40,9 @@ class FaceDisplayLayer: NSObject {
         }
     }
     @objc func didPlayToEndTime(notification:Notification) {
-        self.insert(self.parent.nextPlayerItem())
+        DispatchQueue.main.async {
+            self.insertNextPlayerItem()
+        }
     }
     
     var timeRemaining : CMTime {
@@ -62,16 +65,19 @@ class FaceDisplayLayer: NSObject {
             self.layer.setNeedsDisplay()
             self.layer.setNeedsLayout()
         }
+        isPlaying = false
     }
     
     func switchPlay() {
-        // Disconnect live preview and contiune playing items
-        layer.sublayers?.forEach({ (layer) in layer.removeFromSuperlayer()})
-        layer.addSublayer(playerLayer)
-        player.play()
-        DispatchQueue.main.async {
-            self.layer.setNeedsDisplay()
-            self.layer.setNeedsLayout()
+        if !isPlaying {
+            // Disconnect live preview and contiune playing items
+            layer.sublayers?.forEach({ (layer) in layer.removeFromSuperlayer()})
+            layer.addSublayer(playerLayer)
+            player.play()
+            DispatchQueue.main.async {
+                self.layer.setNeedsDisplay()
+                self.layer.setNeedsLayout()
+            }
         }
     }
 }

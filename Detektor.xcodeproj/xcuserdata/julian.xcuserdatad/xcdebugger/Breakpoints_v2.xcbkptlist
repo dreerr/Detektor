@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Detektor/AppDelegate.swift"
-            timestampString = "565005553.44119"
+            timestampString = "565107191.644608"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "92"
-            endingLineNumber = "92"
+            startingLineNumber = "100"
+            endingLineNumber = "100"
             landmarkName = "observeShutdownDialog()"
             landmarkType = "7">
          </BreakpointContent>
