@@ -8,7 +8,7 @@ class FaceDisplay: NSObject {
     var faceLayers = [FaceDisplayLayer]()
     var faces = [Int32: Face]()
     var tracker: FaceTracker?
-    var collectionIndex = 0
+    var currentIndex = 0
     var currentFaceIndex = 0 // HACK
     
     init(withLayers layers: [CALayer]) {
@@ -40,7 +40,7 @@ class FaceDisplay: NSObject {
                                                 self.appendToPlayerItems($0.object as! URL)
         }
         
-        fillPlayerItems(5)
+        //fillPlayerItems(5)
         
         _ = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true, block: {_ in
             self.currentFaceIndex+=1
@@ -49,44 +49,64 @@ class FaceDisplay: NSObject {
     }
 
     
-    // Append an item to the queue
+    // Append an item to the queue, gest called on starup and when a
     func appendToPlayerItems(_ url:URL) {
         let item = AVPlayerItem(url: url)
         if item.asset.isPlayable {
-            self.playerItems.insert(item, at: 0)
-            self.urls.insert(url, at: 0)
+            self.playerItems.append(item)
+            //self.urls.insert(url, at: 0)
         }
     }
 
     
     // Fill up queue with a given number of items
-    func fillPlayerItems(_ numItems: Int) {
-        guard urls.count > 0 else {return}
-        for _ in 1...numItems {
-            let item = AVPlayerItem(url: urls[collectionIndex])
-            if item.asset.isPlayable {
-                playerItems.insert(item, at: 0)
-            }
-            collectionIndex = (collectionIndex+1)%urls.count
-            print("collectionIndex", collectionIndex)
-        }
-    }
+//    func fillPlayerItems(_ numItems: Int) {
+//        guard urls.count > 0 else {return}
+//        for _ in 1...numItems {
+//            guard let url = self.getNextURL() else { return }
+//            let item = AVPlayerItem(url: url)
+//            if item.asset.isPlayable {
+//                playerItems.insert(item, at: 0)
+//            }
+//        }
+//    }
     
     // Get the next item to play and fill queue if there are not enough items available
     func getNextPlayerItem() -> AVPlayerItem? {
-        if playerItems.count < 2 {
-            DispatchQueue.main.async {
-                self.fillPlayerItems(1)
+        while playerItems.count > 0 {
+            let item = playerItems[currentIndex]
+            let url = (item.asset as! AVURLAsset).url
+            currentIndex = (currentIndex+1)%playerItems.count // we have the item, so we advance
+            if let attributes = try? FileManager.default.attributesOfItem(atPath: url.path) as [FileAttributeKey: Any],
+                let creationDate = attributes[FileAttributeKey.creationDate] as? Date {
+                print("time interval", creationDate.timeIntervalSinceNow)
+                if creationDate.timeIntervalSinceNow < -60*60*60*24*14 {
+                    print(creationDate, "is too old")
+                    playerItems.remove(at: currentIndex)
+                } else {
+                    return item
+                }
             }
-        }
-        if let item = playerItems.popLast() {
-            print((item.asset as! AVURLAsset).url)
-            return item
-        } else {
-            print("couldn't get a player item")
         }
         return nil
     }
+    
+//    func getNextURL() -> URL? {
+//        while urls.count > 0 {
+//            let url = urls[currentIndex]
+//            if let attributes = try? FileManager.default.attributesOfItem(atPath: url.path) as [FileAttributeKey: Any],
+//                let creationDate = attributes[FileAttributeKey.creationDate] as? Date {
+//                if creationDate.timeIntervalSinceNow > 60*60*60*24*14 {
+//                    print(creationDate, "is too old")
+//                    urls.remove(at: currentIndex)
+//                } else {
+//                    currentIndex = (currentIndex+1)%urls.count
+//                    return url
+//                }
+//            }
+//        }
+//        return nil // we failed
+//    }
 
 
     
