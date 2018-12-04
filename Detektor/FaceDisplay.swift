@@ -3,7 +3,6 @@ import AVFoundation
 import Cocoa
 
 class FaceDisplay: NSObject {
-    var urls = [URL]()
     var playerItems = [AVPlayerItem]()
     var faceLayers = [FaceDisplayLayer]()
     var faces = [Int32: Face]()
@@ -39,76 +38,50 @@ class FaceDisplay: NSObject {
                                                queue: OperationQueue.main) {
                                                 self.appendToPlayerItems($0.object as! URL)
         }
-        
-        //fillPlayerItems(5)
-        
+
+        // Cycle through
         _ = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true, block: {_ in
             self.currentFaceIndex+=1
             self.updateLayers()
         })
     }
-
     
     // Append an item to the queue, gest called on starup and when a
     func appendToPlayerItems(_ url:URL) {
+        guard url.pathExtension.lowercased() == "mp4" else { return }
         let item = AVPlayerItem(url: url)
         if item.asset.isPlayable {
             self.playerItems.append(item)
-            //self.urls.insert(url, at: 0)
         }
     }
-
-    
-    // Fill up queue with a given number of items
-//    func fillPlayerItems(_ numItems: Int) {
-//        guard urls.count > 0 else {return}
-//        for _ in 1...numItems {
-//            guard let url = self.getNextURL() else { return }
-//            let item = AVPlayerItem(url: url)
-//            if item.asset.isPlayable {
-//                playerItems.insert(item, at: 0)
-//            }
-//        }
-//    }
     
     // Get the next item to play and fill queue if there are not enough items available
     func getNextPlayerItem() -> AVPlayerItem? {
         while playerItems.count > 0 {
             let item = playerItems[currentIndex]
             let url = (item.asset as! AVURLAsset).url
-            currentIndex = (currentIndex+1)%playerItems.count // we have the item, so we advance
-            if let attributes = try? FileManager.default.attributesOfItem(atPath: url.path) as [FileAttributeKey: Any],
-                let creationDate = attributes[FileAttributeKey.creationDate] as? Date {
-                print("time interval", creationDate.timeIntervalSinceNow)
-                if creationDate.timeIntervalSinceNow < -60*60*60*24*14 {
-                    print(creationDate, "is too old")
-                    playerItems.remove(at: currentIndex)
-                } else {
-                    return item
+            guard let attributes = try? FileManager.default.attributesOfItem(atPath: url.path) as [FileAttributeKey: Any],
+                let creationDate = attributes[FileAttributeKey.creationDate] as? Date else { continue }
+            if creationDate.timeIntervalSinceNow < Constants.timeIntervalLimit {
+                print("\(url.lastPathComponent) is too old \(creationDate)")
+                playerItems.remove(at: currentIndex)
+                do {
+                    if UserDefaults.standard.bool(forKey: "delete immediately") {
+                        try FileManager.default.removeItem(at: url)
+                    } else {
+                        try FileManager.default.trashItem(at: url, resultingItemURL: nil)
+                    }
+                } catch let error as NSError {
+                    print("Fehler: " + error.localizedDescription)
                 }
+            } else {
+                print("\(url.lastPathComponent) in timeframe \(creationDate)")
+                currentIndex = (currentIndex+1)%playerItems.count // we have the item, so we advance
+                return item
             }
         }
         return nil
     }
-    
-//    func getNextURL() -> URL? {
-//        while urls.count > 0 {
-//            let url = urls[currentIndex]
-//            if let attributes = try? FileManager.default.attributesOfItem(atPath: url.path) as [FileAttributeKey: Any],
-//                let creationDate = attributes[FileAttributeKey.creationDate] as? Date {
-//                if creationDate.timeIntervalSinceNow > 60*60*60*24*14 {
-//                    print(creationDate, "is too old")
-//                    urls.remove(at: currentIndex)
-//                } else {
-//                    currentIndex = (currentIndex+1)%urls.count
-//                    return url
-//                }
-//            }
-//        }
-//        return nil // we failed
-//    }
-
-
     
     // Toggle playing state of all live and recorded layers
     var isPlaying: Bool = true {
@@ -121,12 +94,11 @@ class FaceDisplay: NSObject {
     // Update all Layers with faces and players
     func updateLayers() {
         let faceLayer = faceLayers[0] // ONLY UPDATE THE FIRST LAYER (DETEKTOR ONLY HAS ONE LAYER)
-        if(faces.count == 0) {
+        if faces.count == 0 {
             faceLayer.switchPlay()
         } else {
-            print("updating layers for \(faces.count) faces")
             let index = Int(currentFaceIndex%faces.count)
-            print("selecting face \(index)")
+            print("live faces: \(faces.count) / selecting:  \(index+1)")
             let layer = Array(faces)[index].value.preview
             faceLayer.switchLive(layer)
         }

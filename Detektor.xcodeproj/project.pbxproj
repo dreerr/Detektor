@@ -19,6 +19,7 @@
 		B90E9A0F21331408000550FF /* FaceDisplayLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0821331408000550FF /* FaceDisplayLayer.swift */; };
 		B90E9A1121331408000550FF /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0A21331408000550FF /* Extensions.swift */; };
 		B90E9A1221331408000550FF /* Face.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0B21331408000550FF /* Face.swift */; };
+		B94335E121B6B6DC00EC4CD7 /* CALayerStretch.swift in Sources */ = {isa = PBXBuildFile; fileRef = B94335E021B6B6DC00EC4CD7 /* CALayerStretch.swift */; };
 		B9829DA32146913800837BB4 /* CALayerMatrix.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9829DA22146913800837BB4 /* CALayerMatrix.swift */; };
 /* End PBXBuildFile section */
 
@@ -38,6 +39,7 @@
 		B90E9A0821331408000550FF /* FaceDisplayLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceDisplayLayer.swift; sourceTree = "<group>"; };
 		B90E9A0A21331408000550FF /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		B90E9A0B21331408000550FF /* Face.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Face.swift; sourceTree = "<group>"; };
+		B94335E021B6B6DC00EC4CD7 /* CALayerStretch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CALayerStretch.swift; sourceTree = "<group>"; };
 		B9829DA22146913800837BB4 /* CALayerMatrix.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CALayerMatrix.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -74,6 +76,7 @@
 				B90E99F321331096000550FF /* AppDelegate.swift */,
 				B9085D5D21AD565C006A6E14 /* OSDLog.swift */,
 				B9829DA22146913800837BB4 /* CALayerMatrix.swift */,
+				B94335E021B6B6DC00EC4CD7 /* CALayerStretch.swift */,
 				B90E9A0121331189000550FF /* Constants.swift */,
 				B90E9A0A21331408000550FF /* Extensions.swift */,
 				B90E9A0B21331408000550FF /* Face.swift */,
@@ -175,6 +178,7 @@
 				B90E9A0D21331408000550FF /* FaceTracker.swift in Sources */,
 				B9829DA32146913800837BB4 /* CALayerMatrix.swift in Sources */,
 				B90E9A0221331189000550FF /* Constants.swift in Sources */,
+				B94335E121B6B6DC00EC4CD7 /* CALayerStretch.swift in Sources */,
 				B90E9A0E21331408000550FF /* FaceTrackerDebug.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

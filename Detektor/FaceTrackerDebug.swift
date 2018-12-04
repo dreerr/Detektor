@@ -65,7 +65,7 @@ extension FaceTracker {
             }
         }
         DispatchQueue.main.async {
-            self.previewLayer!.setNeedsDisplay()
+            self.previewLayer?.setNeedsDisplay()
             self.previewLayerRects.setNeedsDisplay()
         }
     }

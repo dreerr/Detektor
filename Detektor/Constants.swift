@@ -16,6 +16,7 @@ struct Constants {
     static let minimumSecs : CFTimeInterval = 3.5
     static var pause = false
     static let minFreeGB = 4
+    static let timeIntervalLimit : Double = -60*60*24*14 //   -60*60*24*14
     
     static var directoryURL: URL {
         var url = FileManager.default.urls(for: .moviesDirectory, in: .userDomainMask)[0]
@@ -27,4 +28,5 @@ struct Constants {
         }
         return url
     }
+    var debug = true
 }

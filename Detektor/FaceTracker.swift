@@ -14,7 +14,7 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
                               options: [CIDetectorAccuracy : CIDetectorAccuracyHigh,
                                         CIDetectorTracking: true,
                                         CIDetectorMinFeatureSize: 0.01,
-                                        CIDetectorNumberOfAngles: 3,
+                                        CIDetectorNumberOfAngles: 1,
                                         CIDetectorMaxFeatureCount: 4])
     var detectorFeatures: [CIFeature]?
     let context = CIContext()

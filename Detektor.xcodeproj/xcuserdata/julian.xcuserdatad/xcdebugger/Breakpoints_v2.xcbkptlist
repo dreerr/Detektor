@@ -9,13 +9,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Detektor/AppDelegate.swift"
-            timestampString = "565346815.551704"
+            filePath = "Detektor/FaceDisplayLayer.swift"
+            timestampString = "565626481.823253"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "101"
-            endingLineNumber = "101"
-            landmarkName = "observeShutdownDialog()"
+            startingLineNumber = "86"
+            endingLineNumber = "86"
+            landmarkName = "switchPlay()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

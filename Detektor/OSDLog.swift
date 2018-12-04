@@ -10,32 +10,46 @@ import Foundation
 import Cocoa
 
 class OSDLogLayer: CATextLayer {
-    init(withLayer layer:CALayer) {
+    enum LogState { case debug, error }
+    var logging = LogState.debug {
+        didSet {
+            self.opacity = (logging == .debug ? 1.0 : 0.0)
+        }
+    }
+    
+    override init() {
         super.init()
-        self.fontSize = 20
+        self.fontSize = 15
         self.string = ""
         self.isWrapped = true
+        self.opacity = 0.0
+        self.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
+        NotificationCenter.default.addObserver(forName: Notification.Name("Log"),
+                                               object: nil,
+                                               queue: OperationQueue.main) {self.print($0.object as! String)}
+    }
+    
+    func print(_ string: String) {
+        var lines = (self.string as! String).components(separatedBy: "\n")
+        lines.append(string)
+        self.string = lines.suffix(20).joined(separator: "\n")
+    }
+    
+    override init(layer: Any) {
+        super.init(layer: layer)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+    
+    func connect(to layer: CALayer) {
         self.frame = layer.bounds
         self.frame.origin.x += 10
         self.frame.size.width -= 20
         self.frame.size.height -= 20
         self.frame.origin.y -= 10
         layer.addSublayer(self)
-        NotificationCenter.default.addObserver(forName: Notification.Name("Log"),
-                                               object: nil,
-                                               queue: OperationQueue.main) {
-                                                var lines = (self.string as! String).components(separatedBy: "\n")
-                                                lines.append($0.object as! String)
-                                                
-                                                self.string = lines.suffix(10).joined(separator: "\n")
-        }
-        
-    }
-    override init(layer: Any) {
-        super.init(layer: layer)
-    }
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
     }
 }
 
