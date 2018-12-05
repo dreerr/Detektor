@@ -9,7 +9,7 @@ class Face: NSObject {
     var size = Constants.videoSize
     let faceSide: CIFaceSide = .left
     var startTime: CMTime
-    var presentationTime: CMTime = CMTime.zero
+    var presentationTime = CMTime.zero
     let preview = CALayer()
     let imageQueue = DispatchQueue(label: "Image Queue", qos:.background)
     let recordQueue = DispatchQueue(label: "Record Queue", attributes:[])
