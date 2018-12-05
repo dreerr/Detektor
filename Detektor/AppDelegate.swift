@@ -60,7 +60,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         display = FaceDisplay(withLayers: layerTiles)
         
         // Set Fullscreen if it was before
-        //setFullscreen(defaults.bool(forKey: "fullscreen"))
+        setFullscreen(defaults.bool(forKey: "Full Screen"))
     }
     
     func applicationWillTerminate(_ aNotification: Notification) {

@@ -85,11 +85,13 @@ class FaceDisplayLayer: NSObject {
             // Disconnect live preview and contiune playing items
             layer.sublayers?.forEach({ (layer) in layer.removeFromSuperlayer()})
             layer.addSublayer(playerLayer)
+            playerLayer.frame = layer.bounds
             if player.currentItem == nil {
                 insertNextPlayerItem()
             } else {
                 player.play()
             }
+            isPlaying = true
             DispatchQueue.main.async {
                 self.layer.setNeedsDisplay()
                 self.layer.setNeedsLayout()

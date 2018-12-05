@@ -75,7 +75,13 @@ class Face: NSObject {
                 let diskSpace = attrs[FileAttributeKey.systemFreeSize] as! Int
                 
                 // Longer than minimumSecs and at least 4GB free on volume
-                if(elapsed > Constants.minimumSecs && (diskSpace/1024/1024/1024) > Constants.minFreeGB) {
+                if(elapsed < Constants.minimumSecs) {
+                    self.assetWriter.cancelWriting()
+                    print(String(format: "dropped recording with %.2f secs", elapsed))
+                } else if (diskSpace/1024/1024/1024) < Constants.minFreeGB {
+                    self.assetWriter.cancelWriting()
+                    alert("Not enough free space, only \((diskSpace/1024/1024/1024))GB left!")
+                } else {
                     let url = self.assetWriter.outputURL
                     self.assetWriter.finishWriting {
                         print("finished writing movie at", url)
@@ -83,12 +89,7 @@ class Face: NSObject {
                                                         object: url,
                                                         userInfo: nil)
                     }
-                } else {
-                    self.assetWriter.cancelWriting()
-                    print(String(format: "dropped recording with %.2f secs", elapsed))
                 }
-                let fileSizeWithUnit = ByteCountFormatter.string(fromByteCount: Int64(diskSpace), countStyle: .file)
-                print("Free size on volume: \(fileSizeWithUnit)")
             }
         }
     }
