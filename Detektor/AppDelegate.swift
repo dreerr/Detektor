@@ -11,6 +11,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         observePowerStates()
+        registerUserDefaults()
         var layerTiles = [CALayer]()
         
         // Create new window
@@ -65,6 +66,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         tracker.faces.values.forEach{ $0.finishRecording() }
     }
     
+    @IBAction func togglePreferences(_ sender: Any) {
+        guard let item = (sender as? NSMenuItem) else {return}
+        if item.title == "Use High Accuracy" {
+            defaults.set(!defaults.bool(forKey: "High Accuracy"), forKey: "High Accuracy")
+        } else if item.title.contains("Feature Size") {
+            if let size = Float(item.title.suffix(4)) {
+                defaults.set(size, forKey: "Feature Size")
+            }
+        } else if item.title.contains("Angles") {
+            if let angles = Int(item.title.suffix(1)) {
+                defaults.set(angles, forKey: "Angles")
+            }
+        }
+        syncPrefsMenu()
+    }
+    
+    
     // Toggle play/pause of all videos and live footage
     @IBAction func togglePlayingState(_ sender: Any) {
         display?.isPlaying = !(display!.isPlaying)
@@ -90,30 +108,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         //        NSApp.terminate(nil)
     }
     
-    func observePowerStates() {
-        // Observe Dialog for Shutdown
-        let notification = "com.apple.shutdownInitiated" as CFString
-        let observer = UnsafeRawPointer(Unmanaged.passUnretained(self).toOpaque())
-        CFNotificationCenterAddObserver(CFNotificationCenterGetDistributedCenter(), observer, { (center, observer, name, _, userInfo) in
-            let mySelf = Unmanaged<AppDelegate>.fromOpaque(observer!).takeUnretainedValue()
-            mySelf.pressCancel()
-        }, notification, nil, .deliverImmediately)
-        
-        // Observe Sleep Status NOT YET DONE
-        let notificationCenter = NSWorkspace.shared.notificationCenter
-        notificationCenter.addObserver(forName: NSWorkspace.willSleepNotification, object: nil, queue: nil) { _ in
-            print("Sleep")
-            //self.setFullscreen(false)
-        }
-        notificationCenter.addObserver(forName: NSWorkspace.didWakeNotification, object: nil, queue: nil) { _ in
-            print("Wake up")
-            //self.setFullscreen(true)
-        }
-    }
-    
-    func pressCancel() {
-        __NSBeep()
-    }
     
     @IBAction func toggleFullscreen(_ sender: Any) {
         setFullscreen(windows[0].contentView?.isInFullScreenMode==false)

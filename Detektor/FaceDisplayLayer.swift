@@ -25,6 +25,9 @@ class FaceDisplayLayer: NSObject {
         layer.removeAllAnimations()
         layer.addSublayer(playerLayer)
         
+        // Mirror layer
+        layer.transform = CATransform3DMakeScale(-1, 1, 1)
+        
         // Play next item available
         self.insertNextPlayerItem()
     }
@@ -34,14 +37,14 @@ class FaceDisplayLayer: NSObject {
         if let item = parent.getNextPlayerItem()  {
             
             // Reset the item: rewind and remove observer
-            item.seek(to: kCMTimeZero, completionHandler: nil)
+            item.seek(to: CMTime.zero, completionHandler: nil)
             NotificationCenter.default.removeObserver(self,
                                                       name: .AVPlayerItemDidPlayToEndTime,
                                                       object: item)
             
             if item == player.currentItem {
                 print("seek")
-                player.seek(to: kCMTimeZero)
+                player.seek(to: CMTime.zero)
             } else {
                 
                 player.replaceCurrentItem(with: item)

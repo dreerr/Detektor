@@ -8,7 +8,7 @@ extension FaceTracker {
         // Create and setup AVCaptureVideoPreviewLayer
         let preview = AVCaptureVideoPreviewLayer(session: captureSession)
         let formatDescription = captureDevice?.activeFormat.formatDescription
-        let cleanAperture = CMVideoFormatDescriptionGetCleanAperture(formatDescription!, false)
+        let cleanAperture = CMVideoFormatDescriptionGetCleanAperture(formatDescription!, originIsAtTopLeft: false)
         let sideLength = layer.bounds.size.width/2
         let size = CGSize(width: sideLength,
                           height: sideLength/cleanAperture.size.width*cleanAperture.size.height)
@@ -74,7 +74,7 @@ extension FaceTracker {
     // Calculates the scaled sizes in the smaller preview
     func scaledInPreview(_ rect: CGRect) -> CGRect {
         let formatDescription = captureDevice?.activeFormat.formatDescription
-        let cleanAperture = CMVideoFormatDescriptionGetCleanAperture(formatDescription!, false)
+        let cleanAperture = CMVideoFormatDescriptionGetCleanAperture(formatDescription!, originIsAtTopLeft: false)
         let parentFrameSize = self.previewLayer!.bounds
         var newRect = rect
         let widthScaleBy = parentFrameSize.width / cleanAperture.size.width

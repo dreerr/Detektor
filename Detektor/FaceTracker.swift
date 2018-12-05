@@ -9,53 +9,59 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     var previewLayer: AVCaptureVideoPreviewLayer?
     var previewLayerRects = CALayer()
     
-    let detector = CIDetector(ofType: CIDetectorTypeFace,
-                              context: nil,
-                              options: [CIDetectorAccuracy : CIDetectorAccuracyHigh,
-                                        CIDetectorTracking: true,
-                                        CIDetectorMinFeatureSize: 0.01,
-                                        CIDetectorNumberOfAngles: 1,
-                                        CIDetectorMaxFeatureCount: 4])
+    var detector: CIDetector?
     var detectorFeatures: [CIFeature]?
     let context = CIContext()
     var faces = [Int32 : Face]()
     var delegate: FaceTrackerProtocol?
-    var queue: DispatchQueue?
+    var captureQueue = DispatchQueue(label: "Capture Queue",
+                              qos: .userInteractive,
+                              autoreleaseFrequency: .workItem,
+                              target: nil)
     let detectorQueue = DispatchQueue(label: "Face Recognition Queue", qos:.default)
     var isTracking = true
     
     
     override init() {
         super.init()
+        detector = getDetector()
         
-        // Get AVCaptureDevice
-        if let device = (AVCaptureDevice.devices(withNameContaining: "USB 2.0 Camera")?.first) {
-            guard let format = device.formats.filter({ (format) -> Bool in
-                print(format)
-                let dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
-//                return dimensions.width == 1280 && dimensions.height == 720
-                return dimensions.width == 1920 && dimensions.height == 1080
-            }).first else { return }
-            try! device.lockForConfiguration()
-            device.activeFormat = format
-            device.unlockForConfiguration()
-            captureDevice = device
-        }
-        if captureDevice == nil {
-            if let device = (AVCaptureDevice.devices(withNameContaining: "FaceTime")?.first) {
-                try! device.lockForConfiguration()
-                let fps = CMTimeMake(20, 600) // 30 fps
-                device.activeVideoMinFrameDuration = fps
-                device.activeVideoMaxFrameDuration = fps
-                device.unlockForConfiguration()
-                captureDevice = device
-            }
-        }
-        guard captureDevice != nil else { return }
+        // Notifications
+//        NotificationCenter.default
+//            .addObserver(forName: NSNotification.Name.AVCaptureDeviceWasDisconnected,
+//                         object: nil,
+//                         queue: nil)
+//            { (notif) -> Void in
+//                print("disconnected")
+//                //self.iosDeviceDetached(device: notif.object! as! AVCaptureDevice)
+//        }
         
+        NotificationCenter.default
+            .addObserver(forName: NSNotification.Name.AVCaptureDeviceWasConnected, object: nil, queue: nil)
+            { (notif) -> Void in
+                print("connected")
+                let device = notif.object! as! AVCaptureDevice
+                self.captureDevice = device
+                do {
+                    try self.captureSession.addInput(AVCaptureDeviceInput(device: device))
+                } catch let error as NSError {
+                    print("Error: no valid camera input in \(error.domain)")
+                }
+                self.captureSession.startRunning()
+        }
+        NotificationCenter.default
+            .addObserver(forName: .AVCaptureSessionRuntimeError, object: nil, queue: nil)
+            { (notif) -> Void in
+                print("AVCaptureSessionRuntimeError")
+                let session = notif.object! as! AVCaptureSession
+                print(session)
+        }
+
         // Configure Capture Session
         captureSession.beginConfiguration()
         captureSession.sessionPreset = AVCaptureSession.Preset.high
+        captureDevice = getDevice()
+        guard captureDevice != nil else { return }
         do {
             try captureSession.addInput(AVCaptureDeviceInput(device: captureDevice!))
         } catch let error as NSError {
@@ -67,16 +73,46 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         //output.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String : NSNumber(value: Constants.pixelFormat)]
         captureSession.addOutput(output)
         captureSession.commitConfiguration()
-        
-        // Create queue with high QoS and autorelease frequency
-        queue = DispatchQueue(label: "Capture Queue",
-                              qos: .userInteractive,
-                              autoreleaseFrequency: .workItem,
-                              target: nil)
-        //        queue = DispatchQueue.global(qos: .userInteractive)
-        
-        output.setSampleBufferDelegate(self, queue: queue)
+        output.setSampleBufferDelegate(self, queue: captureQueue)
         captureSession.startRunning()
+    }
+    
+    func getDetector() -> CIDetector? {
+        let accuracy = (UserDefaults.standard.bool(forKey: "High Accuracy") ? CIDetectorAccuracyHigh : CIDetectorAccuracyLow)
+        let featureSize = UserDefaults.standard.float(forKey: "Feature Size")
+        let angles = UserDefaults.standard.integer(forKey: "Angles")
+        return CIDetector(ofType: CIDetectorTypeFace,
+                   context: nil,
+                   options: [CIDetectorAccuracy : accuracy,
+                             CIDetectorTracking: true,
+                             CIDetectorMinFeatureSize: featureSize,
+                             CIDetectorNumberOfAngles: angles,
+                             CIDetectorMaxFeatureCount: 4])
+    }
+    
+    func getDevice() -> AVCaptureDevice? {
+        if let device = (AVCaptureDevice.devices(withNameContaining: "USB 2.0 Camera")?.first) {
+            guard let format = device.formats.filter({ (format) -> Bool in
+                print(format)
+                let dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
+                //                return dimensions.width == 1280 && dimensions.height == 720
+                return dimensions.width == 1920 && dimensions.height == 1080
+            }).first else { return nil }
+            try! device.lockForConfiguration()
+            device.activeFormat = format
+            device.unlockForConfiguration()
+            return device
+        } else {
+            if let device = (AVCaptureDevice.devices(withNameContaining: "FaceTime")?.first) {
+                try! device.lockForConfiguration()
+                let fps = CMTimeMake(value: 20, timescale: 600) // 30 fps
+                device.activeVideoMinFrameDuration = fps
+                device.activeVideoMaxFrameDuration = fps
+                device.unlockForConfiguration()
+                return device
+            }
+        }
+        return nil
     }
     
     
@@ -87,8 +123,11 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         // Get Image Buffer
         guard let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
         let timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
-        let attachments = CMCopyDictionaryOfAttachments(kCFAllocatorDefault, sampleBuffer, kCMAttachmentMode_ShouldPropagate)
-        var ciImage = CIImage(cvImageBuffer: imageBuffer, options: attachments as! [String : Any]?)
+        let attachments = CMCopyDictionaryOfAttachments(allocator: kCFAllocatorDefault,
+                                                        target: sampleBuffer,
+                                                        attachmentMode: kCMAttachmentMode_ShouldPropagate)
+        var ciImage = CIImage(cvImageBuffer: imageBuffer,
+                              options: (attachments as! [CIImageOption : Any]))
         
         // Recognize faces on other queue
         detectorQueue.async {

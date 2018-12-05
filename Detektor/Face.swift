@@ -9,7 +9,7 @@ class Face: NSObject {
     var size = Constants.videoSize
     let faceSide: CIFaceSide = .left
     var startTime: CMTime
-    var presentationTime: CMTime = kCMTimeZero
+    var presentationTime: CMTime = CMTime.zero
     let preview = CALayer()
     let imageQueue = DispatchQueue(label: "Image Queue", qos:.background)
     let recordQueue = DispatchQueue(label: "Record Queue", attributes:[])
@@ -40,7 +40,7 @@ class Face: NSObject {
         }
         
         // Setup preview layer
-        preview.contentsGravity = kCAGravityResizeAspect
+        preview.contentsGravity = CALayerContentsGravity.resizeAspect
         preview.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
         preview.removeAllAnimations()
         
@@ -59,7 +59,7 @@ class Face: NSObject {
         // Add image to preview
         imageQueue.async {
             var cgImage: CGImage?
-            VTCreateCGImageFromCVPixelBuffer(buffer, nil, &cgImage)
+            VTCreateCGImageFromCVPixelBuffer(buffer, options: nil, imageOut: &cgImage)
             DispatchQueue.main.async {
                 self.preview.contents = cgImage
             }
