@@ -57,4 +57,7 @@ func syncPrefsMenu() {
             }
         }
     }
+    alert("High Accuracy: \(defaults.bool(forKey: "High Accuracy") ? "Yes": "No")")
+    alert("Minimum Feature Size: \(defaults.float(forKey: "Feature Size"))")
+    alert("Face Angles: \(defaults.integer(forKey: "Angles"))")
 }

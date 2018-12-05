@@ -10,16 +10,10 @@ import Foundation
 import Cocoa
 
 class OSDLogLayer: CATextLayer {
-    enum LogState { case debug, error }
-    var logging = LogState.debug {
-        didSet {
-            self.opacity = (logging == .debug ? 1.0 : 0.0)
-        }
-    }
-    
+    var fadeOut : Timer?
     override init() {
         super.init()
-        self.fontSize = 15
+        self.fontSize = 40
         self.string = ""
         self.isWrapped = true
         self.opacity = 0.0
@@ -33,6 +27,12 @@ class OSDLogLayer: CATextLayer {
         var lines = (self.string as! String).components(separatedBy: "\n")
         lines.append(string)
         self.string = lines.suffix(20).joined(separator: "\n")
+        opacity = 1.0
+        fadeOut?.invalidate()
+        fadeOut = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false, block: {_ in
+            self.opacity = 0.0
+            self.string = ""
+        })
     }
     
     override init(layer: Any) {
@@ -53,7 +53,7 @@ class OSDLogLayer: CATextLayer {
     }
 }
 
-public func print(_ items: Any..., separator: String = " ", terminator: String = "\n") {
+public func alert(_ items: Any..., separator: String = " ", terminator: String = "\n") {
     let output = items.map { "*\($0)" }.joined(separator: separator)
     Swift.print(output, terminator: terminator)
     NotificationCenter.default.post(name: Notification.Name("Log"), object: output)

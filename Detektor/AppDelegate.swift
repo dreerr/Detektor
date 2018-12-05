@@ -51,6 +51,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         // Connect OSD
         osd.connect(to: stretch.content)
+        let attrs = try! FileManager.default.attributesOfFileSystem(forPath: Constants.directoryURL.path)
+        let diskSpace = attrs[FileAttributeKey.systemFreeSize] as! Int
+        let fileSizeWithUnit = ByteCountFormatter.string(fromByteCount: Int64(diskSpace), countStyle: .file)
+        alert("Free Size: \(fileSizeWithUnit)")
         
         // Initialize FacePlayer with the sublayers of CALayerMatrix array
         display = FaceDisplay(withLayers: layerTiles)
@@ -94,11 +98,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if display?.tracker?.previewLayer == nil {
             if let layer = windows[0].contentView?.layer?.sublayers?.first?.sublayers?.first {
                 display?.tracker?.connectDebug(layer)
-                osd.logging = .debug
             }
         } else {
             display?.tracker?.disconnectDebug()
-            osd.logging = .error
         }
     }
     @IBAction func terminateAndShutdown(_ sender: Any) {

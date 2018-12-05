@@ -7,7 +7,7 @@ class Face: NSObject {
     var writeInput:AVAssetWriterInput!
     var bufferAdapter:AVAssetWriterInputPixelBufferAdaptor!
     var size = Constants.videoSize
-    let faceSide: CIFaceSide = .left
+    let faceSide: CIFaceSide = .right
     var startTime: CMTime
     var presentationTime = CMTime.zero
     let preview = CALayer()
@@ -86,9 +86,9 @@ class Face: NSObject {
                 } else {
                     self.assetWriter.cancelWriting()
                     print(String(format: "dropped recording with %.2f secs", elapsed))
-                    let fileSizeWithUnit = ByteCountFormatter.string(fromByteCount: Int64(diskSpace), countStyle: .file)
-                    print("Free size on volume: \(fileSizeWithUnit)")
                 }
+                let fileSizeWithUnit = ByteCountFormatter.string(fromByteCount: Int64(diskSpace), countStyle: .file)
+                print("Free size on volume: \(fileSizeWithUnit)")
             }
         }
     }

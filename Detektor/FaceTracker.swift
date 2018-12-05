@@ -163,7 +163,7 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
                         isFirst = false
                     }
                     guard let face = faces[id] else { continue }
-                    let image = ciImage.croppedAndScaledToFace(faceFeature, faceSide: .left)
+                    let image = ciImage.croppedAndScaledToFace(faceFeature, faceSide: .right)
                     guard let buffer = image.createPixelBuffer(withContext: context) else { continue }
                     face.append(buffer, time: timestamp)
                 }
