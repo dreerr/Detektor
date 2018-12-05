@@ -35,7 +35,8 @@ func registerUserDefaults() {
     UserDefaults.standard.register(defaults: [
         "High Accuracy": true,
         "Feature Size": 0.01,
-        "Angles": 1
+        "Angles": 1,
+        "Full Screen": false
     ])
     syncPrefsMenu()
 }

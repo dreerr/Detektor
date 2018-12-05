@@ -114,18 +114,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func setFullscreen(_ goFullscreen:Bool) {
-        UserDefaults.standard.set(goFullscreen, forKey: "fullscreen")
-        
+        UserDefaults.standard.set(goFullscreen, forKey: "Full Screen")
         if(goFullscreen) {
-            //NSCursor.hide()
+            NSCursor.hide()
             let presOptions: NSApplication.PresentationOptions = [
-                //                .disableProcessSwitching,
-                //                .disableForceQuit,
-                //                .disableHideApplication,
-                //                .disableSessionTermination,
-                //                .hideDock,
                 .fullScreen,
-                //.autoHideMenuBar
+                .autoHideMenuBar
             ]
             let optionsDictionary = [
                 .fullScreenModeApplicationPresentationOptions: presOptions,
