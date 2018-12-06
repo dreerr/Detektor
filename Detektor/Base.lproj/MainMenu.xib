@@ -147,6 +147,12 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="Preferences" systemMenu="window" id="lMq-GU-6jp">
                         <items>
+                            <menuItem title="Face Recognition" enabled="NO" id="zne-Lq-93U">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="togglePreferences:" target="-1" id="FdV-1P-Jwk"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Use High Accuracy" id="fQ4-FM-3gc">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
@@ -203,6 +209,44 @@
                                     </items>
                                 </menu>
                             </menuItem>
+                            <menuItem isSeparatorItem="YES" id="37W-Bh-hdg"/>
+                            <menuItem title="Recordings" enabled="NO" id="gvf-K9-vlh">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="togglePreferences:" target="-1" id="AbH-tV-ky7"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Delete Immediately" id="WVG-hM-KQ8">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="togglePreferences:" target="-1" id="NNI-MM-BD9"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Keep Recordings" id="yt6-Xj-V22">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="Keep Recordings" id="sTD-Ch-aXW">
+                                    <items>
+                                        <menuItem title="14 Days" id="OOT-sK-CD4">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="togglePreferences:" target="-1" id="PpX-nl-V0B"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="3 Months" id="ZPl-uc-CnH">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="togglePreferences:" target="-1" id="ziv-oX-S0k"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Forever" id="6v3-jy-iQJ">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="togglePreferences:" target="-1" id="ydm-fJ-HKN"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </menuItem>
                         </items>
                     </menu>
                 </menuItem>
@@ -225,6 +269,31 @@
             <connections>
                 <action selector="togglePreferences:" target="-1" id="btb-MB-vXY"/>
             </connections>
+        </menuItem>
+        <menuItem title="Face Angles" id="oB9-mr-XXB">
+            <modifierMask key="keyEquivalentModifierMask"/>
+            <menu key="submenu" title="Face Angles" id="0W0-Xk-alo">
+                <items>
+                    <menuItem title="Angles: 1" id="JEg-cf-5J1">
+                        <modifierMask key="keyEquivalentModifierMask"/>
+                        <connections>
+                            <action selector="togglePreferences:" target="-1" id="IVe-EQ-K2W"/>
+                        </connections>
+                    </menuItem>
+                    <menuItem title="Angles: 3" id="LtF-W6-vo2">
+                        <modifierMask key="keyEquivalentModifierMask"/>
+                        <connections>
+                            <action selector="togglePreferences:" target="-1" id="Lmo-g3-Q23"/>
+                        </connections>
+                    </menuItem>
+                    <menuItem title="Angles: 5" id="sKf-rv-oCe">
+                        <modifierMask key="keyEquivalentModifierMask"/>
+                        <connections>
+                            <action selector="togglePreferences:" target="-1" id="WM9-MB-xxG"/>
+                        </connections>
+                    </menuItem>
+                </items>
+            </menu>
         </menuItem>
     </objects>
 </document>

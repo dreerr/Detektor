@@ -72,25 +72,32 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     @IBAction func togglePreferences(_ sender: Any) {
         guard let item = (sender as? NSMenuItem) else {return}
-        if item.title == "Use High Accuracy" {
+        if item.title == "Delete Immediately" {
+            defaults.set(!defaults.bool(forKey: "Delete Immediately"), forKey: "Delete Immediately")
+        } else if item.title == "Use High Accuracy" {
             defaults.set(!defaults.bool(forKey: "High Accuracy"), forKey: "High Accuracy")
-        } else if item.title.contains("Feature Size") {
+            display?.tracker?.initDetector()
+        } else if item.parent!.title.contains("Minimum Feature Size") {
             if let size = Float(item.title.suffix(4)) {
                 defaults.set(size, forKey: "Feature Size")
             }
-        } else if item.title.contains("Angles") {
+            display?.tracker?.initDetector()
+        } else if item.parent!.title.contains("Face Angles") {
             if let angles = Int(item.title.suffix(1)) {
                 defaults.set(angles, forKey: "Angles")
             }
+            display?.tracker?.initDetector()
+        } else if item.parent!.title.contains("Keep Recordings") {
+            defaults.set(item.title, forKey: "Keep Recordings")
         }
         syncPrefsMenu()
     }
     
     
     // Toggle play/pause of all videos and live footage
-    @IBAction func togglePlayingState(_ sender: Any) {
-        display?.isPlaying = !(display!.isPlaying)
-    }
+//    @IBAction func togglePlayingState(_ sender: Any) {
+//        display?.isPlaying = !(display!.isPlaying)
+//    }
     
     // Toggle debug infos
     @IBAction func toggleDebug(_ sender: Any) {
@@ -103,13 +110,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             display?.tracker?.disconnectDebug()
         }
     }
-    @IBAction func terminateAndShutdown(_ sender: Any) {
-        let source = "tell application \"Finder\"\nshut down\nend tell\ntell application \"Detektor\" to quit"
-        let script = NSAppleScript(source: source)
-        script?.executeAndReturnError(nil)
-        //        NSApp.terminate(nil)
-    }
-    
     
     @IBAction func toggleFullscreen(_ sender: Any) {
         setFullscreen(windows[0].contentView?.isInFullScreenMode==false)

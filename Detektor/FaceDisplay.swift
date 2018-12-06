@@ -14,9 +14,9 @@ class FaceDisplay: NSObject {
         super.init()
         // Scan for movies
         guard let initialUrls = try? FileManager.default.contentsOfDirectory(at: Constants.directoryURL,
-                                                                       includingPropertiesForKeys: [.creationDateKey],
-                                                                       options:.skipsHiddenFiles)
-        else { return }
+                                                                             includingPropertiesForKeys: [.creationDateKey],
+                                                                             options:.skipsHiddenFiles)
+            else { return }
         initialUrls.map { url in
             (url, (try? url.resourceValues(forKeys: [.creationDateKey]))?.creationDate ?? Date.distantPast)
             }
@@ -31,14 +31,14 @@ class FaceDisplay: NSObject {
         // Initialize FaceTracker (after FaceDisplayLayers are initialized)
         tracker = FaceTracker()
         tracker?.delegate = self
-       
+        
         // Register FaceRecorder Notification
         NotificationCenter.default.addObserver(forName: Notification.Name("newRecording"),
                                                object: nil,
                                                queue: OperationQueue.main) {
                                                 self.appendToPlayerItems($0.object as! URL)
         }
-
+        
         // Cycle through
         _ = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true, block: {_ in
             self.currentFaceIndex+=1
@@ -60,25 +60,32 @@ class FaceDisplay: NSObject {
         while playerItems.count > 0 {
             let item = playerItems[currentIndex]
             let url = (item.asset as! AVURLAsset).url
-            guard let attributes = try? FileManager.default.attributesOfItem(atPath: url.path) as [FileAttributeKey: Any],
-                let creationDate = attributes[FileAttributeKey.creationDate] as? Date else { continue }
-            if creationDate.timeIntervalSinceNow < Constants.timeIntervalLimit {
-                print("\(url.lastPathComponent) is too old \(creationDate)")
-                playerItems.remove(at: currentIndex)
-                do {
-                    if UserDefaults.standard.bool(forKey: "delete immediately") {
-                        try FileManager.default.removeItem(at: url)
-                    } else {
-                        try FileManager.default.trashItem(at: url, resultingItemURL: nil)
+            
+            // Check which timeframe is set and test the file accordingly
+            let intervals = ["14 Days": -60*60*24*14, "3 Months": -60*60*24*60] as [String:Double]
+            if let timeIntervalLimit = intervals[UserDefaults.standard.string(forKey: "Keep Recordings") ?? "Forever"] {
+                guard let attributes = try? FileManager.default.attributesOfItem(atPath: url.path) as [FileAttributeKey: Any],
+                    let creationDate = attributes[FileAttributeKey.creationDate] as? Date else { continue }
+                if creationDate.timeIntervalSinceNow < timeIntervalLimit {
+                    print("\(url.lastPathComponent) is too old \(creationDate)")
+                    playerItems.remove(at: currentIndex)
+                    do {
+                        if UserDefaults.standard.bool(forKey: "Delete Immediately") {
+                            try FileManager.default.removeItem(at: url)
+                        } else {
+                            try FileManager.default.trashItem(at: url, resultingItemURL: nil)
+                        }
+                    } catch let error as NSError {
+                        alert("Fehler: " + error.localizedDescription)
                     }
-                } catch let error as NSError {
-                    print("Fehler: " + error.localizedDescription)
+                    return nil
                 }
             } else {
-                print("\(url.lastPathComponent) in timeframe \(creationDate)")
-                currentIndex = (currentIndex+1)%playerItems.count // we have the item, so we advance
-                return item
+                print("No valid limit found, could be forever")
             }
+            print("\(url.lastPathComponent) in timeframe")
+            currentIndex = (currentIndex+1)%playerItems.count // we have the item, so we advance
+            return item
         }
         return nil
     }

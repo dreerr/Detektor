@@ -24,17 +24,8 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     
     override init() {
         super.init()
-        detector = getDetector()
-        
-        // Notifications
-//        NotificationCenter.default
-//            .addObserver(forName: NSNotification.Name.AVCaptureDeviceWasDisconnected,
-//                         object: nil,
-//                         queue: nil)
-//            { (notif) -> Void in
-//                print("disconnected")
-//                //self.iosDeviceDetached(device: notif.object! as! AVCaptureDevice)
-//        }
+        initDetector()
+
         
         NotificationCenter.default
             .addObserver(forName: NSNotification.Name.AVCaptureDeviceWasConnected, object: nil, queue: nil)
@@ -77,17 +68,18 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         captureSession.startRunning()
     }
     
-    func getDetector() -> CIDetector? {
+    func initDetector() {
         let accuracy = (UserDefaults.standard.bool(forKey: "High Accuracy") ? CIDetectorAccuracyHigh : CIDetectorAccuracyLow)
         let featureSize = UserDefaults.standard.float(forKey: "Feature Size")
         let angles = UserDefaults.standard.integer(forKey: "Angles")
-        return CIDetector(ofType: CIDetectorTypeFace,
+        detector = CIDetector(ofType: CIDetectorTypeFace,
                    context: nil,
                    options: [CIDetectorAccuracy : accuracy,
                              CIDetectorTracking: true,
                              CIDetectorMinFeatureSize: featureSize,
                              CIDetectorNumberOfAngles: angles,
                              CIDetectorMaxFeatureCount: 4])
+        alert("Detector initialized")
     }
     
     func getDevice() -> AVCaptureDevice? {

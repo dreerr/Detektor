@@ -3,8 +3,6 @@ import ApplicationServices
 
 extension AppDelegate {
     func observePowerStates() {
-        print(AXIsProcessTrusted())
-        
         // Observe Dialog for Shutdown
         let notification = "com.apple.shutdownInitiated" as CFString
         let selfOpaque = UnsafeRawPointer(Unmanaged.passUnretained(self).toOpaque())
@@ -37,5 +35,13 @@ extension AppDelegate {
         let script = NSAppleScript(source: source)
         script?.executeAndReturnError(nil)
         __NSBeep()
-        }
+        self.terminateAndShutdown(self)
+    }
+    
+    @IBAction func terminateAndShutdown(_ sender: Any) {
+        let source = "tell application \"Finder\"\nshut down\nend tell\ntell application \"Detektor\" to quit"
+        let script = NSAppleScript(source: source)
+        script?.executeAndReturnError(nil)
+        //        NSApp.terminate(nil)
+    }
 }

@@ -16,7 +16,6 @@ struct Constants {
     static let minimumSecs : CFTimeInterval = 3.5
     static var pause = false
     static let minFreeGB = 4
-    static let timeIntervalLimit : Double = -60*60*24*14 //   -60*60*24*14
     
     static var directoryURL: URL {
         var url = FileManager.default.urls(for: .moviesDirectory, in: .userDomainMask)[0]
@@ -29,35 +28,4 @@ struct Constants {
         return url
     }
     var debug = true
-}
-
-func registerUserDefaults() {
-    UserDefaults.standard.register(defaults: [
-        "High Accuracy": true,
-        "Feature Size": 0.01,
-        "Angles": 1,
-        "Full Screen": false
-    ])
-    syncPrefsMenu()
-}
-func syncPrefsMenu() {
-    let defaults = UserDefaults.standard
-    let prefsMenu = NSApplication.shared.mainMenu!.items.filter(){ $0.title == "Preferences" }.first
-    for item in (prefsMenu?.submenu?.items)! {
-        if item.title == "Use High Accuracy" {
-            item.state = (defaults.bool(forKey: "High Accuracy") ? .on : .off)
-        }
-        for subitem in item.submenu?.items ?? [] {
-            if item.title == "Minimum Feature Size" {
-                let size = Float(subitem.title.suffix(4))
-                subitem.state = defaults.float(forKey: "Feature Size") == size ? .on : .off
-            } else if item.title == "Face Angles" {
-                let angles = Int(subitem.title.suffix(1))
-                subitem.state = defaults.integer(forKey: "Angles") == angles ? .on : .off
-            }
-        }
-    }
-    alert("High Accuracy: \(defaults.bool(forKey: "High Accuracy") ? "Yes": "No")")
-    alert("Minimum Feature Size: \(defaults.float(forKey: "Feature Size"))")
-    alert("Face Angles: \(defaults.integer(forKey: "Angles"))")
 }
