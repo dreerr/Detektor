@@ -8,6 +8,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var inFullscreen = false
     let osd = OSDLogLayer()
     let defaults = UserDefaults.standard
+    var shutdownHasStarted = false
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         observePowerStates()

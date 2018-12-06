@@ -21,7 +21,7 @@
 		B90E9A1221331408000550FF /* Face.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0B21331408000550FF /* Face.swift */; };
 		B94335E121B6B6DC00EC4CD7 /* CALayerStretch.swift in Sources */ = {isa = PBXBuildFile; fileRef = B94335E021B6B6DC00EC4CD7 /* CALayerStretch.swift */; };
 		B9829DA32146913800837BB4 /* CALayerMatrix.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9829DA22146913800837BB4 /* CALayerMatrix.swift */; };
-		B9929DC421B7B65F00645321 /* AppDelegatePowerStates.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9929DC321B7B65F00645321 /* AppDelegatePowerStates.swift */; };
+		B9929DC421B7B65F00645321 /* AppDelegatePower.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9929DC321B7B65F00645321 /* AppDelegatePower.swift */; };
 		B9FBF57C21B911E500ADEFCD /* AppDelegateUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9FBF57B21B911E500ADEFCD /* AppDelegateUserDefaults.swift */; };
 /* End PBXBuildFile section */
 
@@ -43,7 +43,7 @@
 		B90E9A0B21331408000550FF /* Face.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Face.swift; sourceTree = "<group>"; };
 		B94335E021B6B6DC00EC4CD7 /* CALayerStretch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CALayerStretch.swift; sourceTree = "<group>"; };
 		B9829DA22146913800837BB4 /* CALayerMatrix.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CALayerMatrix.swift; sourceTree = "<group>"; };
-		B9929DC321B7B65F00645321 /* AppDelegatePowerStates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegatePowerStates.swift; sourceTree = "<group>"; };
+		B9929DC321B7B65F00645321 /* AppDelegatePower.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegatePower.swift; sourceTree = "<group>"; };
 		B9FBF57B21B911E500ADEFCD /* AppDelegateUserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegateUserDefaults.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -78,8 +78,8 @@
 			isa = PBXGroup;
 			children = (
 				B90E99F321331096000550FF /* AppDelegate.swift */,
-				B9929DC321B7B65F00645321 /* AppDelegatePowerStates.swift */,
 				B9FBF57B21B911E500ADEFCD /* AppDelegateUserDefaults.swift */,
+				B9929DC321B7B65F00645321 /* AppDelegatePower.swift */,
 				B9085D5D21AD565C006A6E14 /* OSDLog.swift */,
 				B9829DA22146913800837BB4 /* CALayerMatrix.swift */,
 				B94335E021B6B6DC00EC4CD7 /* CALayerStretch.swift */,
@@ -178,7 +178,7 @@
 			files = (
 				B90E9A1221331408000550FF /* Face.swift in Sources */,
 				B90E9A1121331408000550FF /* Extensions.swift in Sources */,
-				B9929DC421B7B65F00645321 /* AppDelegatePowerStates.swift in Sources */,
+				B9929DC421B7B65F00645321 /* AppDelegatePower.swift in Sources */,
 				B90E9A042133138E000550FF /* FaceDisplay.swift in Sources */,
 				B90E99F421331096000550FF /* AppDelegate.swift in Sources */,
 				B90E9A0F21331408000550FF /* FaceDisplayLayer.swift in Sources */,

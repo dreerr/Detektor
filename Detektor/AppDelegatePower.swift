@@ -24,7 +24,9 @@ extension AppDelegate {
     }
     
     func handleShutdownDialog() {
-        print("pressCancel")
+        guard shutdownHasStarted == false else { return }
+        shutdownHasStarted = true
+        __NSBeep()
         let source = """
         tell application "System Events"
             tell application process "loginwindow"
@@ -34,7 +36,6 @@ extension AppDelegate {
         """
         let script = NSAppleScript(source: source)
         script?.executeAndReturnError(nil)
-        __NSBeep()
         self.terminateAndShutdown(self)
     }
     
@@ -42,6 +43,5 @@ extension AppDelegate {
         let source = "tell application \"Finder\"\nshut down\nend tell\ntell application \"Detektor\" to quit"
         let script = NSAppleScript(source: source)
         script?.executeAndReturnError(nil)
-        //        NSApp.terminate(nil)
     }
 }
