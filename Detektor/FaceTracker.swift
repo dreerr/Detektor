@@ -8,6 +8,7 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     var captureDevice: AVCaptureDevice?
     var previewLayer: AVCaptureVideoPreviewLayer?
     var previewLayerRects = CALayer()
+    let defaults = UserDefaults.standard
     
     var detector: CIDetector?
     var detectorFeatures: [CIFeature]?
@@ -20,7 +21,6 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
                               target: nil)
     let detectorQueue = DispatchQueue(label: "Face Recognition Queue", qos:.default)
     var isTracking = true
-    
     
     override init() {
         super.init()
@@ -100,6 +100,7 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
                 let fps = CMTimeMake(value: 20, timescale: 600) // 30 fps
                 device.activeVideoMinFrameDuration = fps
                 device.activeVideoMaxFrameDuration = fps
+                device.exposureMode = .locked
                 device.unlockForConfiguration()
                 return device
             }
@@ -133,10 +134,10 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         var currentIDs = [Int32]()
         
         // Apply filter to image
-        ciImage = ciImage.applyingFilter("CIColorControls", parameters: ["inputBrightness": 0.0,
-                                                                         "inputContrast": 1.1,
-                                                                         "inputSaturation": 0.0])
-            .applyingFilter("CIExposureAdjust", parameters: ["inputEV": 0.5])
+        ciImage = ciImage.applyingFilter("CIColorControls", parameters: ["inputBrightness": defaults.float(forKey: "Image Brightness"),
+                                                                         "inputContrast": defaults.float(forKey: "Image Contrast"),
+                                                                         "inputSaturation": defaults.float(forKey: "Image Saturation")])
+            .applyingFilter("CIExposureAdjust", parameters: ["inputEV": defaults.float(forKey: "Image EV")])
         
         detectorQueue.sync {
             var isFirst = true

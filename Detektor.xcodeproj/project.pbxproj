@@ -22,7 +22,8 @@
 		B94335E121B6B6DC00EC4CD7 /* CALayerStretch.swift in Sources */ = {isa = PBXBuildFile; fileRef = B94335E021B6B6DC00EC4CD7 /* CALayerStretch.swift */; };
 		B9829DA32146913800837BB4 /* CALayerMatrix.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9829DA22146913800837BB4 /* CALayerMatrix.swift */; };
 		B9929DC421B7B65F00645321 /* AppDelegatePower.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9929DC321B7B65F00645321 /* AppDelegatePower.swift */; };
-		B9FBF57C21B911E500ADEFCD /* AppDelegateUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9FBF57B21B911E500ADEFCD /* AppDelegateUserDefaults.swift */; };
+		B9CF0D1321BBCC53006EAADA /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CF0D1121BBCC53006EAADA /* Preferences.swift */; };
+		B9CF0D1421BBCC53006EAADA /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = B9CF0D1221BBCC53006EAADA /* Preferences.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,7 +45,9 @@
 		B94335E021B6B6DC00EC4CD7 /* CALayerStretch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CALayerStretch.swift; sourceTree = "<group>"; };
 		B9829DA22146913800837BB4 /* CALayerMatrix.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CALayerMatrix.swift; sourceTree = "<group>"; };
 		B9929DC321B7B65F00645321 /* AppDelegatePower.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegatePower.swift; sourceTree = "<group>"; };
-		B9FBF57B21B911E500ADEFCD /* AppDelegateUserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegateUserDefaults.swift; sourceTree = "<group>"; };
+		B9AAF2C221BD169A00879852 /* Detektor-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Detektor-Bridging-Header.h"; sourceTree = "<group>"; };
+		B9CF0D1121BBCC53006EAADA /* Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
+		B9CF0D1221BBCC53006EAADA /* Preferences.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Preferences.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,7 +81,6 @@
 			isa = PBXGroup;
 			children = (
 				B90E99F321331096000550FF /* AppDelegate.swift */,
-				B9FBF57B21B911E500ADEFCD /* AppDelegateUserDefaults.swift */,
 				B9929DC321B7B65F00645321 /* AppDelegatePower.swift */,
 				B9085D5D21AD565C006A6E14 /* OSDLog.swift */,
 				B9829DA22146913800837BB4 /* CALayerMatrix.swift */,
@@ -90,10 +92,13 @@
 				B90E9A0721331408000550FF /* FaceTrackerDebug.swift */,
 				B90E9A032133138D000550FF /* FaceDisplay.swift */,
 				B90E9A0821331408000550FF /* FaceDisplayLayer.swift */,
+				B9CF0D1121BBCC53006EAADA /* Preferences.swift */,
+				B9AAF2C221BD169A00879852 /* Detektor-Bridging-Header.h */,
+				B9CF0D1221BBCC53006EAADA /* Preferences.xib */,
+				B90E99F721331098000550FF /* MainMenu.xib */,
 				B90E99F521331098000550FF /* Assets.xcassets */,
 				B90E99FB21331098000550FF /* Detektor.entitlements */,
 				B90E99FA21331098000550FF /* Info.plist */,
-				B90E99F721331098000550FF /* MainMenu.xib */,
 				B903432F215815B400509ED6 /* Icon.icns */,
 			);
 			path = Detektor;
@@ -165,6 +170,7 @@
 			files = (
 				B9034330215815B500509ED6 /* Icon.icns in Resources */,
 				B90E99F621331098000550FF /* Assets.xcassets in Resources */,
+				B9CF0D1421BBCC53006EAADA /* Preferences.xib in Resources */,
 				B90E99F921331098000550FF /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -184,7 +190,7 @@
 				B90E9A0F21331408000550FF /* FaceDisplayLayer.swift in Sources */,
 				B9085D5E21AD565C006A6E14 /* OSDLog.swift in Sources */,
 				B90E9A0D21331408000550FF /* FaceTracker.swift in Sources */,
-				B9FBF57C21B911E500ADEFCD /* AppDelegateUserDefaults.swift in Sources */,
+				B9CF0D1321BBCC53006EAADA /* Preferences.swift in Sources */,
 				B9829DA32146913800837BB4 /* CALayerMatrix.swift in Sources */,
 				B90E9A0221331189000550FF /* Constants.swift in Sources */,
 				B94335E121B6B6DC00EC4CD7 /* CALayerStretch.swift in Sources */,
@@ -323,6 +329,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -336,6 +343,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = at.palacz.Detektor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Detektor/Detektor-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
@@ -344,6 +353,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -357,6 +367,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = at.palacz.Detektor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Detektor/Detektor-Bridging-Header.h";
 				SWIFT_VERSION = 4.2;
 			};
 			name = Release;

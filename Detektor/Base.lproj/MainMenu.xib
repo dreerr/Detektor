@@ -32,6 +32,12 @@
                                 <menu key="submenu" title="Services" systemMenu="services" id="hz9-B4-Xy5"/>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="4je-JR-u6R"/>
+                            <menuItem title="Preferences" keyEquivalent="," id="oIj-tN-Zvh">
+                                <connections>
+                                    <action selector="openPreferences:" target="-1" id="d6H-fr-dkp"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="64O-ea-YDm"/>
                             <menuItem title="Hide Detektor" keyEquivalent="h" id="Olw-nP-bQN">
                                 <connections>
                                     <action selector="hide:" target="-1" id="PnN-Uc-m68"/>
@@ -59,18 +65,6 @@
                                 <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                 <connections>
                                     <action selector="terminateAndShutdown:" target="-1" id="Bdb-XM-g8x"/>
-                                </connections>
-                            </menuItem>
-                        </items>
-                    </menu>
-                </menuItem>
-                <menuItem title="File" id="dMs-cI-mzQ">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <menu key="submenu" title="File" id="bib-Uj-vzu">
-                        <items>
-                            <menuItem title="Close" keyEquivalent="w" id="DVo-aG-piG">
-                                <connections>
-                                    <action selector="performClose:" target="-1" id="HmO-Ls-i7Q"/>
                                 </connections>
                             </menuItem>
                         </items>
@@ -130,122 +124,20 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="Window" systemMenu="window" id="Td7-aD-5lo">
                         <items>
+                            <menuItem title="Close" keyEquivalent="w" id="deU-3J-OW1">
+                                <connections>
+                                    <action selector="close:" target="-1" id="zvb-T8-dc1"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Toggle Full Screen" keyEquivalent="f" id="4J7-dP-txa">
                                 <connections>
-                                    <action selector="toggleFullscreen:" target="-1" id="HeQ-KX-Je2"/>
+                                    <action selector="toggleScreen:" target="-1" id="lTW-Fj-HAu"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Toggle Debug" keyEquivalent="d" id="NLY-I3-GE7">
                                 <connections>
                                     <action selector="toggleDebug:" target="-1" id="gij-ZY-Peo"/>
                                 </connections>
-                            </menuItem>
-                        </items>
-                    </menu>
-                </menuItem>
-                <menuItem title="Preferences" id="Q4E-qe-uzH">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <menu key="submenu" title="Preferences" systemMenu="window" id="lMq-GU-6jp">
-                        <items>
-                            <menuItem title="Face Recognition" enabled="NO" id="zne-Lq-93U">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="togglePreferences:" target="-1" id="FdV-1P-Jwk"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Use High Accuracy" id="fQ4-FM-3gc">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="togglePreferences:" target="-1" id="rYP-OZ-1wG"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Minimum Feature Size" id="Eeb-MR-kOx">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <menu key="submenu" title="Minimum Feature Size" id="RQg-lM-C3y">
-                                    <items>
-                                        <menuItem title="Feature Size 0.01" id="ZBZ-xc-Iwm">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="togglePreferences:" target="-1" id="nvG-PJ-fet"/>
-                                            </connections>
-                                        </menuItem>
-                                        <menuItem title="Feature Size 0.03" id="DrO-er-j5y">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="togglePreferences:" target="-1" id="Png-AY-hPh"/>
-                                            </connections>
-                                        </menuItem>
-                                        <menuItem title="Feature Size 0.05" id="Cbm-fb-K1r">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="togglePreferences:" target="-1" id="fx6-y3-cbx"/>
-                                            </connections>
-                                        </menuItem>
-                                    </items>
-                                </menu>
-                            </menuItem>
-                            <menuItem title="Face Angles" id="nB8-Tt-IMg">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <menu key="submenu" title="Face Angles" id="AYI-yi-ZgM">
-                                    <items>
-                                        <menuItem title="Angles: 1" id="cRn-Hi-tWa">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="togglePreferences:" target="-1" id="hQe-g4-1E6"/>
-                                            </connections>
-                                        </menuItem>
-                                        <menuItem title="Angles: 3" id="kRL-E0-h7Y">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="togglePreferences:" target="-1" id="0ey-xZ-kmQ"/>
-                                            </connections>
-                                        </menuItem>
-                                        <menuItem title="Angles: 5" id="p7Z-Uc-tvL">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="togglePreferences:" target="-1" id="Rnv-Oj-c48"/>
-                                            </connections>
-                                        </menuItem>
-                                    </items>
-                                </menu>
-                            </menuItem>
-                            <menuItem isSeparatorItem="YES" id="37W-Bh-hdg"/>
-                            <menuItem title="Recordings" enabled="NO" id="gvf-K9-vlh">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="togglePreferences:" target="-1" id="AbH-tV-ky7"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Delete Immediately" id="WVG-hM-KQ8">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="togglePreferences:" target="-1" id="NNI-MM-BD9"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Keep Recordings" id="yt6-Xj-V22">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <menu key="submenu" title="Keep Recordings" id="sTD-Ch-aXW">
-                                    <items>
-                                        <menuItem title="14 Days" id="OOT-sK-CD4">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="togglePreferences:" target="-1" id="PpX-nl-V0B"/>
-                                            </connections>
-                                        </menuItem>
-                                        <menuItem title="3 Months" id="ZPl-uc-CnH">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="togglePreferences:" target="-1" id="ziv-oX-S0k"/>
-                                            </connections>
-                                        </menuItem>
-                                        <menuItem title="Forever" id="6v3-jy-iQJ">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="togglePreferences:" target="-1" id="ydm-fJ-HKN"/>
-                                            </connections>
-                                        </menuItem>
-                                    </items>
-                                </menu>
                             </menuItem>
                         </items>
                     </menu>

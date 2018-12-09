@@ -2,6 +2,9 @@ import Cocoa
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
+    override init() {
+        registerUserDefaults()
+    }
     var display: FaceDisplay?
     var matrixLayers = [CALayerMatrix]()
     var windows = [NSWindow]()
@@ -9,10 +12,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let osd = OSDLogLayer()
     let defaults = UserDefaults.standard
     var shutdownHasStarted = false
-    
+    let prefs = Preferences(windowNibName: "Preferences")
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         observePowerStates()
-        registerUserDefaults()
         var layerTiles = [CALayer]()
         
         // Create new window
@@ -61,7 +63,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         display = FaceDisplay(withLayers: layerTiles)
         
         // Set Fullscreen if it was before
-        setFullscreen(defaults.bool(forKey: "Full Screen"))
+        setFullScreen(defaults.bool(forKey: "Full Screen"))
     }
     
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -71,36 +73,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         tracker.faces.values.forEach{ $0.finishRecording() }
     }
     
-    @IBAction func togglePreferences(_ sender: Any) {
-        guard let item = (sender as? NSMenuItem) else {return}
-        if item.title == "Delete Immediately" {
-            defaults.set(!defaults.bool(forKey: "Delete Immediately"), forKey: "Delete Immediately")
-        } else if item.title == "Use High Accuracy" {
-            defaults.set(!defaults.bool(forKey: "High Accuracy"), forKey: "High Accuracy")
-            display?.tracker?.initDetector()
-        } else if item.parent!.title.contains("Minimum Feature Size") {
-            if let size = Float(item.title.suffix(4)) {
-                defaults.set(size, forKey: "Feature Size")
-            }
-            display?.tracker?.initDetector()
-        } else if item.parent!.title.contains("Face Angles") {
-            if let angles = Int(item.title.suffix(1)) {
-                defaults.set(angles, forKey: "Angles")
-            }
-            display?.tracker?.initDetector()
-        } else if item.parent!.title.contains("Keep Recordings") {
-            defaults.set(item.title, forKey: "Keep Recordings")
-        }
-        syncPrefsMenu()
+    @IBAction func openPreferences(_ sender: Any) {
+        
+        prefs.showWindow(self)
     }
     
-    
-    // Toggle play/pause of all videos and live footage
-//    @IBAction func togglePlayingState(_ sender: Any) {
-//        display?.isPlaying = !(display!.isPlaying)
-//    }
-    
-    // Toggle debug infos
     @IBAction func toggleDebug(_ sender: Any) {
         // Connect FaceTracker to matrix and preview
         if display?.tracker?.previewLayer == nil {
@@ -112,13 +89,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
     
-    @IBAction func toggleFullscreen(_ sender: Any) {
-        setFullscreen(windows[0].contentView?.isInFullScreenMode==false)
+    @IBAction func toggleScreen(_ sender: Any) {
+        setFullScreen(windows[0].contentView?.isInFullScreenMode==false)
     }
     
-    func setFullscreen(_ goFullscreen:Bool) {
-        UserDefaults.standard.set(goFullscreen, forKey: "Full Screen")
-        if(goFullscreen) {
+    func setFullScreen(_ setFullScreen:Bool) {
+        UserDefaults.standard.set(setFullScreen, forKey: "Full Screen")
+        if(setFullScreen) {
             NSCursor.hide()
             let presOptions: NSApplication.PresentationOptions = [
                 .fullScreen,
