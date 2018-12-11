@@ -135,7 +135,7 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         var currentIDs = [Int32]()
         
         // Apply filter to image
-        //ciImage = applyFilterChain(to: ciImage)
+        ciImage = applyFilterChain(to: ciImage)
         
         detectorQueue.sync {
             var isFirst = true

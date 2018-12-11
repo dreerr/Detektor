@@ -7,7 +7,7 @@ class CALayerStretch: CALayer {
     var stretchRatio : CGFloat = 1.0 {
         didSet {
             if stretchRatio > 1.0 {
-                self.sublayerTransform = CATransform3DMakeScale(1.0, 1.0/stretchRatio, 1.0)
+                self.sublayerTransform = CATransform3DMakeScale(stretchRatio, 1.0, 1.0)
                 self.layoutBounds()
             }
         }
@@ -32,8 +32,8 @@ class CALayerStretch: CALayer {
     func layoutBounds() {
         if stretchRatio >= 1.0 {
             content.frame = self.bounds
-            content.frame =  NSRect(origin: self.bounds.origin, size: CGSize(width: self.bounds.width, height: self.bounds.height*stretchRatio))
-            content.frame.origin.y -= (self.bounds.height*stretchRatio - self.bounds.height)/2
+            content.frame =  NSRect(origin: self.bounds.origin, size: CGSize(width: self.bounds.width/stretchRatio, height: self.bounds.height))
+            content.frame.origin.x += (self.bounds.width - self.bounds.width/stretchRatio)/2
             content.layoutSublayers()
         }
     }

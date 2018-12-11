@@ -13,10 +13,11 @@ class OSDLogLayer: CATextLayer {
     var fadeOut : Timer?
     override init() {
         super.init()
-        self.fontSize = 40
+        self.fontSize = 12
         self.string = ""
         self.isWrapped = true
         self.opacity = 0.0
+        self.contentsScale = 2.0
         self.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
         NotificationCenter.default.addObserver(forName: Notification.Name("Log"),
                                                object: nil,
@@ -45,10 +46,10 @@ class OSDLogLayer: CATextLayer {
     
     func connect(to layer: CALayer) {
         self.frame = layer.bounds
-        self.frame.origin.x += 10
-        self.frame.size.width -= 20
-        self.frame.size.height -= 20
-        self.frame.origin.y -= 10
+        self.frame.origin.x += 5
+        self.frame.size.width -= 10
+        self.frame.size.height -= 10
+        self.frame.origin.y -= 5
         layer.addSublayer(self)
     }
 }
