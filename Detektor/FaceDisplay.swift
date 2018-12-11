@@ -51,7 +51,7 @@ class FaceDisplay: NSObject {
         guard url.pathExtension.lowercased() == "mp4" else { return }
         let item = AVPlayerItem(url: url)
         if item.asset.isPlayable {
-            self.playerItems.append(item)
+            self.playerItems.insert(item, at: 0) // prepend
         }
     }
     
