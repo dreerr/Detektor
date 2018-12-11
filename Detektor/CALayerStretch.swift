@@ -33,7 +33,7 @@ class CALayerStretch: CALayer {
         if stretchRatio >= 1.0 {
             content.frame = self.bounds
             content.frame =  NSRect(origin: self.bounds.origin, size: CGSize(width: self.bounds.width/stretchRatio, height: self.bounds.height))
-            content.frame.origin.x += (self.bounds.width - self.bounds.width/stretchRatio)/2
+            content.frame.origin.x = (self.bounds.width - self.bounds.width/stretchRatio)/2
             content.layoutSublayers()
         }
     }

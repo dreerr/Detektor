@@ -81,7 +81,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @IBAction func toggleDebug(_ sender: Any) {
         // Connect FaceTracker to matrix and preview
         if display?.tracker?.previewLayer == nil {
-            if let layer = windows[0].contentView?.layer?.sublayers?.first?.sublayers?.first {
+            if let layer = windows[0].contentView?.subviews.first?.layer?.sublayers?.first?.sublayers?.first {
                 display?.tracker?.connectDebug(layer)
             }
         } else {
