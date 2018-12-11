@@ -120,13 +120,13 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         let attachments = CMCopyDictionaryOfAttachments(allocator: kCFAllocatorDefault,
                                                         target: sampleBuffer,
                                                         attachmentMode: kCMAttachmentMode_ShouldPropagate)
-        var ciImage = CIImage(cvImageBuffer: imageBuffer,
+        let ciImageRaw = CIImage(cvImageBuffer: imageBuffer,
                               options: (attachments as! [CIImageOption : Any]))
         
         // Recognize faces on other queue
         detectorQueue.async {
             let options: [String : Any] = [CIDetectorTypeFace: true]
-            self.detectorFeatures = self.detector?.features(in: ciImage, options: options)
+            self.detectorFeatures = self.detector?.features(in: ciImageRaw, options: options)
         }
         guard let features = detectorFeatures else { return }
         drawDebug(features) // only executed if connected
@@ -135,7 +135,7 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         var currentIDs = [Int32]()
         
         // Apply filter to image
-        ciImage = applyFilterChain(to: ciImage)
+        let ciImage = applyFilterChain(to: ciImageRaw)
         
         detectorQueue.sync {
             var isFirst = true
