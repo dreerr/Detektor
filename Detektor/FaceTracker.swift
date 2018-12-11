@@ -170,14 +170,15 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     }
     
     func applyFilterChain(to image: CIImage) -> CIImage {
-        let colorFilter = CIFilter(name: "CIColorControls", parameters:
-            [kCIInputImageKey: image,
+        let colorFilter = CIFilter(name: "CIExposureAdjust",
+                                   parameters: [kCIInputImageKey: image,
+                                                "inputEV": defaults.float(forKey: "Image EV")])!
+
+        let exposureImage = colorFilter.outputImage!.applyingFilter("CIColorControls", parameters:
+            [
              "inputBrightness": defaults.float(forKey: "Image Brightness"),
              "inputContrast": defaults.float(forKey: "Image Contrast"),
-             "inputSaturation": defaults.float(forKey: "Image Saturation")])!
-
-        let exposureImage = colorFilter.outputImage!.applyingFilter("CIExposureAdjust",
-                                                                 parameters: ["inputEV": defaults.float(forKey: "Image EV")])
+             "inputSaturation": defaults.float(forKey: "Image Saturation")])
         
         
         return exposureImage

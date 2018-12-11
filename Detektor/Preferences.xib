@@ -22,16 +22,16 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
             <windowCollectionBehavior key="collectionBehavior" fullScreenAuxiliary="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="101" y="334" width="400" height="525"/>
+            <rect key="contentRect" x="101" y="334" width="400" height="490"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
-            <value key="minSize" type="size" width="400" height="731"/>
-            <value key="maxSize" type="size" width="800" height="731"/>
+            <value key="minSize" type="size" width="400" height="490"/>
+            <value key="maxSize" type="size" width="400" height="800"/>
             <view key="contentView" wantsLayer="YES" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="400" height="525"/>
+                <rect key="frame" x="0.0" y="0.0" width="400" height="490"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <box fixedFrame="YES" title="Face Recognition" translatesAutoresizingMaskIntoConstraints="NO" id="B1O-Xh-5tB">
-                        <rect key="frame" x="17" y="368" width="366" height="137"/>
+                        <rect key="frame" x="17" y="333" width="366" height="137"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <view key="contentView" id="NkX-FJ-KAg">
                             <rect key="frame" x="2" y="2" width="362" height="120"/>
@@ -133,7 +133,7 @@
                         </view>
                     </box>
                     <box fixedFrame="YES" title="Recordings" translatesAutoresizingMaskIntoConstraints="NO" id="oTa-DZ-Cvp">
-                        <rect key="frame" x="17" y="256" width="366" height="108"/>
+                        <rect key="frame" x="17" y="221" width="366" height="108"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <view key="contentView" id="6Hs-ve-2pR">
                             <rect key="frame" x="2" y="2" width="362" height="91"/>
@@ -212,7 +212,7 @@
                         </textFieldCell>
                     </textField>
                     <box fixedFrame="YES" title="Image Processing" translatesAutoresizingMaskIntoConstraints="NO" id="89V-xn-nsm">
-                        <rect key="frame" x="17" y="95" width="366" height="157"/>
+                        <rect key="frame" x="17" y="60" width="366" height="157"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <view key="contentView" id="ZyC-9u-LfB">
                             <rect key="frame" x="2" y="2" width="362" height="140"/>
@@ -284,7 +284,7 @@
                                 <slider verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="04B-9g-4mn">
                                     <rect key="frame" x="115" y="27" width="229" height="19"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="2" tickMarkPosition="above" sliderType="linear" id="XU0-DM-dD5"/>
+                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="10" tickMarkPosition="above" sliderType="linear" id="XU0-DM-dD5"/>
                                     <connections>
                                         <binding destination="B8E-hl-TRy" name="value" keyPath="values.Image EV" id="RIl-ld-g8X">
                                             <dictionary key="options">
@@ -310,7 +310,7 @@
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
             </connections>
-            <point key="canvasLocation" x="102" y="274.5"/>
+            <point key="canvasLocation" x="102" y="257"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="B8E-hl-TRy"/>
     </objects>
