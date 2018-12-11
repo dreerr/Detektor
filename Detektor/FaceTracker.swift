@@ -27,6 +27,7 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         initDetector()
 
         
+        
         NotificationCenter.default
             .addObserver(forName: NSNotification.Name.AVCaptureDeviceWasConnected, object: nil, queue: nil)
             { (notif) -> Void in
@@ -134,10 +135,7 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         var currentIDs = [Int32]()
         
         // Apply filter to image
-        ciImage = ciImage.applyingFilter("CIColorControls", parameters: ["inputBrightness": defaults.float(forKey: "Image Brightness"),
-                                                                         "inputContrast": defaults.float(forKey: "Image Contrast"),
-                                                                         "inputSaturation": defaults.float(forKey: "Image Saturation")])
-            .applyingFilter("CIExposureAdjust", parameters: ["inputEV": defaults.float(forKey: "Image EV")])
+        //ciImage = applyFilterChain(to: ciImage)
         
         detectorQueue.sync {
             var isFirst = true
@@ -169,6 +167,20 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
             delegate?.removeFace(id: orphan)
             faces.removeValue(forKey: orphan)
         }
+    }
+    
+    func applyFilterChain(to image: CIImage) -> CIImage {
+        let colorFilter = CIFilter(name: "CIColorControls", parameters:
+            [kCIInputImageKey: image,
+             "inputBrightness": defaults.float(forKey: "Image Brightness"),
+             "inputContrast": defaults.float(forKey: "Image Contrast"),
+             "inputSaturation": defaults.float(forKey: "Image Saturation")])!
+
+        let exposureImage = colorFilter.outputImage!.applyingFilter("CIExposureAdjust",
+                                                                 parameters: ["inputEV": defaults.float(forKey: "Image EV")])
+        
+        
+        return exposureImage
     }
 }
 

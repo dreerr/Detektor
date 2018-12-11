@@ -26,13 +26,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                               styleMask: [.closable, .resizable],
                               backing: .buffered,
                               defer: false)
-        window.contentView?.wantsLayer = true
         window.isMovableByWindowBackground = true
         window.makeKeyAndOrderFront(nil)
         windows.append(window)
-        guard let windowLayer = window.contentView?.layer else { return }
-        windowLayer.backgroundColor = NSColor.black.cgColor
-        windowLayer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
+        let view = MainView(frame: window.contentView!.bounds)
+        window.contentView?.addSubview(view)
+        guard let layer = view.layer else { return }
+        layer.backgroundColor = NSColor.black.cgColor
+        layer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
         
         // Initialize CALayerMatrix
         let layerMatrix = CALayerMatrix(withCols: 1, rows: 1)
@@ -43,9 +44,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Transform layer for streched screen: Make it three times bigger then squeeze
         let stretch = CALayerStretch()
         stretch.stretchRatio = 3.0
-        windowLayer.addSublayer(stretch)
-        windowLayer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
-        stretch.frame = windowLayer.bounds
+        layer.addSublayer(stretch)
+        layer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
+        stretch.frame = layer.bounds
         stretch.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
         
         stretch.content.addSublayer(layerMatrix)
@@ -74,7 +75,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     @IBAction func openPreferences(_ sender: Any) {
-        
         prefs.showWindow(self)
     }
     
@@ -119,5 +119,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             })
         }
         windows.first?.makeKeyAndOrderFront(self)
+    }
+}
+
+class MainView: NSView {
+    override init(frame frameRect: NSRect) {
+        super.init(frame:frameRect);
+        self.autoresizingMask = [.height, .width]
+        self.wantsLayer = true
+    }
+    
+    required init(coder: NSCoder) {
+        super.init(coder: coder)!
+    }
+    override func mouseUp(with event: NSEvent) {
+        if event.clickCount == 2 {
+            let appDelegate = NSApplication.shared.delegate as! AppDelegate
+            appDelegate.toggleScreen(self)
+        }
     }
 }

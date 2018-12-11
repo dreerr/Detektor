@@ -26,9 +26,9 @@ extension CIImage {
         // Calculate Rectangle and resize image
         let rect = face.boundsForFaceSide(faceSide, withAspectRatio: Constants.aspectRatio)
         let scaleFactor = Constants.videoSize.height / rect.size.height
-        let image = self.cropped(to: rect)
-            .transformed(by: CGAffineTransform(translationX:-rect.minX, y: -rect.minY))
-            .transformed(by: CGAffineTransform(scaleX: scaleFactor, y: scaleFactor))
+        let transform = CGAffineTransform(translationX:-rect.minX, y: -rect.minY)
+            .concatenating(CGAffineTransform(scaleX: scaleFactor, y: scaleFactor))
+        let image = self.cropped(to: rect).transformed(by: transform)
         return image
     }
 }

@@ -20,17 +20,18 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <window title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" animationBehavior="default" tabbingMode="disallowed" titlebarAppearsTransparent="YES" titleVisibility="hidden" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
+            <windowCollectionBehavior key="collectionBehavior" fullScreenAuxiliary="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="101" y="334" width="400" height="757"/>
+            <rect key="contentRect" x="101" y="334" width="400" height="525"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
             <value key="minSize" type="size" width="400" height="731"/>
             <value key="maxSize" type="size" width="800" height="731"/>
             <view key="contentView" wantsLayer="YES" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="400" height="757"/>
+                <rect key="frame" x="0.0" y="0.0" width="400" height="525"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <box fixedFrame="YES" title="Face Recognition" translatesAutoresizingMaskIntoConstraints="NO" id="B1O-Xh-5tB">
-                        <rect key="frame" x="17" y="600" width="366" height="137"/>
+                        <rect key="frame" x="17" y="368" width="366" height="137"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <view key="contentView" id="NkX-FJ-KAg">
                             <rect key="frame" x="2" y="2" width="362" height="120"/>
@@ -132,7 +133,7 @@
                         </view>
                     </box>
                     <box fixedFrame="YES" title="Recordings" translatesAutoresizingMaskIntoConstraints="NO" id="oTa-DZ-Cvp">
-                        <rect key="frame" x="17" y="488" width="366" height="108"/>
+                        <rect key="frame" x="17" y="256" width="366" height="108"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <view key="contentView" id="6Hs-ve-2pR">
                             <rect key="frame" x="2" y="2" width="362" height="91"/>
@@ -192,189 +193,6 @@
                             </subviews>
                         </view>
                     </box>
-                    <box fixedFrame="YES" title="Camera" translatesAutoresizingMaskIntoConstraints="NO" id="5OB-Yy-rbI">
-                        <rect key="frame" x="17" y="221" width="366" height="263"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                        <view key="contentView" id="Qge-QH-R5I">
-                            <rect key="frame" x="2" y="2" width="362" height="246"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                            <subviews>
-                                <slider verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5mJ-vq-2kr">
-                                    <rect key="frame" x="115" y="208" width="229" height="19"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                    <sliderCell key="cell" state="on" alignment="left" maxValue="1" tickMarkPosition="above" sliderType="linear" id="4Gm-RD-UBd"/>
-                                    <connections>
-                                        <binding destination="B8E-hl-TRy" name="value" keyPath="values.Camera Exposure" id="Rhy-VF-YVI">
-                                            <dictionary key="options">
-                                                <bool key="NSValidatesImmediately" value="YES"/>
-                                            </dictionary>
-                                        </binding>
-                                    </connections>
-                                </slider>
-                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gBr-pl-tH4">
-                                    <rect key="frame" x="18" y="209" width="61" height="17"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                    <textFieldCell key="cell" lineBreakMode="clipping" title="Exposure" id="aKV-sy-v5i">
-                                        <font key="font" metaFont="system"/>
-                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                    </textFieldCell>
-                                </textField>
-                                <slider verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CpH-58-01y">
-                                    <rect key="frame" x="115" y="183" width="229" height="19"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                    <sliderCell key="cell" state="on" alignment="left" maxValue="1" tickMarkPosition="above" sliderType="linear" id="pbU-09-F5B"/>
-                                    <connections>
-                                        <binding destination="B8E-hl-TRy" name="value" keyPath="values.Camera Gain" id="u9x-jT-dYl">
-                                            <dictionary key="options">
-                                                <bool key="NSValidatesImmediately" value="YES"/>
-                                            </dictionary>
-                                        </binding>
-                                    </connections>
-                                </slider>
-                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Z3p-Nn-QZe">
-                                    <rect key="frame" x="18" y="184" width="32" height="17"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                    <textFieldCell key="cell" lineBreakMode="clipping" title="Gain" id="H5S-cP-8Da">
-                                        <font key="font" metaFont="system"/>
-                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                    </textFieldCell>
-                                </textField>
-                                <slider verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="KQi-sI-SJX">
-                                    <rect key="frame" x="115" y="158" width="229" height="19"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                    <sliderCell key="cell" state="on" alignment="left" maxValue="1" tickMarkPosition="above" sliderType="linear" id="cfn-I9-hgu"/>
-                                    <connections>
-                                        <binding destination="B8E-hl-TRy" name="value" keyPath="values.Camera Brightness" id="j9J-uE-SR7">
-                                            <dictionary key="options">
-                                                <bool key="NSValidatesImmediately" value="YES"/>
-                                            </dictionary>
-                                        </binding>
-                                    </connections>
-                                </slider>
-                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xfA-fi-ckT">
-                                    <rect key="frame" x="18" y="159" width="69" height="17"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                    <textFieldCell key="cell" lineBreakMode="clipping" title="Brightness" id="w2c-hJ-yeo">
-                                        <font key="font" metaFont="system"/>
-                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                    </textFieldCell>
-                                </textField>
-                                <slider verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8Rf-Ai-S3b">
-                                    <rect key="frame" x="115" y="133" width="229" height="19"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                    <sliderCell key="cell" state="on" alignment="left" maxValue="1" tickMarkPosition="above" sliderType="linear" id="eRZ-i0-Cxw"/>
-                                    <connections>
-                                        <binding destination="B8E-hl-TRy" name="value" keyPath="values.Camera Contrast" id="Ohv-g2-x4W">
-                                            <dictionary key="options">
-                                                <bool key="NSValidatesImmediately" value="YES"/>
-                                            </dictionary>
-                                        </binding>
-                                    </connections>
-                                </slider>
-                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Kpn-nq-Pud">
-                                    <rect key="frame" x="18" y="134" width="57" height="17"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                    <textFieldCell key="cell" lineBreakMode="clipping" title="Contrast" id="C61-C1-VgR">
-                                        <font key="font" metaFont="system"/>
-                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                    </textFieldCell>
-                                </textField>
-                                <slider verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DwC-PE-0CW">
-                                    <rect key="frame" x="115" y="108" width="229" height="19"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                    <sliderCell key="cell" state="on" alignment="left" maxValue="1" tickMarkPosition="above" sliderType="linear" id="cNm-Qb-k9J"/>
-                                    <connections>
-                                        <binding destination="B8E-hl-TRy" name="value" keyPath="values.Camera Saturation" id="9HE-iI-fcp">
-                                            <dictionary key="options">
-                                                <bool key="NSValidatesImmediately" value="YES"/>
-                                            </dictionary>
-                                        </binding>
-                                    </connections>
-                                </slider>
-                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="quu-8g-arP">
-                                    <rect key="frame" x="18" y="109" width="67" height="17"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                    <textFieldCell key="cell" lineBreakMode="clipping" title="Saturation" id="YD8-Fl-gOG">
-                                        <font key="font" metaFont="system"/>
-                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                    </textFieldCell>
-                                </textField>
-                                <slider verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eGg-0u-sQH">
-                                    <rect key="frame" x="115" y="83" width="229" height="19"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                    <sliderCell key="cell" state="on" alignment="left" maxValue="1" tickMarkPosition="above" sliderType="linear" id="ZrQ-Gy-Mjv"/>
-                                    <connections>
-                                        <binding destination="B8E-hl-TRy" name="value" keyPath="values.Camera Sharpness" id="vmU-mD-nu5">
-                                            <dictionary key="options">
-                                                <bool key="NSValidatesImmediately" value="YES"/>
-                                            </dictionary>
-                                        </binding>
-                                    </connections>
-                                </slider>
-                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yNQ-ep-xfc">
-                                    <rect key="frame" x="18" y="84" width="69" height="17"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                    <textFieldCell key="cell" lineBreakMode="clipping" title="Sharpness" id="4FO-1M-8BW">
-                                        <font key="font" metaFont="system"/>
-                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                    </textFieldCell>
-                                </textField>
-                                <slider verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="KWN-FY-fid">
-                                    <rect key="frame" x="115" y="58" width="229" height="19"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                    <sliderCell key="cell" state="on" alignment="left" maxValue="1" tickMarkPosition="above" sliderType="linear" id="tYY-7b-1QU"/>
-                                    <connections>
-                                        <binding destination="B8E-hl-TRy" name="value" keyPath="values.Camera White Balance" id="sTe-RB-zGT"/>
-                                    </connections>
-                                </slider>
-                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tAX-VB-SsF">
-                                    <rect key="frame" x="18" y="59" width="91" height="17"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                    <textFieldCell key="cell" lineBreakMode="clipping" title="White Balance" id="Ld4-j8-cTn">
-                                        <font key="font" metaFont="system"/>
-                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                    </textFieldCell>
-                                </textField>
-                                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3qk-fb-xfc">
-                                    <rect key="frame" x="201" y="24" width="110" height="18"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                    <buttonCell key="cell" type="check" title="Auto Exposure" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="O6n-mF-Th9">
-                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                        <font key="font" metaFont="system"/>
-                                    </buttonCell>
-                                    <connections>
-                                        <binding destination="B8E-hl-TRy" name="value" keyPath="values.Camera Auto Exposure" id="XEg-BG-t0k">
-                                            <dictionary key="options">
-                                                <bool key="NSValidatesImmediately" value="YES"/>
-                                            </dictionary>
-                                        </binding>
-                                    </connections>
-                                </button>
-                                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MSn-1m-fZJ">
-                                    <rect key="frame" x="18" y="24" width="141" height="18"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                    <buttonCell key="cell" type="check" title="Auto White Balance" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="N3Q-yS-adQ">
-                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                        <font key="font" metaFont="system"/>
-                                    </buttonCell>
-                                    <connections>
-                                        <binding destination="B8E-hl-TRy" name="value" keyPath="values.Camera Auto White Balance" id="zpn-8z-ZFx">
-                                            <dictionary key="options">
-                                                <bool key="NSValidatesImmediately" value="YES"/>
-                                            </dictionary>
-                                        </binding>
-                                    </connections>
-                                </button>
-                            </subviews>
-                        </view>
-                    </box>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9sF-u3-SPl">
                         <rect key="frame" x="265" y="20" width="117" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
@@ -394,7 +212,7 @@
                         </textFieldCell>
                     </textField>
                     <box fixedFrame="YES" title="Image Processing" translatesAutoresizingMaskIntoConstraints="NO" id="89V-xn-nsm">
-                        <rect key="frame" x="17" y="60" width="366" height="157"/>
+                        <rect key="frame" x="17" y="95" width="366" height="157"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <view key="contentView" id="ZyC-9u-LfB">
                             <rect key="frame" x="2" y="2" width="362" height="140"/>
@@ -403,7 +221,7 @@
                                 <slider verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Bkc-vE-dcs">
                                     <rect key="frame" x="115" y="102" width="229" height="19"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                    <sliderCell key="cell" state="on" alignment="left" maxValue="2" tickMarkPosition="above" sliderType="linear" id="Det-Gm-KzQ"/>
+                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="2" tickMarkPosition="above" sliderType="linear" id="Det-Gm-KzQ"/>
                                     <connections>
                                         <binding destination="B8E-hl-TRy" name="value" keyPath="values.Image Brightness" id="DqF-IP-lxZ">
                                             <dictionary key="options">
@@ -424,7 +242,7 @@
                                 <slider verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FT3-oI-w1s">
                                     <rect key="frame" x="115" y="77" width="229" height="19"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                    <sliderCell key="cell" state="on" alignment="left" maxValue="2" tickMarkPosition="above" sliderType="linear" id="d4c-we-CZi"/>
+                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="2" tickMarkPosition="above" sliderType="linear" id="d4c-we-CZi"/>
                                     <connections>
                                         <binding destination="B8E-hl-TRy" name="value" keyPath="values.Image Contrast" id="Fyj-PV-cQj">
                                             <dictionary key="options">
@@ -445,7 +263,7 @@
                                 <slider verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LQJ-oA-0u1">
                                     <rect key="frame" x="115" y="52" width="229" height="19"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                    <sliderCell key="cell" state="on" alignment="left" maxValue="2" tickMarkPosition="above" sliderType="linear" id="4dq-MY-kbA"/>
+                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="2" tickMarkPosition="above" sliderType="linear" id="4dq-MY-kbA"/>
                                     <connections>
                                         <binding destination="B8E-hl-TRy" name="value" keyPath="values.Image Saturation" id="C7r-Ub-3RV">
                                             <dictionary key="options">
@@ -466,7 +284,7 @@
                                 <slider verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="04B-9g-4mn">
                                     <rect key="frame" x="115" y="27" width="229" height="19"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                    <sliderCell key="cell" state="on" alignment="left" maxValue="2" tickMarkPosition="above" sliderType="linear" id="XU0-DM-dD5"/>
+                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="2" tickMarkPosition="above" sliderType="linear" id="XU0-DM-dD5"/>
                                     <connections>
                                         <binding destination="B8E-hl-TRy" name="value" keyPath="values.Image EV" id="RIl-ld-g8X">
                                             <dictionary key="options">
@@ -492,7 +310,7 @@
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
             </connections>
-            <point key="canvasLocation" x="102" y="390.5"/>
+            <point key="canvasLocation" x="102" y="274.5"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="B8E-hl-TRy"/>
     </objects>

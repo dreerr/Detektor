@@ -62,7 +62,7 @@ class FaceDisplay: NSObject {
             let url = (item.asset as! AVURLAsset).url
             
             // Check which timeframe is set and test the file accordingly
-            let intervals = ["14 Days": -60*60*24*14, "3 Months": -60*60*24*60] as [String:Double]
+            let intervals = ["14 Days": -60*60*24*14, "30 Days": -60*60*24*30, "3 Months": -60*60*24*90] as [String:Double]
             if let timeIntervalLimit = intervals[UserDefaults.standard.string(forKey: "Keep Recordings") ?? "Forever"] {
                 guard let attributes = try? FileManager.default.attributesOfItem(atPath: url.path) as [FileAttributeKey: Any],
                     let creationDate = attributes[FileAttributeKey.creationDate] as? Date else { continue }

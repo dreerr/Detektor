@@ -34,8 +34,7 @@ class Preferences: NSWindowController {
 }
 
 func registerUserDefaults() {
-    let defaults = UserDefaults.standard
-    defaults.register(defaults: [
+    let defaults = [
         "High Accuracy": true,
         "Feature Size": 0.01,
         "Angles": 1,
@@ -45,15 +44,17 @@ func registerUserDefaults() {
         "Image Brightness": 0.0,
         "Image Contrast": 1.1,
         "Image Saturation": 0.0,
-        "Image EV": 0.5,
-        ])
+        "Image EV": 0.5
+        ] as [String : Any]
+    UserDefaults.standard.register(defaults: defaults)
     ValueTransformer.setValueTransformer(StringDoubleTransformer(), forName: NSValueTransformerName("StringDoubleTransformer"))
     ValueTransformer.setValueTransformer(StringIntTransformer(), forName: NSValueTransformerName("StringIntTransformer"))
-    alert("High Accuracy: \(defaults.bool(forKey: "High Accuracy") ? "Yes": "No")")
-    alert("Minimum Feature Size: \(defaults.float(forKey: "Feature Size"))")
-    alert("Face Angles: \(defaults.integer(forKey: "Angles"))")
-    alert("Keep Recordings: \(defaults.string(forKey: "Keep Recordings") ?? "Unknown")")
-    alert("Delete Immediately: \(defaults.bool(forKey: "Delete Immediately") ? "Yes": "No")")
+    defaults.keys.sorted().forEach { (key) in
+        if let option = UserDefaults.standard.object(forKey: key) {
+            alert("\(key): \(String(describing: option))")
+        }
+    }
+
 }
 
 class StringDoubleTransformer: ValueTransformer {
