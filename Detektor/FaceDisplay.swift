@@ -58,6 +58,7 @@ class FaceDisplay: NSObject {
     // Get the next item to play and fill queue if there are not enough items available
     func getNextPlayerItem() -> AVPlayerItem? {
         while playerItems.count > 0 {
+            if currentIndex >= playerItems.count { currentIndex = playerItems.count - 1 }
             let item = playerItems[currentIndex]
             let url = (item.asset as! AVURLAsset).url
             
@@ -78,7 +79,7 @@ class FaceDisplay: NSObject {
                     } catch let error as NSError {
                         alert("Fehler: " + error.localizedDescription)
                     }
-                    return nil
+                    continue
                 }
             } else {
                 print("No valid limit found, could be forever")

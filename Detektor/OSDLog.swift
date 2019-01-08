@@ -8,6 +8,7 @@
 
 import Foundation
 import Cocoa
+import os
 
 class OSDLogLayer: CATextLayer {
     var fadeOut : Timer?
