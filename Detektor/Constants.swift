@@ -26,6 +26,8 @@ struct Constants {
     static var pause = false
     static let minFreeGB = 4
     
+    static let intervals = ["14 Days": -60*60*24*14, "30 Days": -60*60*24*30, "3 Months": -60*60*24*90] as [String:Double]
+    
     static var directoryURL: URL {
         var url = FileManager.default.urls(for: .moviesDirectory, in: .userDomainMask)[0]
         url.appendPathComponent(Constants.directoryName, isDirectory: true)

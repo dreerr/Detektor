@@ -3,7 +3,7 @@ import AVFoundation
 import Cocoa
 
 class FaceDisplay: NSObject {
-    var playerItems = [AVPlayerItem]()
+    var assets = [AVURLAsset]()
     var faceLayers = [FaceDisplayLayer]()
     var faces = [Int32: Face]()
     var tracker: FaceTracker?
@@ -22,7 +22,7 @@ class FaceDisplay: NSObject {
             }
             .sorted(by: { $0.1 < $1.1 })
             .map { $0.0 }
-            .forEach{appendToPlayerItems($0)}
+            .forEach{appendToAssets($0)}
         
         
         // Setup FaceDisplayLayers
@@ -36,7 +36,7 @@ class FaceDisplay: NSObject {
         NotificationCenter.default.addObserver(forName: Notification.Name("newRecording"),
                                                object: nil,
                                                queue: OperationQueue.main) {
-                                                self.appendToPlayerItems($0.object as! URL)
+                                                self.appendToAssets($0.object as! URL)
         }
         
         #if DETEKTOR
@@ -49,29 +49,29 @@ class FaceDisplay: NSObject {
     }
     
     // Append an item to the queue, gets called on starup and when a new movie is recorded
-    func appendToPlayerItems(_ url:URL) {
+    func appendToAssets(_ url:URL) {
         guard url.pathExtension.lowercased() == "mp4" else { return }
-        let item = AVPlayerItem(url: url)
-        if item.asset.isPlayable {
-            self.playerItems.insert(item, at: 0) // prepend
+        let item = AVURLAsset(url: url)
+        if item.isPlayable {
+            self.assets.append(item)
+            // TODO: Need to update layers!
         }
     }
     
     // Get the next item to play and fill queue if there are not enough items available
-    func getNextPlayerItem() -> AVPlayerItem? {
-        while playerItems.count > 0 {
-            if currentIndex >= playerItems.count { currentIndex = playerItems.count - 1 }
-            let item = playerItems[currentIndex]
-            let url = (item.asset as! AVURLAsset).url
+    func getNextAsset() -> AVAsset? {
+        let interval = UserDefaults.standard.string(forKey: "Keep Recordings") ?? "Forever"
+        while assets.count > 0 {
             
-            // Check which timeframe is set and test the file accordingly
-            let intervals = ["14 Days": -60*60*24*14, "30 Days": -60*60*24*30, "3 Months": -60*60*24*90] as [String:Double]
-            if let timeIntervalLimit = intervals[UserDefaults.standard.string(forKey: "Keep Recordings") ?? "Forever"] {
+            let item = assets.removeLast()
+            let url = item.url
+            
+            // Check Time Invervals
+            if let timeIntervalLimit = Constants.intervals[interval] {
                 guard let attributes = try? FileManager.default.attributesOfItem(atPath: url.path) as [FileAttributeKey: Any],
                     let creationDate = attributes[FileAttributeKey.creationDate] as? Date else { continue }
                 if creationDate.timeIntervalSinceNow < timeIntervalLimit {
                     print("\(url.lastPathComponent) is too old \(creationDate)")
-                    playerItems.remove(at: currentIndex)
                     do {
                         if UserDefaults.standard.bool(forKey: "Delete Immediately") {
                             try FileManager.default.removeItem(at: url)
@@ -83,14 +83,18 @@ class FaceDisplay: NSObject {
                     }
                     continue
                 }
-            } else {
-                print("No valid limit found, could be forever")
             }
-            print("\(url.lastPathComponent) in timeframe")
-            currentIndex = (currentIndex+1)%playerItems.count // we have the item, so we advance
+            
+            // If timeintervals passed return the item
+            print("give", item)
             return item
         }
         return nil
+    }
+    
+    func restoreAsset(_ item : AVURLAsset?) {
+        print("get back", item)
+        if item != nil {assets.insert(item!, at: 0)}
     }
     
     // Toggle playing state of all live and recorded layers

@@ -40,31 +40,22 @@ class FaceDisplayLayer: NSObject {
     }
     
     func insertNextPlayerItem() {
-        if let item = parent.getNextPlayerItem()  {
-            
-            // Reset the item: rewind and remove observer
-            item.seek(to: CMTime.zero, completionHandler: nil)
-            NotificationCenter.default.removeObserver(self,
-                                                      name: .AVPlayerItemDidPlayToEndTime,
-                                                      object: item)
-            
-            if item == player.currentItem {
-                player.seek(to: CMTime.zero)
-            } else {
-                player.replaceCurrentItem(with: item)
-            }
+        parent.restoreAsset(player.currentItem?.asset as? AVURLAsset)
+        if let asset = parent.getNextAsset()  {
+            let item = AVPlayerItem(asset: asset)
+            player.replaceCurrentItem(with: item)
             NotificationCenter.default.addObserver(self,
                                                    selector: #selector(didPlayToEndTime(notification:)),
                                                    name: .AVPlayerItemDidPlayToEndTime,
                                                    object: item)
-
-            
             player.play()
             state = .playing
         } else {
+            player.replaceCurrentItem(with:nil)
             state = .empty
         }
     }
+
     @objc func didPlayToEndTime(notification:Notification) {
         DispatchQueue.main.async {
             self.insertNextPlayerItem()
