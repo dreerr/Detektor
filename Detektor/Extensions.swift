@@ -70,4 +70,7 @@ extension AVCaptureDevice {
     static func devices(withNameContaining name: String) -> [AVCaptureDevice]? {
         return AVCaptureDevice.devices().filter { return $0.localizedName.contains(name) }
     }
+    static func device(withUniqueID id: String?) -> AVCaptureDevice? {
+        return AVCaptureDevice.devices().filter{ return $0.uniqueID == id }.first
+    }
 }

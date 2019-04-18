@@ -19,10 +19,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         // Create new window
         guard let screen = NSScreen.screens.last else {return}
+        #if DETEKTOR
+        let height = screen.frame.size.height*CGFloat(1080.0/1920.0)
+        let width = screen.frame.size.height
+        #else
+        let height = screen.frame.size.height
+        let width = height*CGFloat(1080.0/1920.0)
+        #endif
         let window = NSWindow(contentRect: NSMakeRect(screen.frame.origin.x,
                                                       screen.frame.origin.y,
-                                                      screen.frame.size.height*CGFloat(1080.0/1920.0),
-                                                      screen.frame.size.height),
+                                                      height,
+                                                      width),
                               styleMask: [.closable, .resizable],
                               backing: .buffered,
                               defer: false)
@@ -36,14 +43,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         layer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
         
         // Initialize CALayerMatrix
-        let layerMatrix = CALayerMatrix(withCols: 1, rows: 1)
+        let layerMatrix = CALayerMatrix(withCols: Constants.cols, rows: Constants.rows)
         layerMatrix.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
         matrixLayers.append(layerMatrix)
         layerTiles.append(contentsOf: layerMatrix.sublayers!)
         
         // Transform layer for streched screen: Make it three times bigger then squeeze
         let stretch = CALayerStretch()
+        #if DETEKTOR
         stretch.stretchRatio = 3.0
+        #else
+        stretch.stretchRatio = 1.0
+        #endif
         layer.addSublayer(stretch)
         layer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
         stretch.frame = layer.bounds

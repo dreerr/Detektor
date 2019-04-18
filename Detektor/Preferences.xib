@@ -8,11 +8,8 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="Preferences" customModule="Detektor" customModuleProvider="target">
             <connections>
-                <outlet property="deleteImmediately" destination="6Rz-ME-Pr3" id="NGe-ti-OoP"/>
-                <outlet property="faceAngles" destination="YS9-5a-YmO" id="pZg-D5-FaG"/>
-                <outlet property="featureSize" destination="Clc-mk-l70" id="IxV-07-BfJ"/>
-                <outlet property="highAccuracy" destination="P0a-Gu-qnd" id="UmY-1c-u5P"/>
-                <outlet property="keepRecordings" destination="n7T-91-p2Q" id="pns-Cc-Ykd"/>
+                <outlet property="cameraController" destination="3rP-2Z-YST" id="sD3-AH-4Rm"/>
+                <outlet property="cameraFormatController" destination="hbw-xL-dBh" id="cOX-VK-3kg"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
             </connections>
         </customObject>
@@ -22,23 +19,80 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
             <windowCollectionBehavior key="collectionBehavior" fullScreenAuxiliary="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="101" y="334" width="400" height="490"/>
+            <rect key="contentRect" x="101" y="334" width="400" height="554"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
             <value key="minSize" type="size" width="400" height="490"/>
             <value key="maxSize" type="size" width="400" height="800"/>
             <view key="contentView" wantsLayer="YES" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="400" height="490"/>
+                <rect key="frame" x="0.0" y="0.0" width="400" height="554"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <box fixedFrame="YES" title="Face Recognition" translatesAutoresizingMaskIntoConstraints="NO" id="B1O-Xh-5tB">
-                        <rect key="frame" x="17" y="333" width="366" height="137"/>
+                        <rect key="frame" x="17" y="340" width="366" height="194"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <view key="contentView" id="NkX-FJ-KAg">
-                            <rect key="frame" x="2" y="2" width="362" height="120"/>
+                            <rect key="frame" x="2" y="2" width="362" height="177"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
+                                <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Gri-cV-wGq">
+                                    <rect key="frame" x="73" y="134" width="272" height="26"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                    <popUpButtonCell key="cell" type="push" title="Camera" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="NOy-xO-fIw" id="f9P-2e-KcH">
+                                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" metaFont="menu"/>
+                                        <menu key="menu" id="Der-Fz-QFl">
+                                            <items>
+                                                <menuItem title="Camera" state="on" id="NOy-xO-fIw"/>
+                                            </items>
+                                        </menu>
+                                    </popUpButtonCell>
+                                    <connections>
+                                        <action selector="setCamera:" target="-2" id="wQM-LG-RRt"/>
+                                        <binding destination="3rP-2Z-YST" name="content" keyPath="arrangedObjects" id="bPF-wd-mJ9"/>
+                                        <binding destination="3rP-2Z-YST" name="contentObjects" keyPath="arrangedObjects.object" previousBinding="bPF-wd-mJ9" id="0Gd-qW-FyH"/>
+                                        <binding destination="3rP-2Z-YST" name="contentValues" keyPath="arrangedObjects.name" previousBinding="0Gd-qW-FyH" id="KoO-po-KYm"/>
+                                        <binding destination="B8E-hl-TRy" name="selectedObject" keyPath="values.Camera" previousBinding="KoO-po-KYm" id="vLq-79-ZDS"/>
+                                    </connections>
+                                </popUpButton>
+                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="G1c-jK-Hpp">
+                                    <rect key="frame" x="18" y="140" width="51" height="17"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                    <textFieldCell key="cell" lineBreakMode="clipping" title="Camera" id="IQ3-n4-FXe">
+                                        <font key="font" metaFont="system"/>
+                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                    </textFieldCell>
+                                </textField>
+                                <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gK9-87-4Ih">
+                                    <rect key="frame" x="73" y="105" width="272" height="26"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                    <popUpButtonCell key="cell" type="push" title="Format" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="i0w-NL-uKU" id="wZu-Vb-QdH">
+                                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" metaFont="menu"/>
+                                        <menu key="menu" id="y7b-WN-Dqn">
+                                            <items>
+                                                <menuItem title="Format" state="on" id="i0w-NL-uKU"/>
+                                            </items>
+                                        </menu>
+                                    </popUpButtonCell>
+                                    <connections>
+                                        <binding destination="hbw-xL-dBh" name="content" keyPath="arrangedObjects" id="Anp-rN-2kP"/>
+                                        <binding destination="hbw-xL-dBh" name="contentObjects" keyPath="arrangedObjects.object" previousBinding="Anp-rN-2kP" id="Zpg-6M-lHo"/>
+                                        <binding destination="hbw-xL-dBh" name="contentValues" keyPath="arrangedObjects.name" previousBinding="Zpg-6M-lHo" id="kaY-OC-sU9"/>
+                                        <binding destination="B8E-hl-TRy" name="selectedObject" keyPath="values.Camera Format" previousBinding="kaY-OC-sU9" id="RR1-Wp-nCc"/>
+                                    </connections>
+                                </popUpButton>
+                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wZI-np-efC">
+                                    <rect key="frame" x="18" y="111" width="47" height="17"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                    <textFieldCell key="cell" lineBreakMode="clipping" title="Format" id="zE2-lV-BaI">
+                                        <font key="font" metaFont="system"/>
+                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                    </textFieldCell>
+                                </textField>
                                 <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="P0a-Gu-qnd">
-                                    <rect key="frame" x="18" y="84" width="138" height="18"/>
+                                    <rect key="frame" x="18" y="80" width="138" height="18"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <buttonCell key="cell" type="check" title="Use High Accuracy" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Uvu-2T-biV">
                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -56,7 +110,7 @@
                                     </connections>
                                 </button>
                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="U42-7V-vIi">
-                                    <rect key="frame" x="18" y="56" width="138" height="17"/>
+                                    <rect key="frame" x="18" y="52" width="138" height="17"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <textFieldCell key="cell" lineBreakMode="clipping" title="Minimum Feature Size" id="PaG-wj-cV9">
                                         <font key="font" metaFont="system"/>
@@ -65,7 +119,7 @@
                                     </textFieldCell>
                                 </textField>
                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PTF-cz-hzy">
-                                    <rect key="frame" x="18" y="27" width="78" height="17"/>
+                                    <rect key="frame" x="18" y="23" width="78" height="17"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <textFieldCell key="cell" lineBreakMode="clipping" title="Face Angles" id="oBm-Ud-5BB">
                                         <font key="font" metaFont="system"/>
@@ -74,7 +128,7 @@
                                     </textFieldCell>
                                 </textField>
                                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YS9-5a-YmO">
-                                    <rect key="frame" x="100" y="21" width="76" height="26"/>
+                                    <rect key="frame" x="100" y="17" width="76" height="26"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <popUpButtonCell key="cell" type="push" title="1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Rxo-3F-hca" id="Z2A-C1-8Xr">
                                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -102,7 +156,7 @@
                                     </connections>
                                 </popUpButton>
                                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Clc-mk-l70">
-                                    <rect key="frame" x="160" y="50" width="76" height="26"/>
+                                    <rect key="frame" x="160" y="46" width="76" height="26"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <popUpButtonCell key="cell" type="push" title="0.01" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="XAX-5h-YhV" id="GtX-v9-ASY">
                                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -122,18 +176,29 @@
                                         </menu>
                                     </popUpButtonCell>
                                     <connections>
-                                        <binding destination="B8E-hl-TRy" name="selectedValue" keyPath="values.Feature Size" id="xZH-dM-KAT">
+                                        <binding destination="B8E-hl-TRy" name="selectedValue" keyPath="values.Feature Size" id="bT0-NY-7mF">
                                             <dictionary key="options">
                                                 <string key="NSValueTransformerName">StringDoubleTransformer</string>
                                             </dictionary>
                                         </binding>
                                     </connections>
                                 </popUpButton>
+                                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6ID-pL-XBj">
+                                    <rect key="frame" x="271" y="13" width="75" height="32"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                    <buttonCell key="cell" type="push" title="Apply" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="4iC-60-RE3">
+                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="applyCameraChange:" target="-2" id="ZkP-S0-Qg8"/>
+                                    </connections>
+                                </button>
                             </subviews>
                         </view>
                     </box>
                     <box fixedFrame="YES" title="Recordings" translatesAutoresizingMaskIntoConstraints="NO" id="oTa-DZ-Cvp">
-                        <rect key="frame" x="17" y="221" width="366" height="108"/>
+                        <rect key="frame" x="17" y="228" width="366" height="108"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <view key="contentView" id="6Hs-ve-2pR">
                             <rect key="frame" x="2" y="2" width="362" height="91"/>
@@ -194,25 +259,16 @@
                         </view>
                     </box>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9sF-u3-SPl">
-                        <rect key="frame" x="265" y="20" width="117" height="17"/>
+                        <rect key="frame" x="299" y="20" width="83" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                        <textFieldCell key="cell" lineBreakMode="clipping" title="Julian Palacz 2018" id="wRK-vk-n58">
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="Julian Palacz" id="wRK-vk-n58">
                             <font key="font" usesAppearanceFont="YES"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Bsu-r4-WrK">
-                        <rect key="frame" x="18" y="20" width="63" height="17"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <textFieldCell key="cell" lineBreakMode="clipping" title="Detektor" id="iri-Pr-PQJ">
-                            <font key="font" metaFont="systemBlack" size="13"/>
-                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                        </textFieldCell>
-                    </textField>
                     <box fixedFrame="YES" title="Image Processing" translatesAutoresizingMaskIntoConstraints="NO" id="89V-xn-nsm">
-                        <rect key="frame" x="17" y="60" width="366" height="157"/>
+                        <rect key="frame" x="17" y="67" width="366" height="157"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <view key="contentView" id="ZyC-9u-LfB">
                             <rect key="frame" x="2" y="2" width="362" height="140"/>
@@ -310,8 +366,10 @@
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
             </connections>
-            <point key="canvasLocation" x="102" y="257"/>
+            <point key="canvasLocation" x="102" y="289"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="B8E-hl-TRy"/>
+        <arrayController id="3rP-2Z-YST" userLabel="Camera Controller"/>
+        <arrayController id="hbw-xL-dBh"/>
     </objects>
 </document>

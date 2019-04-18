@@ -2,18 +2,25 @@ import Foundation
 import AVFoundation
 import Cocoa
 
+enum PlayingState {
+    case empty, playing, live
+}
+
 class FaceDisplayLayer: NSObject {
     var layer: CALayer
     var liveLayer: CALayer?
     var playerLayer: AVPlayerLayer
     var parent: FaceDisplay
-    var player = AVPlayer() // Maybe only AVPlayer?
+    var player = AVPlayer()
     var isPlaying = true
+    var state = PlayingState.empty
 
     init(layer: CALayer, facePlayer: FaceDisplay) {
         self.layer = layer
         self.parent = facePlayer
+        #if DETEKTOR
         self.layer.contentsScale = 3.0
+        #endif
         self.playerLayer = AVPlayerLayer(player: player)
         super.init()
         
@@ -33,7 +40,6 @@ class FaceDisplayLayer: NSObject {
     }
     
     func insertNextPlayerItem() {
-        // Insert item on the playlist and start playing
         if let item = parent.getNextPlayerItem()  {
             
             // Reset the item: rewind and remove observer
@@ -43,10 +49,8 @@ class FaceDisplayLayer: NSObject {
                                                       object: item)
             
             if item == player.currentItem {
-                print("seek")
                 player.seek(to: CMTime.zero)
             } else {
-                
                 player.replaceCurrentItem(with: item)
             }
             NotificationCenter.default.addObserver(self,
@@ -56,6 +60,9 @@ class FaceDisplayLayer: NSObject {
 
             
             player.play()
+            state = .playing
+        } else {
+            state = .empty
         }
     }
     @objc func didPlayToEndTime(notification:Notification) {
@@ -76,12 +83,13 @@ class FaceDisplayLayer: NSObject {
                 self.layer.setNeedsDisplay()
                 self.layer.setNeedsLayout()
             }
-        isPlaying = false
+            isPlaying = false
+            state = .live
         }
     }
     
     func switchPlay() {
-        if !isPlaying {
+        if !isPlaying { // state != .live
             // Disconnect live preview and contiune playing items
             layer.sublayers?.forEach({ (layer) in layer.removeFromSuperlayer()})
             layer.addSublayer(playerLayer)
@@ -91,7 +99,6 @@ class FaceDisplayLayer: NSObject {
             } else {
                 player.play()
             }
-            isPlaying = true
             DispatchQueue.main.async {
                 self.layer.setNeedsDisplay()
                 self.layer.setNeedsLayout()

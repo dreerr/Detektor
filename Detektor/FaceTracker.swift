@@ -24,48 +24,67 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     
     override init() {
         super.init()
-        initDetector()
-
         
         
-        NotificationCenter.default
-            .addObserver(forName: NSNotification.Name.AVCaptureDeviceWasConnected, object: nil, queue: nil)
-            { (notif) -> Void in
-                print("connected")
-                let device = notif.object! as! AVCaptureDevice
-                self.captureDevice = device
-                do {
-                    try self.captureSession.addInput(AVCaptureDeviceInput(device: device))
-                } catch let error as NSError {
-                    print("Error: no valid camera input in \(error.domain)")
-                }
-                self.captureSession.startRunning()
-        }
-        NotificationCenter.default
-            .addObserver(forName: .AVCaptureSessionRuntimeError, object: nil, queue: nil)
-            { (notif) -> Void in
-                print("AVCaptureSessionRuntimeError")
-                let session = notif.object! as! AVCaptureSession
-                print(session)
-        }
-
+        
         // Configure Capture Session
         captureSession.beginConfiguration()
         captureSession.sessionPreset = AVCaptureSession.Preset.high
-        captureDevice = getDevice()
-        guard captureDevice != nil else { return }
-        do {
-            try captureSession.addInput(AVCaptureDeviceInput(device: captureDevice!))
-        } catch let error as NSError {
-            print("Error: no valid camera input in \(error.domain)")
-        }
-        
         // Configure AVCaptureVideoDataOutput and set Delegate
         let output = AVCaptureVideoDataOutput()
         //output.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String : NSNumber(value: Constants.pixelFormat)]
         captureSession.addOutput(output)
         captureSession.commitConfiguration()
         output.setSampleBufferDelegate(self, queue: captureQueue)
+        
+        connectDefaultDevice()
+        initDetector()
+        let mainQueue = OperationQueue.main
+        NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: "CameraChange"), object: nil, queue: mainQueue) { (_) in
+            self.connectDefaultDevice()
+        }
+    }
+    
+    func connectDefaultDevice() {
+        guard let device = AVCaptureDevice.device(withUniqueID: UserDefaults.standard.string(forKey: "Camera")) else {
+            alert("Default camera not found! Please select in Preferences!")
+            return
+        }
+        guard let defaultDimensions = UserDefaults.standard.array(forKey: "Camera Format") else {return}
+        let deviceFormat = device.formats.first {
+            let dimensions = CMVideoFormatDescriptionGetDimensions($0.formatDescription)
+            return (dimensions.width == (defaultDimensions[0] as! Int)) && (dimensions.height == (defaultDimensions[1] as! Int))
+        }
+        guard let format = deviceFormat else {
+            alert("Default format not found! Please select in Preferences!")
+            return
+        }
+        connectDevice(device, withFormat: format)
+    }
+    
+    func connectDevice(_ device: AVCaptureDevice, withFormat format: AVCaptureDevice.Format) {
+        if(!device.formats.contains(format)) { alert("Invalid format to connect to!") }
+        captureSession.beginConfiguration()
+        captureSession.inputs.forEach { captureSession.removeInput($0) } // remove old inputs
+        
+        // Configure device format
+        try! device.lockForConfiguration()
+//        device.activeFormat = format
+//        let fps = CMTimeMake(value: 20, timescale: 600) // 30 fps
+//        device.activeVideoMinFrameDuration = fps
+//        device.activeVideoMaxFrameDuration = fps
+//        device.exposureMode = .locked
+        device.unlockForConfiguration()
+        
+        
+        // Add to capture session
+        do {
+            try captureSession.addInput(AVCaptureDeviceInput(device: device))
+        } catch let error as NSError {
+            print("Camera Error: \(error.localizedDescription)")
+        }
+        captureDevice = device
+        captureSession.commitConfiguration()
         captureSession.startRunning()
     }
     
@@ -80,35 +99,7 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
                              CIDetectorMinFeatureSize: featureSize,
                              CIDetectorNumberOfAngles: angles,
                              CIDetectorMaxFeatureCount: 4])
-        alert("Detector initialized")
     }
-    
-    func getDevice() -> AVCaptureDevice? {
-        if let device = (AVCaptureDevice.devices(withNameContaining: "USB 2.0 Camera")?.first) {
-            guard let format = device.formats.filter({ (format) -> Bool in
-                print(format)
-                let dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
-                //                return dimensions.width == 1280 && dimensions.height == 720
-                return dimensions.width == 1920 && dimensions.height == 1080
-            }).first else { return nil }
-            try! device.lockForConfiguration()
-            device.activeFormat = format
-            device.unlockForConfiguration()
-            return device
-        } else {
-            if let device = (AVCaptureDevice.devices(withNameContaining: "FaceTime")?.first) {
-                try! device.lockForConfiguration()
-                let fps = CMTimeMake(value: 20, timescale: 600) // 30 fps
-                device.activeVideoMinFrameDuration = fps
-                device.activeVideoMaxFrameDuration = fps
-                device.exposureMode = .locked
-                device.unlockForConfiguration()
-                return device
-            }
-        }
-        return nil
-    }
-    
     
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         // Check if we should track

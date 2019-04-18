@@ -20,6 +20,23 @@
 		B90E9A1121331408000550FF /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0A21331408000550FF /* Extensions.swift */; };
 		B90E9A1221331408000550FF /* Face.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0B21331408000550FF /* Face.swift */; };
 		B94335E121B6B6DC00EC4CD7 /* CALayerStretch.swift in Sources */ = {isa = PBXBuildFile; fileRef = B94335E021B6B6DC00EC4CD7 /* CALayerStretch.swift */; };
+		B947F031226338BE00F65891 /* Face.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0B21331408000550FF /* Face.swift */; };
+		B947F032226338BE00F65891 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0A21331408000550FF /* Extensions.swift */; };
+		B947F033226338BE00F65891 /* AppDelegatePower.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9929DC321B7B65F00645321 /* AppDelegatePower.swift */; };
+		B947F034226338BE00F65891 /* FaceDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A032133138D000550FF /* FaceDisplay.swift */; };
+		B947F035226338BE00F65891 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E99F321331096000550FF /* AppDelegate.swift */; };
+		B947F036226338BE00F65891 /* FaceDisplayLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0821331408000550FF /* FaceDisplayLayer.swift */; };
+		B947F037226338BE00F65891 /* OSDLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9085D5D21AD565C006A6E14 /* OSDLog.swift */; };
+		B947F038226338BE00F65891 /* FaceTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0621331408000550FF /* FaceTracker.swift */; };
+		B947F039226338BE00F65891 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CF0D1121BBCC53006EAADA /* Preferences.swift */; };
+		B947F03A226338BE00F65891 /* CALayerMatrix.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9829DA22146913800837BB4 /* CALayerMatrix.swift */; };
+		B947F03B226338BE00F65891 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0121331189000550FF /* Constants.swift */; };
+		B947F03C226338BE00F65891 /* CALayerStretch.swift in Sources */ = {isa = PBXBuildFile; fileRef = B94335E021B6B6DC00EC4CD7 /* CALayerStretch.swift */; };
+		B947F03D226338BE00F65891 /* FaceTrackerDebug.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0721331408000550FF /* FaceTrackerDebug.swift */; };
+		B947F040226338BE00F65891 /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = B903432F215815B400509ED6 /* Icon.icns */; };
+		B947F041226338BE00F65891 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B90E99F521331098000550FF /* Assets.xcassets */; };
+		B947F042226338BE00F65891 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = B9CF0D1221BBCC53006EAADA /* Preferences.xib */; };
+		B947F043226338BE00F65891 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = B90E99F721331098000550FF /* MainMenu.xib */; };
 		B9829DA32146913800837BB4 /* CALayerMatrix.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9829DA22146913800837BB4 /* CALayerMatrix.swift */; };
 		B9929DC421B7B65F00645321 /* AppDelegatePower.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9929DC321B7B65F00645321 /* AppDelegatePower.swift */; };
 		B9CF0D1321BBCC53006EAADA /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CF0D1121BBCC53006EAADA /* Preferences.swift */; };
@@ -43,15 +60,23 @@
 		B90E9A0A21331408000550FF /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		B90E9A0B21331408000550FF /* Face.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Face.swift; sourceTree = "<group>"; };
 		B94335E021B6B6DC00EC4CD7 /* CALayerStretch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CALayerStretch.swift; sourceTree = "<group>"; };
+		B947F047226338BE00F65891 /* Observers.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Observers.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B947F048226338BE00F65891 /* Observers-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Observers-Info.plist"; path = "/Users/julian/Digitale Kunst/Projekte/Detektor/Programmierung/Detektor/Observers-Info.plist"; sourceTree = "<absolute>"; };
 		B9829DA22146913800837BB4 /* CALayerMatrix.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CALayerMatrix.swift; sourceTree = "<group>"; };
 		B9929DC321B7B65F00645321 /* AppDelegatePower.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegatePower.swift; sourceTree = "<group>"; };
-		B9AAF2C221BD169A00879852 /* Detektor-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Detektor-Bridging-Header.h"; sourceTree = "<group>"; };
 		B9CF0D1121BBCC53006EAADA /* Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
 		B9CF0D1221BBCC53006EAADA /* Preferences.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Preferences.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		B90E99ED21331096000550FF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B947F03E226338BE00F65891 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -66,6 +91,7 @@
 			children = (
 				B90E99F221331096000550FF /* Detektor */,
 				B90E99F121331096000550FF /* Products */,
+				B947F048226338BE00F65891 /* Observers-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -73,6 +99,7 @@
 			isa = PBXGroup;
 			children = (
 				B90E99F021331096000550FF /* Detektor.app */,
+				B947F047226338BE00F65891 /* Observers.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -93,7 +120,6 @@
 				B90E9A032133138D000550FF /* FaceDisplay.swift */,
 				B90E9A0821331408000550FF /* FaceDisplayLayer.swift */,
 				B9CF0D1121BBCC53006EAADA /* Preferences.swift */,
-				B9AAF2C221BD169A00879852 /* Detektor-Bridging-Header.h */,
 				B9CF0D1221BBCC53006EAADA /* Preferences.xib */,
 				B90E99F721331098000550FF /* MainMenu.xib */,
 				B90E99F521331098000550FF /* Assets.xcassets */,
@@ -124,13 +150,33 @@
 			productReference = B90E99F021331096000550FF /* Detektor.app */;
 			productType = "com.apple.product-type.application";
 		};
+		B947F02F226338BE00F65891 /* Observers */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B947F044226338BE00F65891 /* Build configuration list for PBXNativeTarget "Observers" */;
+			buildPhases = (
+				B947F030226338BE00F65891 /* Sources */,
+				B947F03E226338BE00F65891 /* Frameworks */,
+				B947F03F226338BE00F65891 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Observers;
+			productName = Detektor;
+			productReference = B947F047226338BE00F65891 /* Observers.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		B90E99E821331096000550FF /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0940;
+				KnownAssetTags = (
+					New,
+				);
+				LastSwiftUpdateCheck = 1010;
 				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = "Julian Palacz";
 				TargetAttributes = {
@@ -159,6 +205,7 @@
 			projectRoot = "";
 			targets = (
 				B90E99EF21331096000550FF /* Detektor */,
+				B947F02F226338BE00F65891 /* Observers */,
 			);
 		};
 /* End PBXProject section */
@@ -172,6 +219,17 @@
 				B90E99F621331098000550FF /* Assets.xcassets in Resources */,
 				B9CF0D1421BBCC53006EAADA /* Preferences.xib in Resources */,
 				B90E99F921331098000550FF /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B947F03F226338BE00F65891 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B947F040226338BE00F65891 /* Icon.icns in Resources */,
+				B947F041226338BE00F65891 /* Assets.xcassets in Resources */,
+				B947F042226338BE00F65891 /* Preferences.xib in Resources */,
+				B947F043226338BE00F65891 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -195,6 +253,26 @@
 				B90E9A0221331189000550FF /* Constants.swift in Sources */,
 				B94335E121B6B6DC00EC4CD7 /* CALayerStretch.swift in Sources */,
 				B90E9A0E21331408000550FF /* FaceTrackerDebug.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B947F030226338BE00F65891 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B947F031226338BE00F65891 /* Face.swift in Sources */,
+				B947F032226338BE00F65891 /* Extensions.swift in Sources */,
+				B947F033226338BE00F65891 /* AppDelegatePower.swift in Sources */,
+				B947F034226338BE00F65891 /* FaceDisplay.swift in Sources */,
+				B947F035226338BE00F65891 /* AppDelegate.swift in Sources */,
+				B947F036226338BE00F65891 /* FaceDisplayLayer.swift in Sources */,
+				B947F037226338BE00F65891 /* OSDLog.swift in Sources */,
+				B947F038226338BE00F65891 /* FaceTracker.swift in Sources */,
+				B947F039226338BE00F65891 /* Preferences.swift in Sources */,
+				B947F03A226338BE00F65891 /* CALayerMatrix.swift in Sources */,
+				B947F03B226338BE00F65891 /* Constants.swift in Sources */,
+				B947F03C226338BE00F65891 /* CALayerStretch.swift in Sources */,
+				B947F03D226338BE00F65891 /* FaceTrackerDebug.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -244,7 +322,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -304,7 +382,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -330,20 +408,22 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = L4EP9C7V6L;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = Detektor/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				OTHER_SWIFT_FLAGS = "-DDETEKTOR";
 				PRODUCT_BUNDLE_IDENTIFIER = at.palacz.Detektor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "Detektor/Detektor-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.2;
 			};
@@ -354,20 +434,73 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = L4EP9C7V6L;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = Detektor/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				OTHER_SWIFT_FLAGS = "-DDETEKTOR";
 				PRODUCT_BUNDLE_IDENTIFIER = at.palacz.Detektor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "Detektor/Detektor-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "";
+				SWIFT_VERSION = 4.2;
+			};
+			name = Release;
+		};
+		B947F045226338BE00F65891 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = L4EP9C7V6L;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = "Observers-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				OTHER_SWIFT_FLAGS = "-DOBSERVERS";
+				PRODUCT_BUNDLE_IDENTIFIER = at.palacz.Observers;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.2;
+			};
+			name = Debug;
+		};
+		B947F046226338BE00F65891 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = L4EP9C7V6L;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = "Observers-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				OTHER_SWIFT_FLAGS = "-DOBSERVERS";
+				PRODUCT_BUNDLE_IDENTIFIER = at.palacz.Observers;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "";
 				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
@@ -389,6 +522,15 @@
 			buildConfigurations = (
 				B90E99FF21331098000550FF /* Debug */,
 				B90E9A0021331098000550FF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B947F044226338BE00F65891 /* Build configuration list for PBXNativeTarget "Observers" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B947F045226338BE00F65891 /* Debug */,
+				B947F046226338BE00F65891 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

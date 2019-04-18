@@ -8,10 +8,19 @@ import Cocoa
 import CoreGraphics
 
 struct Constants {
-    static let aspectRatio: Float = 1/((1920*3)/1080) // 24px Tile Compensation?
+    
+    #if DETEKTOR
+    static let cols = 1
+    static let rows = 1
+    static let aspectRatio: Float = 1080 / (1920*3) // 24px Tile Compensation?
+    #else
+    static let cols = 6
+    static let rows = 2
+    static let aspectRatio = (1920/Float(cols)) / (1080/Float(rows))
+    #endif
     static let videoHeight = 320.0
     static let videoSize: CGSize = CGSize(width: videoHeight*Double(aspectRatio), height: videoHeight)
-    static let directoryName = "Detektor"
+    static let directoryName = Bundle.main.infoDictionary!["CFBundleName"] as! String
     static let pixelFormat = kCVPixelFormatType_32ARGB
     static let minimumSecs : CFTimeInterval = 3.5
     static var pause = false

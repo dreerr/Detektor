@@ -1,40 +1,43 @@
-//
-//  Preferences.swift
-//  Detektor
-//
-//  Created by Julian on 08.12.18.
-//  Copyright © 2018 Julian Palacz. All rights reserved.
-//
-
 import Cocoa
+import AVFoundation
 
 class Preferences: NSWindowController {
-    @IBOutlet weak var highAccuracy: NSButton?
-    @IBOutlet weak var featureSize: NSPopUpButton?
-    @IBOutlet weak var faceAngles: NSPopUpButton?
-    
-    @IBOutlet weak var deleteImmediately: NSButton?
-    @IBOutlet weak var keepRecordings: NSPopUpButton?
-    
+    @IBOutlet var cameraController: NSArrayController?
+    @IBOutlet var cameraFormatController: NSArrayController?
+
     override func windowDidLoad() {
         super.windowDidLoad()
-        
-//        highAccuracy?.bind(NSBindingName(rawValue: "state"),
-//                           to: NSUserDefaultsController.shared,
-//                           withKeyPath: "values.High Accuracy Button",
-//                           options: [NSBindingOption.continuouslyUpdatesValue:true])
-//        
-//    
-//        deleteImmediately?.bind(NSBindingName(rawValue: "state"),
-//                                to: NSUserDefaultsController.shared,
-//                                withKeyPath: "values.Delete Immediately",
-//                                options: [NSBindingOption.continuouslyUpdatesValue:true])
-//        
+        setCameraController()
+        NotificationCenter.default.addObserver(forName: NSNotification.Name.AVCaptureDeviceWasConnected,
+                                               object: nil,
+                                               queue: nil) { _ in self.setCameraController() }
+        NotificationCenter.default.addObserver(forName: NSNotification.Name.AVCaptureDeviceWasDisconnected,
+                                               object: nil,
+                                               queue: nil) { _ in self.setCameraController() }
+    }
+    
+    func setCameraController() {
+        cameraController?.content = AVCaptureDevice.devices(for: .video).map({ (device) -> [String : Any] in
+            ["name": device.localizedName, "object": device.uniqueID]
+        })
+        setCamera(self)
+    }
+    @IBAction func setCamera(_ sender:Any) {
+        guard let device = AVCaptureDevice.device(withUniqueID: UserDefaults.standard.string(forKey: "Camera")) else {return}
+        let formats = device.formats
+        cameraFormatController?.content = Array(formats).map({ (format) -> [String : Any] in
+            let dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
+            return ["name": "\(dimensions.width)x\(dimensions.height)", "object": [Int(dimensions.width), Int(dimensions.height)]] as [String : Any]
+        })
+    }
+    @IBAction func applyCameraChange(_ sender : Any) {
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "CameraChange"), object: sender)
     }
 }
 
 func registerUserDefaults() {
     let defaults = [
+        "Camera": "",
         "High Accuracy": true,
         "Feature Size": 0.01,
         "Angles": 1,
@@ -47,14 +50,19 @@ func registerUserDefaults() {
         "Image EV": 0.5
         ] as [String : Any]
     UserDefaults.standard.register(defaults: defaults)
+    UserDefaults.standard.synchronize()
+    
+    // Register Transformers for Int & Double
     ValueTransformer.setValueTransformer(StringDoubleTransformer(), forName: NSValueTransformerName("StringDoubleTransformer"))
     ValueTransformer.setValueTransformer(StringIntTransformer(), forName: NSValueTransformerName("StringIntTransformer"))
+    
+    // Show all values on OSD
     defaults.keys.sorted().forEach { (key) in
         if let option = UserDefaults.standard.object(forKey: key) {
             alert("\(key): \(String(describing: option))")
         }
     }
-
+    
 }
 
 class StringDoubleTransformer: ValueTransformer {

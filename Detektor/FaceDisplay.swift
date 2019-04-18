@@ -39,14 +39,16 @@ class FaceDisplay: NSObject {
                                                 self.appendToPlayerItems($0.object as! URL)
         }
         
-        // Cycle through
+        #if DETEKTOR
+        // Cycle through images
         _ = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true, block: {_ in
             self.currentFaceIndex+=1
             self.updateLayers()
         })
+        #endif
     }
     
-    // Append an item to the queue, gest called on starup and when a
+    // Append an item to the queue, gets called on starup and when a new movie is recorded
     func appendToPlayerItems(_ url:URL) {
         guard url.pathExtension.lowercased() == "mp4" else { return }
         let item = AVPlayerItem(url: url)
