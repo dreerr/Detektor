@@ -11,9 +11,10 @@ class Face: NSObject {
     var startTime: CMTime
     var presentationTime = CMTime.zero
     let preview = CALayer()
-    let imageQueue = DispatchQueue(label: "Image Queue", qos:.background)
-    let recordQueue = DispatchQueue(label: "Record Queue", attributes:[])
+    //let imageQueue = DispatchQueue(label: "Image Queue", qos:.background)
+//    let recordQueue = DispatchQueue(label: "Record Queue", attributes:[])
     var record = false
+    var layer: FaceDisplayLayer?
     init(recording: Bool, time: CMTime) {
         record = recording
         startTime = time
@@ -49,26 +50,26 @@ class Face: NSObject {
     func append(_ buffer: CVPixelBuffer, time timestamp: CMTime) {
         // Add frame to buffer adapter
         if(record) {
-            recordQueue.async {
+            //recordQueue.async {
                 if self.writeInput!.isReadyForMoreMediaData {
                     self.presentationTime =  CMTimeSubtract(timestamp, self.startTime)
                     self.bufferAdapter.append(buffer, withPresentationTime: self.presentationTime)
                 }
-            }
+            //}
         }
         // Add image to preview
-        imageQueue.async {
+        //imageQueue.async {
             var cgImage: CGImage?
             VTCreateCGImageFromCVPixelBuffer(buffer, options: nil, imageOut: &cgImage)
             DispatchQueue.main.async {
                 self.preview.contents = cgImage
             }
-        }
+        //}
     }
     
     func finishRecording() {
         if(record) {
-            recordQueue.sync {
+            //recordQueue.sync {
                 self.writeInput.markAsFinished()
                 let elapsed = CMTimeGetSeconds(self.presentationTime)
                 let attrs = try! FileManager.default.attributesOfFileSystem(forPath: Constants.directoryURL.path)
@@ -90,7 +91,7 @@ class Face: NSObject {
                                                         userInfo: nil)
                     }
                 }
-            }
+            //}
         }
     }
     

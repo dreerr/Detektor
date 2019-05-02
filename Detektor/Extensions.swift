@@ -57,10 +57,11 @@ extension CIFaceFeature {
             newBounds.size.height = newBounds.width/CGFloat(aspectRatio)
             newBounds.origin.y = eyePosition!.y - newBounds.size.height/2.0
         }
+        #if DETEKTOR
         newBounds.size.width *= 1.3
         newBounds.size.height *= 1.3
         newBounds.origin.y -= newBounds.size.height * 0.09
-        //newBounds.origin.x -= newBounds.size.height * 0.3 / 2.0
+        #endif
         return newBounds
     }
 }

@@ -3,7 +3,7 @@ import AVFoundation
 import Cocoa
 
 class FaceDisplay: NSObject {
-    var assets = [AVURLAsset]()
+    var assets = [AVAsset]()
     var faceLayers = [FaceDisplayLayer]()
     var faces = [Int32: Face]()
     var tracker: FaceTracker?
@@ -36,7 +36,8 @@ class FaceDisplay: NSObject {
         NotificationCenter.default.addObserver(forName: Notification.Name("newRecording"),
                                                object: nil,
                                                queue: OperationQueue.main) {
-                                                self.appendToAssets($0.object as! URL)
+                                                print("new live recording: \($0.object!)")
+            //self.appendToAssets($0.object as! URL)
         }
         
         #if DETEKTOR
@@ -60,13 +61,12 @@ class FaceDisplay: NSObject {
     
     // Get the next item to play and fill queue if there are not enough items available
     func getNextAsset() -> AVAsset? {
-        let interval = UserDefaults.standard.string(forKey: "Keep Recordings") ?? "Forever"
         while assets.count > 0 {
-            
             let item = assets.removeLast()
-            let url = item.url
+            let url = (item as! AVURLAsset).url
             
             // Check Time Invervals
+            let interval = UserDefaults.standard.string(forKey: "Keep Recordings") ?? "Forever"
             if let timeIntervalLimit = Constants.intervals[interval] {
                 guard let attributes = try? FileManager.default.attributesOfItem(atPath: url.path) as [FileAttributeKey: Any],
                     let creationDate = attributes[FileAttributeKey.creationDate] as? Date else { continue }
@@ -86,16 +86,15 @@ class FaceDisplay: NSObject {
             }
             
             // If timeintervals passed return the item
-            print("give", item)
             return item
         }
         return nil
     }
     
-    func restoreAsset(_ item : AVURLAsset?) {
-        print("get back", item)
-        if item != nil {assets.insert(item!, at: 0)}
+    func restoreAsset(_ item : AVAsset?) {
+        if let item = item {assets.insert(item, at: 0)}
     }
+    
     
     // Toggle playing state of all live and recorded layers
     var isPlaying: Bool = true {
@@ -107,51 +106,35 @@ class FaceDisplay: NSObject {
     
     // Update all Layers with faces and players
     func updateLayers() {
-        let faceLayer = faceLayers[0] // ONLY UPDATE THE FIRST LAYER (DETEKTOR ONLY HAS ONE LAYER)
-        if faces.count == 0 {
-            faceLayer.switchPlay()
-        } else {
-            let index = Int(currentFaceIndex%faces.count)
-            print("live faces: \(faces.count) / selecting:  \(index+1)")
-            let layer = Array(faces)[index].value.preview
-            faceLayer.switchLive(layer)
-        }
         
-// DISABLED BECAUSE NOT ENOUGH BRAIN RESSOURCES TO THINK N TO N
-//        // Switch Players on for faces we lost
-//        for orphan in Set(playersLive.keys).subtracting(Set(faces.keys)) {
-//            playersLive[orphan]?.switchPlay()
-//            playersLive.removeValue(forKey: orphan)
-//        }
-//
-//        // Assign new faces to free players
-//        for newbie in Set(faces.keys).subtracting(Set(playersLive.keys)) {
-//            if let layer = getBestLayerForLive() {
-//                layer.switchLive(faces[newbie]!.preview)
-//                playersLive[newbie] = layer
-//            }
-//        }
     }
+    
     // Get a free layer to display a live image on
-    //    func getBestLayerForLive() -> FaceDisplayLayer? {
-    //        let faceLayersNotLive = faceLayers.filter({
-    //            return $0.liveLayer == nil
-    //        })
-    //        if faceLayersNotLive.count == 0 { return nil }
-    //        // FIXME: Don't use random but a meaningful routine instead!
-    //        let index = Int(arc4random_uniform(UInt32(faceLayersNotLive.count)))
-    //        return faceLayersNotLive[index]
-    //    }
+    func getBestLayerForLive() -> FaceDisplayLayer? {
+        if let emptyLayer = faceLayers.filter({return $0.state == .empty}).first {
+            return emptyLayer
+        }
+        let playingLayers = faceLayers.filter({return $0.state == .playing})
+        if let longestLayer = playingLayers.sorted(by: {$0.player.currentTime() > $1.player.currentTime()}).first {
+            return longestLayer
+        }
+        return nil
+    }
 }
 
 
 // Delegate Extension to communicate with FaceTracker
 extension FaceDisplay: FaceTrackerProtocol {
-    func addFace(_ face: Face, id: Int32) {
+    func addLiveFace(_ face: Face, id: Int32) {
         faces[id] = face
-        updateLayers()
+        if let layer = getBestLayerForLive() {
+            layer.switchLive(face.preview)
+            face.layer = layer
+        }
+        //updateLayers()
     }
-    func removeFace(id: Int32) {
+    func removeLiveFace(id: Int32) {
+        faces[id]?.layer?.switchPlay()
         faces.removeValue(forKey: id)
         updateLayers()
     }

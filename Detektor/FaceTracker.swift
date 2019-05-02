@@ -16,10 +16,10 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     var faces = [Int32 : Face]()
     var delegate: FaceTrackerProtocol?
     var captureQueue = DispatchQueue(label: "Capture Queue",
-                              qos: .userInteractive,
-                              autoreleaseFrequency: .workItem,
-                              target: nil)
-    let detectorQueue = DispatchQueue(label: "Face Recognition Queue", qos:.default)
+                                     qos: .userInteractive,
+                                     autoreleaseFrequency: .workItem,
+                                     target: nil)
+    let detectorQueue = DispatchQueue(label: "Face Recognition Queue", qos:.userInteractive)
     var isTracking = true
     
     override init() {
@@ -69,11 +69,11 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         
         // Configure device format
         try! device.lockForConfiguration()
-//        device.activeFormat = format
-//        let fps = CMTimeMake(value: 20, timescale: 600) // 30 fps
-//        device.activeVideoMinFrameDuration = fps
-//        device.activeVideoMaxFrameDuration = fps
-//        device.exposureMode = .locked
+        //        device.activeFormat = format
+        //        let fps = CMTimeMake(value: 20, timescale: 600) // 30 fps
+        //        device.activeVideoMinFrameDuration = fps
+        //        device.activeVideoMaxFrameDuration = fps
+        //        device.exposureMode = .locked
         device.unlockForConfiguration()
         
         
@@ -85,7 +85,9 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         }
         captureDevice = device
         captureSession.commitConfiguration()
-        captureSession.startRunning()
+        captureQueue.async {
+            self.captureSession.startRunning()
+        }
     }
     
     func initDetector() {
@@ -93,12 +95,12 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         let featureSize = UserDefaults.standard.float(forKey: "Feature Size")
         let angles = UserDefaults.standard.integer(forKey: "Angles")
         detector = CIDetector(ofType: CIDetectorTypeFace,
-                   context: nil,
-                   options: [CIDetectorAccuracy : accuracy,
-                             CIDetectorTracking: true,
-                             CIDetectorMinFeatureSize: featureSize,
-                             CIDetectorNumberOfAngles: angles,
-                             CIDetectorMaxFeatureCount: 4])
+                              context: nil,
+                              options: [CIDetectorAccuracy : accuracy,
+                                        CIDetectorTracking: true,
+                                        CIDetectorMinFeatureSize: featureSize,
+                                        CIDetectorNumberOfAngles: angles,
+                                        CIDetectorMaxFeatureCount: 4])
     }
     
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
@@ -112,10 +114,10 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
                                                         target: sampleBuffer,
                                                         attachmentMode: kCMAttachmentMode_ShouldPropagate)
         let ciImageRaw = CIImage(cvImageBuffer: imageBuffer,
-                              options: (attachments as! [CIImageOption : Any]))
+                                 options: (attachments as! [CIImageOption : Any]))
         
-        // Recognize faces on other queue
-        detectorQueue.async {
+        // Recognize faces on other queue?
+        captureQueue.async {
             let options: [String : Any] = [CIDetectorTypeFace: true]
             self.detectorFeatures = self.detector?.features(in: ciImageRaw, options: options)
         }
@@ -127,36 +129,36 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         
         // Apply filter to image
         let ciImage = applyFilterChain(to: ciImageRaw)
-        
-        detectorQueue.sync {
-            var isFirst = true
-            for feature in features {
-                guard let faceFeature = feature as? CIFaceFeature else {continue}
-                if(faceFeature.hasTrackingFrameCount && faceFeature.trackingFrameCount > 10) {
-                    // Keep track of the ID
-                    let id = faceFeature.trackingID
-                    currentIDs.append(id)
-                    if(!faces.keys.contains(id)) {
-                        // Initialize Face instance for each new face that stayed longer than 10 frames
-                        print("new face", id)
-                        let face = Face(recording: isFirst, time: timestamp)
-                        delegate?.addFace(face, id: id)
-                        faces[id] = face
-                        isFirst = false
-                    }
-                    guard let face = faces[id] else { continue }
+        var isFirst = true
+        for feature in features {
+            guard let faceFeature = feature as? CIFaceFeature else {continue}
+            if(faceFeature.hasTrackingFrameCount && faceFeature.trackingFrameCount > 10) {
+                // Keep track of the ID
+                let id = faceFeature.trackingID
+                currentIDs.append(id)
+                if(!self.faces.keys.contains(id)) {
+                    // Initialize Face instance for each new face that stayed longer than 10 frames
+                    print("new face", id)
+                    let face = Face(recording: isFirst, time: timestamp)
+                    self.delegate?.addLiveFace(face, id: id)
+                    self.faces[id] = face
+                    isFirst = false
+                }
+                guard let face = self.faces[id] else { continue }
+                captureQueue.async {
                     let image = ciImage.croppedAndScaledToFace(faceFeature, faceSide: .right)
-                    guard let buffer = image.createPixelBuffer(withContext: context) else { continue }
-                    face.append(buffer, time: timestamp)
+                    if let buffer = image.createPixelBuffer(withContext: self.context) {
+                        face.append(buffer, time: timestamp)
+                    }
+                    
                 }
             }
-        }
-        
-        // Check for orphans and properly remove them (calls deinit)
-        for orphan in Set(faces.keys).subtracting(currentIDs) {
-            print("lost face", orphan)
-            delegate?.removeFace(id: orphan)
-            faces.removeValue(forKey: orphan)
+            // Check for orphans and properly remove them (calls deinit)
+            for orphan in Set(self.faces.keys).subtracting(currentIDs) {
+                print("lost face", orphan)
+                self.delegate?.removeLiveFace(id: orphan)
+                self.faces.removeValue(forKey: orphan)
+            }
         }
     }
     
@@ -164,19 +166,17 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         let colorFilter = CIFilter(name: "CIExposureAdjust",
                                    parameters: [kCIInputImageKey: image,
                                                 "inputEV": defaults.float(forKey: "Image EV")])!
-
-        let exposureImage = colorFilter.outputImage!.applyingFilter("CIColorControls", parameters:
-            [
-             "inputBrightness": defaults.float(forKey: "Image Brightness"),
-             "inputContrast": defaults.float(forKey: "Image Contrast"),
-             "inputSaturation": defaults.float(forKey: "Image Saturation")])
-        
-        
+        let parameters = [
+            "inputBrightness": defaults.float(forKey: "Image Brightness"),
+            "inputContrast": defaults.float(forKey: "Image Contrast"),
+            "inputSaturation": defaults.float(forKey: "Image Saturation")
+        ]
+        let exposureImage = colorFilter.outputImage!.applyingFilter("CIColorControls", parameters:parameters)
         return exposureImage
     }
 }
 
 protocol FaceTrackerProtocol {
-    func addFace(_ face: Face, id: Int32)
-    func removeFace(id: Int32)
+    func addLiveFace(_ face: Face, id: Int32)
+    func removeLiveFace(id: Int32)
 }

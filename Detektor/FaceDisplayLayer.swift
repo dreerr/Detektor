@@ -40,8 +40,8 @@ class FaceDisplayLayer: NSObject {
     }
     
     func insertNextPlayerItem() {
-        parent.restoreAsset(player.currentItem?.asset as? AVURLAsset)
-        if let asset = parent.getNextAsset()  {
+        parent.restoreAsset(player.currentItem?.asset as? AVURLAsset) // Return current item to queue
+        if let asset = parent.getNextAsset() {
             let item = AVPlayerItem(asset: asset)
             player.replaceCurrentItem(with: item)
             NotificationCenter.default.addObserver(self,
@@ -80,7 +80,7 @@ class FaceDisplayLayer: NSObject {
     }
     
     func switchPlay() {
-        if !isPlaying { // state != .live
+        if state != .playing {
             // Disconnect live preview and contiune playing items
             layer.sublayers?.forEach({ (layer) in layer.removeFromSuperlayer()})
             layer.addSublayer(playerLayer)
