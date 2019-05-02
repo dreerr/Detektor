@@ -48,7 +48,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         for _ in 1...Constants.cols*Constants.rows {
             faceLayers.append(FaceLayer())
         }
-        let layerMatrix = CALayerMatrix(withCols: Constants.cols, rows: Constants.rows, layers: faceDisplayLayers)
+        let layerMatrix = CALayerMatrix(withCols: Constants.cols, rows: Constants.rows, layers: faceLayers)
 
         matrixLayers.append(layerMatrix)
         
