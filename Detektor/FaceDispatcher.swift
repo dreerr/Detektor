@@ -2,7 +2,7 @@ import Foundation
 import AVFoundation
 import Cocoa
 
-class FaceDisplay: NSObject {
+class FaceDispatcher: NSObject {
     var assets = [AVAsset]()
     var faceLayers = [FaceDisplayLayer]()
     var faces = [Int32: Face]()
@@ -10,7 +10,8 @@ class FaceDisplay: NSObject {
     var currentIndex = 0
     var currentFaceIndex = 0 // HACK
     
-    init(withLayers layers: [CALayer]) {
+    init(withLayers layers: [FaceDisplayLayer]) {
+        self.faceLayers = layers
         super.init()
         // Scan for movies
         guard let initialUrls = try? FileManager.default.contentsOfDirectory(at: Constants.directoryURL,
@@ -24,9 +25,7 @@ class FaceDisplay: NSObject {
             .map { $0.0 }
             .forEach{appendToAssets($0)}
         
-        
-        // Setup FaceDisplayLayers
-        layers.forEach { faceLayers.append(FaceDisplayLayer(layer: $0, facePlayer: self)) }
+        self.faceLayers.forEach { $0.dispatcher = self }
         
         // Initialize FaceTracker (after FaceDisplayLayers are initialized)
         tracker = FaceTracker()
@@ -37,7 +36,6 @@ class FaceDisplay: NSObject {
                                                object: nil,
                                                queue: OperationQueue.main) {
                                                 print("new live recording: \($0.object!)")
-            //self.appendToAssets($0.object as! URL)
         }
         
         #if DETEKTOR
@@ -124,7 +122,7 @@ class FaceDisplay: NSObject {
 
 
 // Delegate Extension to communicate with FaceTracker
-extension FaceDisplay: FaceTrackerProtocol {
+extension FaceDispatcher: FaceTrackerProtocol {
     func addLiveFace(_ face: Face, id: Int32) {
         faces[id] = face
         if let layer = getBestLayerForLive() {

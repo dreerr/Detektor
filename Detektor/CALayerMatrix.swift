@@ -6,15 +6,17 @@ class CALayerMatrix: CALayer {
     var rows = 0
     var observer: NSKeyValueObservation?
     
-    init(withCols cols:Int, rows:Int) {
+    init(withCols cols:Int, rows:Int, layers:[CALayer]) {
+        assert(cols*rows == layers.count, "Mismatch in rows*cols and layers.count")
         super.init()
         self.cols = cols
         self.rows = rows
         self.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
+        layers.forEach {$0.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]}
+        self.sublayers = layers
         self.backgroundColor = NSColor.black.cgColor
         
         observer = observe(\.bounds, changeHandler: { _,_ in self.layoutSublayers() })
-        matrix(cols: cols, rows: rows)
     }
     override init(layer: Any) {
         super.init(layer: layer)
@@ -23,22 +25,12 @@ class CALayerMatrix: CALayer {
         super.init(coder: aDecoder)
     }
     
-    func matrix(cols:Int, rows: Int) {
-        // Create CALayers and layout them
-        self.sublayers?.removeAll()
-        for _ in 0..<cols*rows {
-            let layer = CALayer()
-            layer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
-            self.addSublayer(layer)
-        }
-        //layoutSublayers()
-    }
-    
     override func layoutSublayers() {
         guard let sublayers = sublayers else { return }
         for col in 0..<cols {
             for row in 0..<rows {
-                let sublayer = sublayers[col*rows+row]
+                let idx = col*rows+row
+                let sublayer = sublayers[idx]
                 let b = self.bounds
                 let frame = CGRect(x: b.origin.x + b.size.width/CGFloat(cols)*CGFloat(col),
                                    y: b.origin.y + b.size.height/CGFloat(rows)*CGFloat(row),

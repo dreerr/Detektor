@@ -13,7 +13,7 @@
 		B90E99F621331098000550FF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B90E99F521331098000550FF /* Assets.xcassets */; };
 		B90E99F921331098000550FF /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = B90E99F721331098000550FF /* MainMenu.xib */; };
 		B90E9A0221331189000550FF /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0121331189000550FF /* Constants.swift */; };
-		B90E9A042133138E000550FF /* FaceDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A032133138D000550FF /* FaceDisplay.swift */; };
+		B90E9A042133138E000550FF /* FaceDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A032133138D000550FF /* FaceDispatcher.swift */; };
 		B90E9A0D21331408000550FF /* FaceTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0621331408000550FF /* FaceTracker.swift */; };
 		B90E9A0E21331408000550FF /* FaceTrackerDebug.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0721331408000550FF /* FaceTrackerDebug.swift */; };
 		B90E9A0F21331408000550FF /* FaceDisplayLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0821331408000550FF /* FaceDisplayLayer.swift */; };
@@ -23,7 +23,7 @@
 		B947F031226338BE00F65891 /* Face.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0B21331408000550FF /* Face.swift */; };
 		B947F032226338BE00F65891 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0A21331408000550FF /* Extensions.swift */; };
 		B947F033226338BE00F65891 /* AppDelegatePower.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9929DC321B7B65F00645321 /* AppDelegatePower.swift */; };
-		B947F034226338BE00F65891 /* FaceDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A032133138D000550FF /* FaceDisplay.swift */; };
+		B947F034226338BE00F65891 /* FaceDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A032133138D000550FF /* FaceDispatcher.swift */; };
 		B947F035226338BE00F65891 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E99F321331096000550FF /* AppDelegate.swift */; };
 		B947F036226338BE00F65891 /* FaceDisplayLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90E9A0821331408000550FF /* FaceDisplayLayer.swift */; };
 		B947F037226338BE00F65891 /* OSDLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9085D5D21AD565C006A6E14 /* OSDLog.swift */; };
@@ -53,7 +53,7 @@
 		B90E99FA21331098000550FF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B90E99FB21331098000550FF /* Detektor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Detektor.entitlements; sourceTree = "<group>"; };
 		B90E9A0121331189000550FF /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
-		B90E9A032133138D000550FF /* FaceDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceDisplay.swift; sourceTree = "<group>"; };
+		B90E9A032133138D000550FF /* FaceDispatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceDispatcher.swift; sourceTree = "<group>"; };
 		B90E9A0621331408000550FF /* FaceTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceTracker.swift; sourceTree = "<group>"; };
 		B90E9A0721331408000550FF /* FaceTrackerDebug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceTrackerDebug.swift; sourceTree = "<group>"; };
 		B90E9A0821331408000550FF /* FaceDisplayLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceDisplayLayer.swift; sourceTree = "<group>"; };
@@ -115,10 +115,10 @@
 				B90E9A0121331189000550FF /* Constants.swift */,
 				B90E9A0A21331408000550FF /* Extensions.swift */,
 				B90E9A0B21331408000550FF /* Face.swift */,
+				B90E9A0821331408000550FF /* FaceDisplayLayer.swift */,
+				B90E9A032133138D000550FF /* FaceDispatcher.swift */,
 				B90E9A0621331408000550FF /* FaceTracker.swift */,
 				B90E9A0721331408000550FF /* FaceTrackerDebug.swift */,
-				B90E9A032133138D000550FF /* FaceDisplay.swift */,
-				B90E9A0821331408000550FF /* FaceDisplayLayer.swift */,
 				B9CF0D1121BBCC53006EAADA /* Preferences.swift */,
 				B9CF0D1221BBCC53006EAADA /* Preferences.xib */,
 				B90E99F721331098000550FF /* MainMenu.xib */,
@@ -243,7 +243,7 @@
 				B90E9A1221331408000550FF /* Face.swift in Sources */,
 				B90E9A1121331408000550FF /* Extensions.swift in Sources */,
 				B9929DC421B7B65F00645321 /* AppDelegatePower.swift in Sources */,
-				B90E9A042133138E000550FF /* FaceDisplay.swift in Sources */,
+				B90E9A042133138E000550FF /* FaceDispatcher.swift in Sources */,
 				B90E99F421331096000550FF /* AppDelegate.swift in Sources */,
 				B90E9A0F21331408000550FF /* FaceDisplayLayer.swift in Sources */,
 				B9085D5E21AD565C006A6E14 /* OSDLog.swift in Sources */,
@@ -263,7 +263,7 @@
 				B947F031226338BE00F65891 /* Face.swift in Sources */,
 				B947F032226338BE00F65891 /* Extensions.swift in Sources */,
 				B947F033226338BE00F65891 /* AppDelegatePower.swift in Sources */,
-				B947F034226338BE00F65891 /* FaceDisplay.swift in Sources */,
+				B947F034226338BE00F65891 /* FaceDispatcher.swift in Sources */,
 				B947F035226338BE00F65891 /* AppDelegate.swift in Sources */,
 				B947F036226338BE00F65891 /* FaceDisplayLayer.swift in Sources */,
 				B947F037226338BE00F65891 /* OSDLog.swift in Sources */,

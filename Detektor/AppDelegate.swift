@@ -5,7 +5,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     override init() {
         registerUserDefaults()
     }
-    var display: FaceDisplay?
+    var display: FaceDispatcher?
     var matrixLayers = [CALayerMatrix]()
     var windows = [NSWindow]()
     var inFullscreen = false
@@ -13,9 +13,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let defaults = UserDefaults.standard
     var shutdownHasStarted = false
     let prefs = Preferences(windowNibName: "Preferences")
+    
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         observePowerStates()
-        var layerTiles = [CALayer]()
         
         // Create new window
         guard let screen = NSScreen.screens.last else {return}
@@ -43,10 +43,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         layer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
         
         // Initialize CALayerMatrix
-        let layerMatrix = CALayerMatrix(withCols: Constants.cols, rows: Constants.rows)
-        layerMatrix.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
+        // TODO: FIXME KILLME
+        var faceDisplayLayers = [FaceDisplayLayer]()
+        for _ in 1...Constants.cols*Constants.rows {
+            faceDisplayLayers.append(FaceDisplayLayer())
+        }
+        let layerMatrix = CALayerMatrix(withCols: Constants.cols, rows: Constants.rows, layers: faceDisplayLayers)
+
         matrixLayers.append(layerMatrix)
-        layerTiles.append(contentsOf: layerMatrix.sublayers!)
         
         // Transform layer for streched screen: Make it three times bigger then squeeze
         let stretch = CALayerStretch()
@@ -72,7 +76,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         alert("Free Size: \(fileSizeWithUnit)")
         
         // Initialize FacePlayer with the sublayers of CALayerMatrix array
-        display = FaceDisplay(withLayers: layerTiles)
+        display = FaceDispatcher(withLayers: faceDisplayLayers)
         
         // Set Fullscreen if it was before
         setFullScreen(defaults.bool(forKey: "Full Screen"))

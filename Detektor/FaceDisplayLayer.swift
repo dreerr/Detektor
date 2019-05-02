@@ -6,42 +6,59 @@ enum PlayingState {
     case empty, playing, live
 }
 
-class FaceDisplayLayer: NSObject {
-    var layer: CALayer
+class FaceDisplayLayer: CALayer {
     var liveLayer: CALayer?
-    var playerLayer: AVPlayerLayer
-    var parent: FaceDisplay
+    var playerLayer: AVPlayerLayer?
+    var dispatcher: FaceDispatcher? {
+        didSet {
+            insertNextPlayerItem()
+        }
+    }
     var player = AVPlayer()
     var isPlaying = true
     var state = PlayingState.empty
-
-    init(layer: CALayer, facePlayer: FaceDisplay) {
-        self.layer = layer
-        self.parent = facePlayer
-        #if DETEKTOR
-        self.layer.contentsScale = 3.0
-        #endif
-        self.playerLayer = AVPlayerLayer(player: player)
+    
+    override init() {
         super.init()
-        
-        // Setup players and layers
-        playerLayer.videoGravity = .resizeAspect
-        playerLayer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
-        playerLayer.frame = layer.bounds
-        playerLayer.removeAllAnimations()
-        layer.removeAllAnimations()
-        layer.addSublayer(playerLayer)
-        
-        // Mirror layer
-        layer.transform = CATransform3DMakeScale(-1, 1, 1)
-        
-        // Play next item available
-        self.insertNextPlayerItem()
+        setup()
     }
     
+    override init(layer: Any) {
+        super.init(layer: layer)
+        setup()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func setup() {
+        self.backgroundColor = NSColor.red.cgColor
+        #if DETEKTOR
+        self.contentsScale = 3.0
+        #endif
+        
+        // Setup player
+        let playerLayer = AVPlayerLayer(player: player)
+        playerLayer.videoGravity = .resizeAspect
+        playerLayer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
+        playerLayer.frame = self.bounds
+        playerLayer.removeAllAnimations()
+        self.addSublayer(playerLayer)
+        self.playerLayer = playerLayer
+        
+        self.removeAllAnimations()
+        self.transform = CATransform3DMakeScale(-1, 1, 1) // Mirror layer
+    }
+    
+    
     func insertNextPlayerItem() {
-        parent.restoreAsset(player.currentItem?.asset as? AVURLAsset) // Return current item to queue
-        if let asset = parent.getNextAsset() {
+        if player.currentItem != nil {
+            print("returning item \(player.currentItem)")
+            dispatcher?.restoreAsset(player.currentItem?.asset as? AVURLAsset) // Return current item to queue
+        }
+        if let asset = dispatcher?.getNextAsset() {
+            print("playing item \(asset)")
             let item = AVPlayerItem(asset: asset)
             player.replaceCurrentItem(with: item)
             NotificationCenter.default.addObserver(self,
@@ -49,30 +66,31 @@ class FaceDisplayLayer: NSObject {
                                                    name: .AVPlayerItemDidPlayToEndTime,
                                                    object: item)
             player.play()
+            playerLayer?.frame = self.bounds
+            
             state = .playing
         } else {
             player.replaceCurrentItem(with:nil)
             state = .empty
         }
     }
-
+    
     @objc func didPlayToEndTime(notification:Notification) {
         DispatchQueue.main.async {
             self.insertNextPlayerItem()
         }
     }
-
+    
     func switchLive(_ live:CALayer) {
         // Connect a CALayer to display live preview
         if live != liveLayer {
-            layer.sublayers?.forEach({ (layer) in layer.removeFromSuperlayer()})
             liveLayer = live
             player.pause()
-            liveLayer!.frame = layer.bounds
-            layer.addSublayer(liveLayer!)
+            liveLayer!.frame = self.bounds
+            self.addSublayer(liveLayer!)
             DispatchQueue.main.async {
-                self.layer.setNeedsDisplay()
-                self.layer.setNeedsLayout()
+                self.setNeedsDisplay()
+                self.setNeedsLayout()
             }
             isPlaying = false
             state = .live
@@ -81,18 +99,15 @@ class FaceDisplayLayer: NSObject {
     
     func switchPlay() {
         if state != .playing {
-            // Disconnect live preview and contiune playing items
-            layer.sublayers?.forEach({ (layer) in layer.removeFromSuperlayer()})
-            layer.addSublayer(playerLayer)
-            playerLayer.frame = layer.bounds
+            liveLayer?.removeFromSuperlayer()
             if player.currentItem == nil {
                 insertNextPlayerItem()
             } else {
                 player.play()
             }
             DispatchQueue.main.async {
-                self.layer.setNeedsDisplay()
-                self.layer.setNeedsLayout()
+                self.setNeedsDisplay()
+                self.setNeedsLayout()
             }
         }
     }
