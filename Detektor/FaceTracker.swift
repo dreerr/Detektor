@@ -153,12 +153,13 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
                     
                 }
             }
-            // Check for orphans and properly remove them (calls deinit)
-            for orphan in Set(self.faces.keys).subtracting(currentIDs) {
-                print("lost face", orphan)
-                self.delegate?.removeLiveFace(id: orphan)
-                self.faces.removeValue(forKey: orphan)
-            }
+        }
+        
+        // Check for orphans and properly remove them (calls deinit)
+        for orphan in Set(self.faces.keys).subtracting(currentIDs) {
+            print("lost face", orphan)
+            self.delegate?.removeLiveFace(id: orphan)
+            self.faces.removeValue(forKey: orphan)
         }
     }
     

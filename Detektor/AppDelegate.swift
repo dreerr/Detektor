@@ -76,7 +76,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         alert("Free Size: \(fileSizeWithUnit)")
         
         // Initialize FacePlayer with the sublayers of CALayerMatrix array
-        display = FaceDispatcher(withLayers: faceDisplayLayers)
+        display = FaceDispatcher(withLayers: faceLayers)
         
         // Set Fullscreen if it was before
         setFullScreen(defaults.bool(forKey: "Full Screen"))

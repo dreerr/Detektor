@@ -16,7 +16,11 @@ class FaceLayer: CALayer {
     }
     var player = AVPlayer()
     var isPlaying = true
-    var state = PlayingState.empty
+    var state = PlayingState.empty {
+        didSet {
+            print("new state \(state) for \(self)")
+        }
+    }
     
     override init() {
         super.init()
@@ -33,7 +37,6 @@ class FaceLayer: CALayer {
     }
     
     func setup() {
-        self.backgroundColor = NSColor.red.cgColor
         #if DETEKTOR
         self.contentsScale = 3.0
         #endif
@@ -54,19 +57,17 @@ class FaceLayer: CALayer {
     
     func insertNextPlayerItem() {
         if player.currentItem != nil {
-            print("returning item \(player.currentItem)")
             dispatcher?.restoreAsset(player.currentItem?.asset as? AVURLAsset) // Return current item to queue
         }
         if let asset = dispatcher?.getNextAsset() {
-            print("playing item \(asset)")
             let item = AVPlayerItem(asset: asset)
             player.replaceCurrentItem(with: item)
-            NotificationCenter.default.addObserver(self,
-                                                   selector: #selector(didPlayToEndTime(notification:)),
-                                                   name: .AVPlayerItemDidPlayToEndTime,
-                                                   object: item)
+            let center = NotificationCenter.default
+            center.addObserver(self,
+                               selector: #selector(didPlayToEndTime(notification:)),
+                               name: .AVPlayerItemDidPlayToEndTime,
+                               object: item)
             player.play()
-            playerLayer?.frame = self.bounds
             
             state = .playing
         } else {
@@ -90,7 +91,6 @@ class FaceLayer: CALayer {
             self.addSublayer(liveLayer!)
             DispatchQueue.main.async {
                 self.setNeedsDisplay()
-                self.setNeedsLayout()
             }
             isPlaying = false
             state = .live
@@ -98,17 +98,19 @@ class FaceLayer: CALayer {
     }
     
     func switchPlay() {
-        if state != .playing {
+        if state == .live {
+            assert(liveLayer?.superlayer == self, "superlayer is not self!")
             liveLayer?.removeFromSuperlayer()
-            if player.currentItem == nil {
-                insertNextPlayerItem()
-            } else {
-                player.play()
-            }
-            DispatchQueue.main.async {
-                self.setNeedsDisplay()
-                self.setNeedsLayout()
-            }
+            liveLayer = nil
+        }
+        if player.currentItem == nil {
+            insertNextPlayerItem()
+        } else {
+            player.play()
+        }
+        DispatchQueue.main.async {
+            self.setNeedsDisplay()
+            self.setNeedsLayout()
         }
     }
 }

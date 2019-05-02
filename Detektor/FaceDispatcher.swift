@@ -23,7 +23,7 @@ class FaceDispatcher: NSObject {
             }
             .sorted(by: { $0.1 < $1.1 })
             .map { $0.0 }
-            .forEach{appendToAssets($0)}
+            .forEach{appendToAssets($0, updateLayers: false)}
         
         self.faceLayers.forEach { $0.dispatcher = self }
         
@@ -32,10 +32,13 @@ class FaceDispatcher: NSObject {
         tracker?.delegate = self
         
         // Register FaceRecorder Notification
-        NotificationCenter.default.addObserver(forName: Notification.Name("newRecording"),
-                                               object: nil,
-                                               queue: OperationQueue.main) {
-                                                print("new live recording: \($0.object!)")
+        let center = NotificationCenter.default
+        center.addObserver(forName: Notification.Name("newRecording"),
+                           object: nil,
+                           queue: OperationQueue.main) { (note) in
+                            guard let url: URL = note.object as? URL else {return}
+                            print("new recording: \(url)")
+                            self.appendToAssets(url, updateLayers: true)
         }
         
         #if DETEKTOR
@@ -48,12 +51,16 @@ class FaceDispatcher: NSObject {
     }
     
     // Append an item to the queue, gets called on starup and when a new movie is recorded
-    func appendToAssets(_ url:URL) {
+    func appendToAssets(_ url:URL, updateLayers:Bool) {
         guard url.pathExtension.lowercased() == "mp4" else { return }
         let item = AVURLAsset(url: url)
         if item.isPlayable {
             self.assets.append(item)
-            // TODO: Need to update layers!
+            if updateLayers, let layer = getEmptyLayer() {
+                DispatchQueue.main.async {
+                    layer.insertNextPlayerItem()
+                }
+            }
         }
     }
     
@@ -70,6 +77,8 @@ class FaceDispatcher: NSObject {
                     let creationDate = attributes[FileAttributeKey.creationDate] as? Date else { continue }
                 if creationDate.timeIntervalSinceNow < timeIntervalLimit {
                     print("\(url.lastPathComponent) is too old \(creationDate)")
+                    
+                    // Try to delete the file if necessary
                     do {
                         if UserDefaults.standard.bool(forKey: "Delete Immediately") {
                             try FileManager.default.removeItem(at: url)
@@ -82,8 +91,6 @@ class FaceDispatcher: NSObject {
                     continue
                 }
             }
-            
-            // If timeintervals passed return the item
             return item
         }
         return nil
@@ -102,14 +109,21 @@ class FaceDispatcher: NSObject {
         }
     }
     
-    // Update all Layers with faces and players
     func updateLayers() {
-        
+        // TODO!
+    }
+    
+    // Get a empty layer
+    func getEmptyLayer() -> FaceLayer? {
+        if let emptyLayer = faceLayers.filter({return $0.state == .empty}).first {
+            return emptyLayer
+        }
+        return nil
     }
     
     // Get a free layer to display a live image on
     func getBestLayerForLive() -> FaceLayer? {
-        if let emptyLayer = faceLayers.filter({return $0.state == .empty}).first {
+        if let emptyLayer = getEmptyLayer() {
             return emptyLayer
         }
         let playingLayers = faceLayers.filter({return $0.state == .playing})
@@ -129,11 +143,9 @@ extension FaceDispatcher: FaceTrackerProtocol {
             layer.switchLive(face.preview)
             face.layer = layer
         }
-        //updateLayers()
     }
     func removeLiveFace(id: Int32) {
         faces[id]?.layer?.switchPlay()
         faces.removeValue(forKey: id)
-        updateLayers()
     }
 }
