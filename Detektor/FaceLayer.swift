@@ -88,7 +88,9 @@ class FaceLayer: CALayer {
             liveLayer = live
             player.pause()
             liveLayer!.frame = self.bounds
-            self.addSublayer(liveLayer!)
+            CATransaction.withDisabledActions {
+                self.addSublayer(liveLayer!)
+            }
             DispatchQueue.main.async {
                 self.setNeedsDisplay()
             }
@@ -100,7 +102,9 @@ class FaceLayer: CALayer {
     func switchPlay() {
         if state == .live {
             assert(liveLayer?.superlayer == self, "superlayer is not self!")
-            liveLayer?.removeFromSuperlayer()
+            CATransaction.withDisabledActions {
+                liveLayer?.removeFromSuperlayer()
+            }
             liveLayer = nil
         }
         if player.currentItem == nil {
