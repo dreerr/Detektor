@@ -14,7 +14,7 @@ class Face: NSObject {
     //let imageQueue = DispatchQueue(label: "Image Queue", qos:.background)
 //    let recordQueue = DispatchQueue(label: "Record Queue", attributes:[])
     var record = false
-    var layer: FaceDisplayLayer?
+    var layer: FaceLayer?
     init(recording: Bool, time: CMTime) {
         record = recording
         startTime = time

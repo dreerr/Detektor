@@ -44,9 +44,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         // Initialize CALayerMatrix
         // TODO: FIXME KILLME
-        var faceDisplayLayers = [FaceDisplayLayer]()
+        var faceLayers = [FaceLayer]()
         for _ in 1...Constants.cols*Constants.rows {
-            faceDisplayLayers.append(FaceDisplayLayer())
+            faceLayers.append(FaceLayer())
         }
         let layerMatrix = CALayerMatrix(withCols: Constants.cols, rows: Constants.rows, layers: faceDisplayLayers)
 

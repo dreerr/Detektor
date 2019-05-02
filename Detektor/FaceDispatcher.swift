@@ -4,13 +4,13 @@ import Cocoa
 
 class FaceDispatcher: NSObject {
     var assets = [AVAsset]()
-    var faceLayers = [FaceDisplayLayer]()
+    var faceLayers = [FaceLayer]()
     var faces = [Int32: Face]()
     var tracker: FaceTracker?
     var currentIndex = 0
     var currentFaceIndex = 0 // HACK
     
-    init(withLayers layers: [FaceDisplayLayer]) {
+    init(withLayers layers: [FaceLayer]) {
         self.faceLayers = layers
         super.init()
         // Scan for movies
@@ -108,7 +108,7 @@ class FaceDispatcher: NSObject {
     }
     
     // Get a free layer to display a live image on
-    func getBestLayerForLive() -> FaceDisplayLayer? {
+    func getBestLayerForLive() -> FaceLayer? {
         if let emptyLayer = faceLayers.filter({return $0.state == .empty}).first {
             return emptyLayer
         }

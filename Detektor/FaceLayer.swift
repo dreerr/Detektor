@@ -6,7 +6,7 @@ enum PlayingState {
     case empty, playing, live
 }
 
-class FaceDisplayLayer: CALayer {
+class FaceLayer: CALayer {
     var liveLayer: CALayer?
     var playerLayer: AVPlayerLayer?
     var dispatcher: FaceDispatcher? {
