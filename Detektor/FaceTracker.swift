@@ -81,7 +81,7 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         do {
             try captureSession.addInput(AVCaptureDeviceInput(device: device))
         } catch let error as NSError {
-            print("Camera Error: \(error.localizedDescription)")
+            alert("Camera Error: \(error.localizedDescription)")
         }
         captureDevice = device
         captureSession.commitConfiguration()
@@ -138,7 +138,7 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
                 currentIDs.append(id)
                 if(!self.faces.keys.contains(id)) {
                     // Initialize Face instance for each new face that stayed longer than 10 frames
-                    print("new face", id)
+                    debug("New Face #\(id)")
                     let face = Face(recording: isFirst, time: timestamp)
                     self.delegate?.addLiveFace(face, id: id)
                     self.faces[id] = face
@@ -157,7 +157,7 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         
         // Check for orphans and properly remove them (calls deinit)
         for orphan in Set(self.faces.keys).subtracting(currentIDs) {
-            print("lost face", orphan)
+            debug("Lost Face #\(orphan)")
             self.delegate?.removeLiveFace(id: orphan)
             self.faces.removeValue(forKey: orphan)
         }

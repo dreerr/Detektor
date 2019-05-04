@@ -59,7 +59,7 @@ func registerUserDefaults() {
     // Show all values on OSD
     defaults.keys.sorted().forEach { (key) in
         if let option = UserDefaults.standard.object(forKey: key) {
-            alert("\(key): \(String(describing: option))")
+            alert("\(key): \(String(describing: option))", icon: "⚙️")
         }
     }
     

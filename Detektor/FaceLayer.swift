@@ -16,11 +16,7 @@ class FaceLayer: CALayer {
     }
     var player = AVPlayer()
     var isPlaying = true
-    var state = PlayingState.empty {
-        didSet {
-            print("new state \(state) for \(self)")
-        }
-    }
+    var state = PlayingState.empty
     
     override init() {
         super.init()

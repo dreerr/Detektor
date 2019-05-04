@@ -32,7 +32,7 @@ class Face: NSObject {
                                                 AVVideoHeightKey: self.size.height]
             writeInput = AVAssetWriterInput(mediaType: AVMediaType.video, outputSettings: videoSettings)
             writeInput.expectsMediaDataInRealTime = true
-            assert(self.assetWriter.canAdd(self.writeInput), "add AVAssetWriterInput failed")
+            assert(self.assetWriter.canAdd(self.writeInput), "adding AVAssetWriterInput failed")
             assetWriter.add(self.writeInput)
             let bufferAttributes:[String: Any] = [kCVPixelBufferPixelFormatTypeKey as String: Int(kCVPixelFormatType_32ARGB)]
             bufferAdapter = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: writeInput, sourcePixelBufferAttributes: bufferAttributes)
@@ -78,14 +78,14 @@ class Face: NSObject {
                 // Longer than minimumSecs and at least 4GB free on volume
                 if(elapsed < Constants.minimumSecs) {
                     self.assetWriter.cancelWriting()
-                    print(String(format: "dropped recording with %.2f secs", elapsed))
+                    debug(String(format: "Dropped Recording with %.2f secs", elapsed))
                 } else if (diskSpace/1024/1024/1024) < Constants.minFreeGB {
                     self.assetWriter.cancelWriting()
                     alert("Not enough free space, only \((diskSpace/1024/1024/1024))GB left!")
                 } else {
                     let url = self.assetWriter.outputURL
                     self.assetWriter.finishWriting {
-                        print("finished writing movie at", url)
+                        debug("Finished Writing", url.lastPathComponent)
                         NotificationCenter.default.post(name: Notification.Name("newRecording"),
                                                         object: url,
                                                         userInfo: nil)
@@ -96,15 +96,26 @@ class Face: NSObject {
     }
     
     func uniqueURL() -> URL {
-        var url = FileManager.default.urls(for: .moviesDirectory, in: .userDomainMask)[0]
-        url.appendPathComponent(Constants.directoryName, isDirectory: true)
+        let manager = FileManager.default
+        var directory = FileManager.default.urls(for: .moviesDirectory, in: .userDomainMask)[0]
+        directory.appendPathComponent(Constants.directoryName, isDirectory: true)
         var isDirectory = ObjCBool(true)
-        if !FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory) {
+        if !manager.fileExists(atPath: directory.path, isDirectory: &isDirectory) {
             // TODO: fail gracefully!
-            try! FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+            try! FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true, attributes: nil)
         }
-        let faceSideString = faceSide == .left ? "left" : "right"
-        url.appendPathComponent(String(format:"%@-%@.mp4", faceSideString, UUID().uuidString))
+        let dateFormatter : DateFormatter = DateFormatter()
+        let date = Date()
+        dateFormatter.dateFormat = "yyyy.MM.dd - HH.mm"
+        let dateString = dateFormatter.string(from: date)
+        var url = directory.appendingPathComponent(String(format:"%@.mp4", dateString), isDirectory: false)
+        
+        var idx = 0
+        while manager.fileExists(atPath: url.path, isDirectory: &isDirectory) {
+            url = directory.appendingPathComponent(String(format:"%@ (%@).mp4", dateString, idx), isDirectory: false)
+            idx+=1
+        }
+        
         return url
     }
     deinit {

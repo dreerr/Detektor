@@ -37,7 +37,6 @@ class FaceDispatcher: NSObject {
                            object: nil,
                            queue: OperationQueue.main) { (note) in
                             guard let url: URL = note.object as? URL else {return}
-                            print("new recording: \(url)")
                             self.appendToAssets(url, updateLayers: true)
         }
         
@@ -76,7 +75,7 @@ class FaceDispatcher: NSObject {
                 guard let attributes = try? FileManager.default.attributesOfItem(atPath: url.path) as [FileAttributeKey: Any],
                     let creationDate = attributes[FileAttributeKey.creationDate] as? Date else { continue }
                 if creationDate.timeIntervalSinceNow < timeIntervalLimit {
-                    print("\(url.lastPathComponent) is too old \(creationDate)")
+                    debug("\(url.lastPathComponent) is too old \(creationDate)")
                     
                     // Try to delete the file if necessary
                     do {
@@ -86,7 +85,7 @@ class FaceDispatcher: NSObject {
                             try FileManager.default.trashItem(at: url, resultingItemURL: nil)
                         }
                     } catch let error as NSError {
-                        alert("Fehler: " + error.localizedDescription)
+                        alert("Error deleting file: " + error.localizedDescription)
                     }
                     continue
                 }
