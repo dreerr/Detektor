@@ -14,9 +14,9 @@ struct Constants {
     static let rows = 1
     static let aspectRatio: Float = 1080 / (1920*3) // 24px Tile Compensation?
     #else
-    static let cols = 6
-    static let rows = 2
-    static let aspectRatio = (1920/Float(cols)) / (1080/Float(rows))
+    static let cols = 3
+    static let rows = 3
+    static let aspectRatio = (1080/Float(cols)) / (1920/Float(rows))
     #endif
     static let videoHeight = 320.0
     static let videoSize: CGSize = CGSize(width: videoHeight*Double(aspectRatio), height: videoHeight)
@@ -38,5 +38,4 @@ struct Constants {
         }
         return url
     }
-    var debug = true
 }

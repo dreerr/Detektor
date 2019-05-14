@@ -61,7 +61,6 @@
 		B90E9A0B21331408000550FF /* Face.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Face.swift; sourceTree = "<group>"; };
 		B94335E021B6B6DC00EC4CD7 /* CALayerStretch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CALayerStretch.swift; sourceTree = "<group>"; };
 		B947F047226338BE00F65891 /* Observers.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Observers.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		B947F048226338BE00F65891 /* Observers-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Observers-Info.plist"; path = "/Users/julian/Digitale Kunst/Projekte/Detektor/Programmierung/Detektor/Observers-Info.plist"; sourceTree = "<absolute>"; };
 		B9829DA22146913800837BB4 /* CALayerMatrix.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CALayerMatrix.swift; sourceTree = "<group>"; };
 		B9929DC321B7B65F00645321 /* AppDelegatePower.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegatePower.swift; sourceTree = "<group>"; };
 		B9CF0D1121BBCC53006EAADA /* Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
@@ -91,7 +90,6 @@
 			children = (
 				B90E99F221331096000550FF /* Detektor */,
 				B90E99F121331096000550FF /* Products */,
-				B947F048226338BE00F65891 /* Observers-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -341,6 +339,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -395,6 +394,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
@@ -464,7 +464,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = L4EP9C7V6L;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = "Observers-Info.plist";
+				INFOPLIST_FILE = Detektor/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -490,7 +490,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = L4EP9C7V6L;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = "Observers-Info.plist";
+				INFOPLIST_FILE = Detektor/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",

@@ -3,7 +3,8 @@ import Cocoa
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
     override init() {
-        registerUserDefaults()
+        prefs = Preferences(windowNibName: "Preferences")
+        prefs.registerUserDefaults()
     }
     var display: FaceDispatcher?
     var matrixLayers = [CALayerMatrix]()
@@ -12,7 +13,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let osd = OSDLogLayer()
     let defaults = UserDefaults.standard
     var shutdownHasStarted = false
-    let prefs = Preferences(windowNibName: "Preferences")
+    let prefs : Preferences
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         observePowerStates()
@@ -23,8 +24,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let height = screen.frame.size.height*CGFloat(1080.0/1920.0)
         let width = screen.frame.size.height
         #else
-        let height = screen.frame.size.height
-        let width = height*CGFloat(1080.0/1920.0)
+        let height = screen.frame.size.height*CGFloat(1080.0/1920.0)
+        let width = screen.frame.size.height
         #endif
         let window = NSWindow(contentRect: NSMakeRect(screen.frame.origin.x,
                                                       screen.frame.origin.y,

@@ -110,9 +110,9 @@ class Face: NSObject {
         let dateString = dateFormatter.string(from: date)
         var url = directory.appendingPathComponent(String(format:"%@.mp4", dateString), isDirectory: false)
         
-        var idx = 0
+        var idx = 1
         while manager.fileExists(atPath: url.path, isDirectory: &isDirectory) {
-            url = directory.appendingPathComponent(String(format:"%@ (%@).mp4", dateString, idx), isDirectory: false)
+            url = directory.appendingPathComponent("\(dateString) (\(idx)).mp4", isDirectory: false)
             idx+=1
         }
         

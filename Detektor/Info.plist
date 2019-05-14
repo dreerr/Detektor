@@ -2,6 +2,14 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSSystemAdministrationUsageDescription</key>
+	<string>This program observes the power state</string>
+	<key>NSAppleEventsUsageDescription</key>
+	<string>This program observes the power state</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This program requires access to your microphone.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This program requires access to your camera.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>

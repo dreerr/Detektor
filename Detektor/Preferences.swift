@@ -16,6 +16,40 @@ class Preferences: NSWindowController {
                                                queue: nil) { _ in self.setCameraController() }
     }
     
+    func registerUserDefaults() {
+        let defaults = [
+            "Camera": "",
+            "High Accuracy": true,
+            "Feature Size": 0.01,
+            "Angles": 1,
+            "Full Screen": false,
+            "Delete Immediately": false,
+            "Keep Recordings": "14 Days",
+            "Image Brightness": 0.0,
+            "Image Contrast": 1.1,
+            "Image Saturation": 0.0,
+            "Image EV": 0.5
+            ] as [String : Any]
+        UserDefaults.standard.register(defaults: defaults)
+        
+        // Register Transformers for Int & Double
+        ValueTransformer.setValueTransformer(StringDoubleTransformer(), forName: NSValueTransformerName("StringDoubleTransformer"))
+        ValueTransformer.setValueTransformer(StringIntTransformer(), forName: NSValueTransformerName("StringIntTransformer"))
+        
+        // Show all values on OSD
+        defaults.keys.sorted().forEach { (key) in
+            if let option = UserDefaults.standard.object(forKey: key) {
+                alert("\(key): \(String(describing: option))", icon: "⚙️")
+            }
+        }
+        
+        // Set User Defaults for loginwindow
+        if var loginwindow = UserDefaults.standard.persistentDomain(forName: "com.apple.loginwindow") {
+            loginwindow["PowerButtonSleepsSystem"] = false
+            UserDefaults.standard.setPersistentDomain(loginwindow, forName: "com.apple.loginwindow")
+        }
+    }
+    
     func setCameraController() {
         cameraController?.content = AVCaptureDevice.devices(for: .video).map({ (device) -> [String : Any] in
             ["name": device.localizedName, "object": device.uniqueID]
@@ -35,35 +69,6 @@ class Preferences: NSWindowController {
     }
 }
 
-func registerUserDefaults() {
-    let defaults = [
-        "Camera": "",
-        "High Accuracy": true,
-        "Feature Size": 0.01,
-        "Angles": 1,
-        "Full Screen": false,
-        "Delete Immediately": false,
-        "Keep Recordings": "14 Days",
-        "Image Brightness": 0.0,
-        "Image Contrast": 1.1,
-        "Image Saturation": 0.0,
-        "Image EV": 0.5
-        ] as [String : Any]
-    UserDefaults.standard.register(defaults: defaults)
-    UserDefaults.standard.synchronize()
-    
-    // Register Transformers for Int & Double
-    ValueTransformer.setValueTransformer(StringDoubleTransformer(), forName: NSValueTransformerName("StringDoubleTransformer"))
-    ValueTransformer.setValueTransformer(StringIntTransformer(), forName: NSValueTransformerName("StringIntTransformer"))
-    
-    // Show all values on OSD
-    defaults.keys.sorted().forEach { (key) in
-        if let option = UserDefaults.standard.object(forKey: key) {
-            alert("\(key): \(String(describing: option))", icon: "⚙️")
-        }
-    }
-    
-}
 
 class StringDoubleTransformer: ValueTransformer {
     override class func transformedValueClass() -> AnyClass {
