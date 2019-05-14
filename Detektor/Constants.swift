@@ -14,15 +14,15 @@ struct Constants {
     static let rows = 1
     static let aspectRatio: Float = 1080 / (1920*3) // 24px Tile Compensation?
     #else
-    static let cols = 3
+    static let cols = 4
     static let rows = 3
     static let aspectRatio = (1080/Float(cols)) / (1920/Float(rows))
     #endif
-    static let videoHeight = 320.0
-    static let videoSize: CGSize = CGSize(width: videoHeight*Double(aspectRatio), height: videoHeight)
+    static let videoWidth = 144.0
+    static let videoSize: CGSize = CGSize(width: videoWidth, height: videoWidth/Double(aspectRatio))
     static let directoryName = Bundle.main.infoDictionary!["CFBundleName"] as! String
     static let pixelFormat = kCVPixelFormatType_32ARGB
-    static let minimumSecs : CFTimeInterval = 3.5
+    static let minimumSecs : CFTimeInterval = 3.0
     static var pause = false
     static let minFreeGB = 4
     

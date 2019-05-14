@@ -28,10 +28,10 @@ class OSDLogLayer: CATextLayer {
     func print(_ string: String) {
         var lines = (self.string as! String).components(separatedBy: "\n")
         lines.insert(string, at:0)
-        self.string = lines.suffix(100).joined(separator: "\n")
+        self.string = lines.prefix(100).joined(separator: "\n")
         opacity = 1.0
         fadeOut?.invalidate()
-        fadeOut = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false, block: {_ in
+        fadeOut = Timer.scheduledTimer(withTimeInterval: 30.0, repeats: false, block: {_ in
             self.opacity = 0.0
             self.string = ""
         })
@@ -57,7 +57,7 @@ class OSDLogLayer: CATextLayer {
 
 public func alert(_ items: Any..., separator: String = " ", terminator: String = "\n", icon: String = "💡") {
     let output = icon + " " + items.map { "\($0)" }.joined(separator: separator)
-    Swift.print(output, terminator: terminator)
+    //Swift.print(output, terminator: terminator)
     NotificationCenter.default.post(name: Notification.Name("Log"), object: output)
 }
 

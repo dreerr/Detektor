@@ -97,7 +97,7 @@ class FaceLayer: CALayer {
     
     func switchPlay() {
         if state == .live {
-            assert(liveLayer?.superlayer == self, "superlayer is not self!")
+            if liveLayer?.superlayer != self { debug("superlayer is not self!") }
             CATransaction.withDisabledActions {
                 liveLayer?.removeFromSuperlayer()
             }
@@ -109,7 +109,6 @@ class FaceLayer: CALayer {
             player.play()
         }
         DispatchQueue.main.async {
-            self.setNeedsDisplay()
             self.setNeedsLayout()
         }
     }

@@ -38,16 +38,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Detektor/FaceLayer.swift"
-            timestampString = "579513219.4190921"
+            filePath = "Detektor/AppDelegatePower.swift"
+            timestampString = "579540386.681167"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "101"
-            endingLineNumber = "101"
-            landmarkName = "switchPlay()"
+            startingLineNumber = "39"
+            endingLineNumber = "39"
+            landmarkName = "handleShutdownDialog()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -72,9 +72,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Connect OSD
         osd.connect(to: stretch.content)
         let attrs = try! FileManager.default.attributesOfFileSystem(forPath: Constants.directoryURL.path)
-        let diskSpace = attrs[FileAttributeKey.systemFreeSize] as! Int
-        let fileSizeWithUnit = ByteCountFormatter.string(fromByteCount: Int64(diskSpace), countStyle: .file)
-        alert("Free Size: \(fileSizeWithUnit)")
+        let diskSpace = attrs[FileAttributeKey.systemFreeSize] as! Int64
+        let diskSpaceFormatted = ByteCountFormatter.string(fromByteCount: diskSpace, countStyle: .file)
+        alert("Free Size: \(diskSpaceFormatted)")
         
         // Initialize FacePlayer with the sublayers of CALayerMatrix array
         display = FaceDispatcher(withLayers: faceLayers)

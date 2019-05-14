@@ -129,7 +129,7 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         
         // Apply filter to image
         let ciImage = applyFilterChain(to: ciImageRaw)
-        var isFirst = true
+//        var isFirst = true
         for feature in features {
             guard let faceFeature = feature as? CIFaceFeature else {continue}
             if(faceFeature.hasTrackingFrameCount && faceFeature.trackingFrameCount > 10) {
@@ -139,10 +139,10 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
                 if(!self.faces.keys.contains(id)) {
                     // Initialize Face instance for each new face that stayed longer than 10 frames
                     debug("New Face #\(id)")
-                    let face = Face(recording: isFirst, time: timestamp)
+                    let face = Face(recording: true, time: timestamp)
                     self.delegate?.addLiveFace(face, id: id)
                     self.faces[id] = face
-                    isFirst = false
+//                    isFirst = false
                 }
                 guard let face = self.faces[id] else { continue }
                 captureQueue.async {
