@@ -81,27 +81,32 @@ class FaceLayer: CALayer {
     func switchLive(_ live:CALayer) {
         // Connect a CALayer to display live preview
         if live != liveLayer {
+            isPlaying = false
+            state = .live
             liveLayer = live
             player.pause()
             liveLayer!.frame = self.bounds
-            CATransaction.withDisabledActions {
-                self.addSublayer(liveLayer!)
-            }
             DispatchQueue.main.async {
-                self.setNeedsDisplay()
+                CATransaction.begin()
+                CATransaction.setDisableActions(true)
+                self.addSublayer(self.liveLayer!)
+                CATransaction.commit()
             }
-            isPlaying = false
-            state = .live
         }
     }
     
     func switchPlay() {
         if state == .live {
             if liveLayer?.superlayer != self { debug("superlayer is not self!") }
-            CATransaction.withDisabledActions {
-                liveLayer?.removeFromSuperlayer()
+            DispatchQueue.main.async {
+                CATransaction.begin()
+                CATransaction.setCompletionBlock({
+                    self.liveLayer = nil
+                })
+                CATransaction.setDisableActions(true)
+                self.liveLayer?.removeFromSuperlayer()
+                CATransaction.commit()
             }
-            liveLayer = nil
         }
         if player.currentItem == nil {
             insertNextPlayerItem()
