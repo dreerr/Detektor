@@ -19,7 +19,7 @@ struct Constants {
     static let aspectRatio = (1080/Float(cols)) / (1920/Float(rows))
     #endif
     static let videoWidth = 144.0
-    static let videoSize: CGSize = CGSize(width: videoWidth, height: videoWidth/Double(aspectRatio))
+    static let videoSize: CGSize = CGSize(width: videoWidth, height: round(videoWidth/Double(aspectRatio)))
     static let directoryName = Bundle.main.infoDictionary!["CFBundleName"] as! String
     static let pixelFormat = kCVPixelFormatType_32ARGB
     static let minimumSecs : CFTimeInterval = 3.0
