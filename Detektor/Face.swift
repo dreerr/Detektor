@@ -11,14 +11,18 @@ class Face: NSObject {
     var startTime: CMTime
     var presentationTime = CMTime.zero
     let preview = CALayer()
-    let imageQueue = DispatchQueue(label: "Image Queue", qos:.userInitiated)
-    let recordQueue = DispatchQueue(label: "Record Queue", qos:.default)
+    let imageQueue = DispatchQueue(label: "Image Queue", qos:.userInteractive)
+    let recordQueue = DispatchQueue(label: "Record Queue", qos:.userInitiated)
+    let lockQueue = DispatchQueue(label: "Lock queue")
     var record = false
     var layer: FaceLayer?
+    var suspended = true
     init(recording: Bool, time: CMTime) {
         record = recording
         startTime = time
         super.init()
+        
+        recordQueue.suspend()
         
         if(record) {
             do {
@@ -32,12 +36,26 @@ class Face: NSObject {
                                                 AVVideoHeightKey: self.size.height]
             writeInput = AVAssetWriterInput(mediaType: AVMediaType.video, outputSettings: videoSettings)
             writeInput.expectsMediaDataInRealTime = true
+            
             assert(self.assetWriter.canAdd(self.writeInput), "adding AVAssetWriterInput failed")
             assetWriter.add(self.writeInput)
             let bufferAttributes:[String: Any] = [kCVPixelBufferPixelFormatTypeKey as String: Int(kCVPixelFormatType_32ARGB)]
             bufferAdapter = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: writeInput, sourcePixelBufferAttributes: bufferAttributes)
             assetWriter!.startWriting()
             assetWriter!.startSession(atSourceTime: presentationTime)
+    
+            writeInput.requestMediaDataWhenReady(on: lockQueue, using: { [weak self] in
+                guard let self = self else { return }
+                
+                if (self.suspended) {
+                    NSLog("Resuming %@", self)
+                    self.suspended = false
+                    self.recordQueue.resume()
+                    
+                } else {
+                    NSLog("Nothing to resume")
+                }
+            })
         }
         
         // Setup preview layer
@@ -54,24 +72,30 @@ class Face: NSObject {
             let image = ciImage.croppedAndScaledToFace(faceFeature, faceSide: .right)
             guard let buffer = image.createPixelBuffer(withContext: context) else { return }
             
-            // Add frame to buffer adapter
-            if(self.record) {
-                self.recordQueue.async { [weak self] in
-                    guard let self = self else {
-                        return
-                    }
-                    if self.writeInput!.isReadyForMoreMediaData {
-                        self.presentationTime =  CMTimeSubtract(timestamp, self.startTime)
-                        self.bufferAdapter.append(buffer, withPresentationTime: self.presentationTime)
-                    }
-                }
-            }
             // Add image to preview
             var cgImage: CGImage?
             VTCreateCGImageFromCVPixelBuffer(buffer, options: nil, imageOut: &cgImage)
             DispatchQueue.main.async { [weak self] in
                 self?.preview.contents = cgImage
             }
+            
+            // Add frame to buffer adapter
+            if(self.record) {
+                self.recordQueue.async { [weak self] in
+                    guard let self = self else {
+                        return
+                    }
+                    self.presentationTime =  CMTimeSubtract(timestamp, self.startTime)
+                    self.bufferAdapter.append(buffer, withPresentationTime: self.presentationTime)
+                    
+                    self.lockQueue.sync { [weak self] in
+                        NSLog("suspending %@", self!)
+                        self?.recordQueue.suspend()
+                        self?.suspended = true
+                    }
+                }
+            }
+            
         }
     }
     
@@ -92,13 +116,17 @@ class Face: NSObject {
             } else {
                 let assetWriter = self.assetWriter
                 let url = assetWriter?.outputURL
-                recordQueue.activate()
-                recordQueue.async {
-                    assetWriter?.finishWriting {
-                        debug("Finished Writing", url?.lastPathComponent)
-                        NotificationCenter.default.post(name: Notification.Name("newRecording"),
-                                                        object: url,
-                                                        userInfo: nil)
+                
+                lockQueue.sync {
+                    recordQueue.activate()
+                    if (self.suspended) { recordQueue.resume() }
+                    recordQueue.sync {
+                        assetWriter?.finishWriting {
+                            debug("Finished Writing", url?.lastPathComponent)
+                            NotificationCenter.default.post(name: Notification.Name("newRecording"),
+                                                            object: url,
+                                                            userInfo: nil)
+                        }
                     }
                 }
             }
@@ -131,6 +159,7 @@ class Face: NSObject {
     }
     
     deinit {
+        NSLog("deinit")
         finishRecording()
     }
 }

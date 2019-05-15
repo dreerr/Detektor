@@ -10,24 +10,30 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     var previewLayerRects = CALayer()
     let defaults = UserDefaults.standard
     
-    var detector: CIDetector?
-    var detectorFeatures: [CIFeature]?
+    var detector: CIDetector!
+    //var detectorFeatures: [CIFeature]?
     let context = CIContext()
     var faces = [Int32 : Face]()
     var delegate: FaceTrackerProtocol?
-    var captureQueue = DispatchQueue(label: "Capture Queue",
-                                     qos: .userInteractive)
-    let detectorQueue = DispatchQueue(label: "Face Recognition Queue",
-                                      qos: .userInteractive,
-                                      autoreleaseFrequency: .workItem,
-                                      target: nil)
+    let captureQueue = DispatchQueue(label: "Capture Queue", qos: .userInitiated)
+    let detectorQueue = DispatchQueue(label: "Detector Queue", qos: .userInteractive)
+    
+    
+
     var isTracking = true
     var detectorFinished = true
+    var features: [CIFeature] = []
+    
+    var frameCounter = 0
+    
     override init() {
         super.init()
         
-        
-        
+        _ = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true, block: {_ in
+            NSLog("FPS = %d", self.frameCounter)
+            self.frameCounter = 0;
+        })
+
         // Configure Capture Session
         captureSession.beginConfiguration()
         captureSession.sessionPreset = AVCaptureSession.Preset.high
@@ -117,17 +123,21 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         let ciImageRaw = CIImage(cvImageBuffer: imageBuffer,
                                  options: (attachments as! [CIImageOption : Any]))
         
-        // Recognize faces on other queue?
         if detectorFinished {
             detectorFinished = false
-            detectorQueue.async { [weak self] in
-                let options: [String : Any] = [CIDetectorTypeFace: true]
-                self?.detectorFeatures = self?.detector?.features(in: ciImageRaw, options: options)
-                self?.detectorFinished = true
+            detectorQueue.async {
+                let featureOptions: [String : Any] = [CIDetectorTypeFace: true]
+                self.features = self.detector.features(in: ciImageRaw, options: featureOptions)
+                self.captureQueue.async {
+                    self.detectorFinished = true
+                }
             }
         }
-        guard let features = detectorFeatures else { return }
-        drawDebug(features) // only executed if connected
+        
+//        drawDebug(features) // only executed if connected
+        
+     
+      
         
         // Collect all IDs to check for orphans
         var currentIDs = [Int32]()
@@ -152,12 +162,6 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
                 guard let face = self.faces[id] else { continue }
                 
                 face.update(ciImage: ciImage, context: context, faceFeature: faceFeature, time: timestamp)
-                //captureQueue.async {
-//                    let image = ciImage.croppedAndScaledToFace(faceFeature, faceSide: .right)
-//                    if let buffer = image.createPixelBuffer(withContext: self.context) {
-//                        face.append(buffer, time: timestamp)
-//                    }
-                //}
             }
         }
         
@@ -167,6 +171,7 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
             self.delegate?.removeLiveFace(id: orphan)
             self.faces.removeValue(forKey: orphan)
         }
+        frameCounter += 1
     }
     
     func applyFilterChain(to image: CIImage) -> CIImage {
