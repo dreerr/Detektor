@@ -11,8 +11,8 @@ class Face: NSObject {
     var startTime: CMTime
     var presentationTime = CMTime.zero
     let preview = CALayer()
-    //let imageQueue = DispatchQueue(label: "Image Queue", qos:.background)
-//    let recordQueue = DispatchQueue(label: "Record Queue", attributes:[])
+    let imageQueue = DispatchQueue(label: "Image Queue", qos:.userInitiated)
+    let recordQueue = DispatchQueue(label: "Record Queue", qos:.default)
     var record = false
     var layer: FaceLayer?
     init(recording: Bool, time: CMTime) {
@@ -47,52 +47,63 @@ class Face: NSObject {
         
     }
     
-    func append(_ buffer: CVPixelBuffer, time timestamp: CMTime) {
-        // Add frame to buffer adapter
-        if(record) {
-            //recordQueue.async {
-                if self.writeInput!.isReadyForMoreMediaData {
-                    self.presentationTime =  CMTimeSubtract(timestamp, self.startTime)
-                    self.bufferAdapter.append(buffer, withPresentationTime: self.presentationTime)
+    func update(ciImage: CIImage, context: CIContext, faceFeature: CIFaceFeature, time timestamp: CMTime) {
+        imageQueue.async { [weak self] in
+            guard let self = self else { return }
+            
+            let image = ciImage.croppedAndScaledToFace(faceFeature, faceSide: .right)
+            guard let buffer = image.createPixelBuffer(withContext: context) else { return }
+            
+            // Add frame to buffer adapter
+            if(self.record) {
+                self.recordQueue.async { [weak self] in
+                    guard let self = self else {
+                        return
+                    }
+                    if self.writeInput!.isReadyForMoreMediaData {
+                        self.presentationTime =  CMTimeSubtract(timestamp, self.startTime)
+                        self.bufferAdapter.append(buffer, withPresentationTime: self.presentationTime)
+                    }
                 }
-            //}
-        }
-        // Add image to preview
-        //imageQueue.async {
+            }
+            // Add image to preview
             var cgImage: CGImage?
             VTCreateCGImageFromCVPixelBuffer(buffer, options: nil, imageOut: &cgImage)
-            DispatchQueue.main.async {
-                self.preview.contents = cgImage
+            DispatchQueue.main.async { [weak self] in
+                self?.preview.contents = cgImage
             }
-        //}
+        }
     }
     
     func finishRecording() {
         if(record) {
-            //recordQueue.sync {
-                self.writeInput.markAsFinished()
-                let elapsed = CMTimeGetSeconds(self.presentationTime)
-                let attrs = try! FileManager.default.attributesOfFileSystem(forPath: Constants.directoryURL.path)
-                let diskSpace = attrs[FileAttributeKey.systemFreeSize] as! Int
-                
-                // Longer than minimumSecs and at least 4GB free on volume
-                if(elapsed < Constants.minimumSecs) {
-                    self.assetWriter.cancelWriting()
-                    debug(String(format: "Dropped Recording with %.2f secs", elapsed))
-                } else if (diskSpace/1024/1024/1024) < Constants.minFreeGB {
-                    self.assetWriter.cancelWriting()
-                    alert("Not enough free space, only \((diskSpace/1024/1024/1024))GB left!")
-                } else {
-                    let url = self.assetWriter.outputURL
-                    self.assetWriter.finishWriting {
-                        debug("Finished Writing", url.lastPathComponent)
+            self.writeInput.markAsFinished()
+            let elapsed = CMTimeGetSeconds(self.presentationTime)
+            let attrs = try! FileManager.default.attributesOfFileSystem(forPath: Constants.directoryURL.path)
+            let diskSpace = attrs[FileAttributeKey.systemFreeSize] as! Int
+            
+            // Longer than minimumSecs and at least 4GB free on volume
+            if(elapsed < Constants.minimumSecs) {
+                self.assetWriter.cancelWriting()
+                debug(String(format: "Dropped Recording with %.2f secs", elapsed))
+            } else if (diskSpace/1024/1024/1024) < Constants.minFreeGB {
+                self.assetWriter.cancelWriting()
+                alert("Not enough free space, only \((diskSpace/1024/1024/1024))GB left!")
+            } else {
+                let assetWriter = self.assetWriter
+                let url = assetWriter?.outputURL
+                recordQueue.activate()
+                recordQueue.async {
+                    assetWriter?.finishWriting {
+                        debug("Finished Writing", url?.lastPathComponent)
                         NotificationCenter.default.post(name: Notification.Name("newRecording"),
                                                         object: url,
                                                         userInfo: nil)
                     }
                 }
-            //}
+            }
         }
+        
     }
     
     func uniqueURL() -> URL {
@@ -118,6 +129,7 @@ class Face: NSObject {
         
         return url
     }
+    
     deinit {
         finishRecording()
     }

@@ -16,12 +16,13 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     var faces = [Int32 : Face]()
     var delegate: FaceTrackerProtocol?
     var captureQueue = DispatchQueue(label: "Capture Queue",
-                                     qos: .userInteractive,
-                                     autoreleaseFrequency: .workItem,
-                                     target: nil)
-    let detectorQueue = DispatchQueue(label: "Face Recognition Queue", qos:.userInteractive)
+                                     qos: .userInteractive)
+    let detectorQueue = DispatchQueue(label: "Face Recognition Queue",
+                                      qos: .userInteractive,
+                                      autoreleaseFrequency: .workItem,
+                                      target: nil)
     var isTracking = true
-    
+    var detectorFinished = true
     override init() {
         super.init()
         
@@ -117,9 +118,13 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
                                  options: (attachments as! [CIImageOption : Any]))
         
         // Recognize faces on other queue?
-        captureQueue.async {
-            let options: [String : Any] = [CIDetectorTypeFace: true]
-            self.detectorFeatures = self.detector?.features(in: ciImageRaw, options: options)
+        if detectorFinished {
+            detectorFinished = false
+            detectorQueue.async { [weak self] in
+                let options: [String : Any] = [CIDetectorTypeFace: true]
+                self?.detectorFeatures = self?.detector?.features(in: ciImageRaw, options: options)
+                self?.detectorFinished = true
+            }
         }
         guard let features = detectorFeatures else { return }
         drawDebug(features) // only executed if connected
@@ -145,13 +150,14 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
 //                    isFirst = false
                 }
                 guard let face = self.faces[id] else { continue }
-                captureQueue.async {
-                    let image = ciImage.croppedAndScaledToFace(faceFeature, faceSide: .right)
-                    if let buffer = image.createPixelBuffer(withContext: self.context) {
-                        face.append(buffer, time: timestamp)
-                    }
-                    
-                }
+                
+                face.update(ciImage: ciImage, context: context, faceFeature: faceFeature, time: timestamp)
+                //captureQueue.async {
+//                    let image = ciImage.croppedAndScaledToFace(faceFeature, faceSide: .right)
+//                    if let buffer = image.createPixelBuffer(withContext: self.context) {
+//                        face.append(buffer, time: timestamp)
+//                    }
+                //}
             }
         }
         
