@@ -57,7 +57,7 @@ class OSDLogLayer: CATextLayer {
 
 public func alert(_ items: Any..., separator: String = " ", terminator: String = "\n", icon: String = "💡") {
     let output = icon + " " + items.map { "\($0)" }.joined(separator: separator)
-    //Swift.print(output, terminator: terminator)
+    Swift.print(output, terminator: terminator)
     NotificationCenter.default.post(name: Notification.Name("Log"), object: output)
 }
 
