@@ -154,22 +154,24 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
                 if(!self.faces.keys.contains(id)) {
                     // Initialize Face instance for each new face that stayed longer than 10 frames
                     debug("New Face #\(id)")
-                    let face = Face(recording: true, time: timestamp)
+                    let face = Face(time: timestamp)
                     self.delegate?.addLiveFace(face, id: id)
                     self.faces[id] = face
 //                    isFirst = false
                 }
                 guard let face = self.faces[id] else { continue }
                 
-                face.update(ciImage: ciImage, context: context, faceFeature: faceFeature, time: timestamp)
+                face.update(ciImage, context: context, faceFeature: faceFeature, time: timestamp)
             }
         }
         
         // Check for orphans and properly remove them (calls deinit)
         for orphan in Set(self.faces.keys).subtracting(currentIDs) {
-            debug("Lost Face #\(orphan)")
-            self.delegate?.removeLiveFace(id: orphan)
-            self.faces.removeValue(forKey: orphan)
+            orphan.stop(on: captureQueue, perform: {
+                debug("Lost Face #\(orphan)")
+                self.delegate?.removeLiveFace(id: orphan)
+                //self.faces.removeValue(forKey: orphan)
+            })
         }
         frameCounter += 1
     }
