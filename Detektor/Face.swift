@@ -3,6 +3,12 @@ import AVFoundation
 import VideoToolbox
 
 class Face: NSObject {
+    enum FaceState {
+        case running
+        case finishing
+        case finished
+    }
+    
     var assetWriter:AVAssetWriter!
     var writeInput:AVAssetWriterInput!
     var bufferAdapter:AVAssetWriterInputPixelBufferAdaptor!
@@ -12,25 +18,25 @@ class Face: NSObject {
     var lastPresentationTime = CMTime.zero
     let preview = CALayer()
     let imageQueue = DispatchQueue(label: "Image Queue", qos:.userInteractive)
-    let recordQueue = DispatchQueue(label: "Record Queue", qos:.userInitiated)
-    let lockQueue = DispatchQueue(label: "Lock queue")
+    let recordQueue = DispatchQueue(label: "Record Queue", qos:.default)
+//    let lockQueue = DispatchQueue(label: "Lock queue")
     
-    
-    var todo: [(CVPixelBuffer, CMTime)] = []
-    
-    var record = false
     var layer: FaceLayer?
     
-    var inactive = false
+    var state  = FaceState.running
+    //var recordQueueSuspended = true
+    
     
     init(time: CMTime) {
         startTime = time
         super.init()
+        //recordQueue.suspend()
         do {
             assetWriter = try AVAssetWriter(url:uniqueURL() , fileType: AVFileType.mp4)
         } catch {
             return
         }
+        
         // Setup recordung
         let videoSettings: [String: Any] = [AVVideoCodecKey: AVVideoCodecType.h264,
                                             AVVideoWidthKey: self.size.width,
@@ -46,16 +52,12 @@ class Face: NSObject {
         assetWriter!.startWriting()
         assetWriter!.startSession(atSourceTime: CMTime.zero)
         
-        writeInput.requestMediaDataWhenReady(on: lockQueue, using: { [weak self] in
-            guard let self = self, !self.shutdown else { return }
-            while (self.writeInput.isReadyForMoreMediaData && !self.todo.isEmpty) {
-                let (buff, ts) = self.todo.removeFirst()
-                self.bufferAdapter.append(buff, withPresentationTime: ts)
-            }
-            if self.todo.count > 0 { NSLog("Remain = %d", self.todo.count) }
-        })
-        
-        
+//        writeInput.requestMediaDataWhenReady(on: lockQueue, using: { [weak self] in
+//            if (self?.recordQueueSuspended)! {
+//                self?.recordQueue.resume()
+//                self?.recordQueueSuspended = false
+//            }
+//        })
         
         // Setup preview layer
         preview.contentsGravity = CALayerContentsGravity.resizeAspect
@@ -65,7 +67,6 @@ class Face: NSObject {
     }
     
     func update(_ inputImage: CIImage, context: CIContext, faceFeature: CIFaceFeature, time timestamp: CMTime) {
-        if inactive { return }
         imageQueue.async { [weak self] in
             guard let self = self, let pool = self.bufferAdapter?.pixelBufferPool else {
                 return
@@ -73,65 +74,27 @@ class Face: NSObject {
             
             let croppedImage = inputImage.croppedAndScaledToFace(faceFeature, faceSide: .right)
             
-            // Add image to preview
-            let cgImage = context.createCGImage(croppedImage, from: croppedImage.extent)
-            DispatchQueue.main.async { [weak self] in
-                self?.preview.contents = cgImage
+            if self.state == .running {
+                // Add image to preview
+                let cgImage = context.createCGImage(croppedImage, from: croppedImage.extent)
+                DispatchQueue.main.async { [weak self] in
+                    self?.preview.contents = cgImage
+                }
             }
             
-            guard let buffer = self.createPixelBuffer(croppedImage, pool: pool, withContext: context) else { return }
-            
-            
+
             // Add frame to buffer adapter
-            if(self.record) {
-                self.lockQueue.async { [weak self] in
-                    guard let self = self else { return }
-                    let presentationTime =  CMTimeSubtract(timestamp, self.startTime)
-                    self.lastPresentationTime = presentationTime
-                    if self.writeInput.isReadyForMoreMediaData {
-                        self.bufferAdapter.append(buffer, withPresentationTime: presentationTime)
-                    } else {
-                        self.todo.append((buffer, presentationTime))
-                    }
-                }
-            }
-        }
-    }
-    
-    func cleanup() {
-        lockQueue.sync {
-            self.inactive = true
-            self.finishRecording()
-        }
-    }
-    
-    func finishRecording() {
-        if(record) {
-            self.writeInput.markAsFinished()
-            let elapsed = CMTimeGetSeconds(self.lastPresentationTime)
-            let attrs = try! FileManager.default.attributesOfFileSystem(forPath: Constants.directoryURL.path)
-            let diskSpace = attrs[FileAttributeKey.systemFreeSize] as! Int
-            
-            // Longer than minimumSecs and at least 4GB free on volume
-            if(elapsed < Constants.minimumSecs) {
-                self.assetWriter.cancelWriting()
-                debug(String(format: "Dropped Recording with %.2f secs", elapsed))
-            } else if (diskSpace/1024/1024/1024) < Constants.minFreeGB {
-                self.assetWriter.cancelWriting()
-                alert("Not enough free space, only \((diskSpace/1024/1024/1024))GB left!")
-            } else {
-                let assetWriter = self.assetWriter
-                let url = assetWriter?.outputURL
-                //                recordQueue.activate()
-                //                recordQueue.sync {
-                NSLog("Deiniting with %d items in todo", self.todo.count)
-                assetWriter?.finishWriting {
-                    debug("Finished Writing", url?.lastPathComponent)
-                    NotificationCenter.default.post(name: Notification.Name("newRecording"),
-                                                    object: url,
-                                                    userInfo: nil)
-                }
-                //                }
+            self.recordQueue.async { [weak self] in
+                guard let self = self else { return }
+                
+                guard let buffer = self.createPixelBuffer(croppedImage, pool: pool, withContext: context) else { return }
+                
+                let presentationTime =  CMTimeSubtract(timestamp, self.startTime)
+                self.lastPresentationTime = presentationTime
+                
+                while !self.writeInput.isReadyForMoreMediaData { usleep(10) }
+                
+                self.bufferAdapter.append(buffer, withPresentationTime: presentationTime)
             }
         }
     }
@@ -160,6 +123,42 @@ class Face: NSObject {
                            colorSpace: image.colorSpace)
         }
         return pixelBuffer
+    }
+    func cleanup() {
+        state = .finishing
+        //        if recordQueueSuspended {
+        //            recordQueue.resume()
+        //        }
+        recordQueue.async {
+            self.finishRecording()
+        }
+    }
+    
+    func finishRecording() {
+        self.writeInput.markAsFinished()
+        let elapsed = CMTimeGetSeconds(self.lastPresentationTime)
+        let attrs = try! FileManager.default.attributesOfFileSystem(forPath: Constants.directoryURL.path)
+        let diskSpace = attrs[FileAttributeKey.systemFreeSize] as! Int
+        
+        // Longer than minimumSecs and at least 4GB free on volume
+        if(elapsed < Constants.minimumSecs) {
+            self.assetWriter.cancelWriting()
+            debug(String(format: "Dropped Recording with %.2f secs", elapsed))
+            self.state = .finished
+        } else if (diskSpace/1024/1024/1024) < Constants.minFreeGB {
+            self.assetWriter.cancelWriting()
+            alert("Not enough free space, only \((diskSpace/1024/1024/1024))GB left!")
+            self.state = .finished
+        } else {
+            let url = self.assetWriter.outputURL
+            assetWriter?.finishWriting {
+                debug("Finished Writing", url.lastPathComponent)
+                NotificationCenter.default.post(name: Notification.Name("newRecording"),
+                                                object: url,
+                                                userInfo: nil)
+                self.state = .finished
+            }
+        }
     }
 }
 

@@ -128,9 +128,7 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
             detectorQueue.async {
                 let featureOptions: [String : Any] = [CIDetectorTypeFace: true]
                 self.features = self.detector.features(in: ciImageRaw, options: featureOptions)
-                self.captureQueue.async {
-                    self.detectorFinished = true
-                }
+                self.detectorFinished = true
             }
         }
         
@@ -167,11 +165,17 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         
         // Check for orphans and properly remove them (calls deinit)
         for orphan in Set(self.faces.keys).subtracting(currentIDs) {
-            orphan.stop(on: captureQueue, perform: {
-                debug("Lost Face #\(orphan)")
-                self.delegate?.removeLiveFace(id: orphan)
-                //self.faces.removeValue(forKey: orphan)
-            })
+            self.delegate?.removeLiveFace(id: orphan)
+            if let face = faces[orphan] {
+                if face.state == .running {
+                    debug("Lost Face, cleaning up #\(orphan)")
+                    face.cleanup()
+                }
+                if face.state == .finished {
+                    debug("Finished cleaning #\(orphan)")
+                    self.faces.removeValue(forKey: orphan)
+                }
+            }
         }
         frameCounter += 1
     }

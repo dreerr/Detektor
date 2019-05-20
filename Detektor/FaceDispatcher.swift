@@ -144,7 +144,9 @@ extension FaceDispatcher: FaceTrackerProtocol {
         }
     }
     func removeLiveFace(id: Int32) {
-        faces[id]?.layer?.switchPlay()
-        faces.removeValue(forKey: id)
+        if faces.keys.contains(id) {
+            faces[id]?.layer?.switchPlay()
+            faces.removeValue(forKey: id)
+        }
     }
 }
