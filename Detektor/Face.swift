@@ -136,32 +136,6 @@ class Face: NSObject {
         }
     }
     
-    func uniqueURL() -> URL {
-        let manager = FileManager.default
-        var directory = FileManager.default.urls(for: .moviesDirectory, in: .userDomainMask)[0]
-        directory.appendPathComponent(Constants.directoryName, isDirectory: true)
-        var isDirectory = ObjCBool(true)
-        if !manager.fileExists(atPath: directory.path, isDirectory: &isDirectory) {
-            // TODO: fail gracefully!
-            try! FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true, attributes: nil)
-        }
-        let dateFormatter : DateFormatter = DateFormatter()
-        let date = Date()
-        dateFormatter.dateFormat = "yyyy.MM.dd - HH.mm.ss"
-        let dateString = dateFormatter.string(from: date)
-        var url = directory.appendingPathComponent(String(format:"%@.mp4", dateString), isDirectory: false)
-        
-        var idx = 1
-        while manager.fileExists(atPath: url.path, isDirectory: &isDirectory) {
-            url = directory.appendingPathComponent("\(dateString) (\(idx)).mp4", isDirectory: false)
-            idx+=1
-        }
-        
-        return url
-    }
-    
-
-    
     func createPixelBuffer(_ image:CIImage, pool: CVPixelBufferPool, withContext context : CIContext) -> CVPixelBuffer? {
         var pixelBuffer: CVPixelBuffer? = nil
         //        let options: [NSObject: Any] = [
