@@ -30,7 +30,9 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         super.init()
         
         _ = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true, block: {_ in
-            NSLog("FPS = %d", self.frameCounter)
+            if self.frameCounter < 20 {
+                debug("FPS low: \(self.frameCounter)")
+            }
             self.frameCounter = 0;
         })
 
@@ -142,7 +144,6 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         
         // Apply filter to image
         let ciImage = applyFilterChain(to: ciImageRaw)
-//        var isFirst = true
         for feature in features {
             guard let faceFeature = feature as? CIFaceFeature else {continue}
             if(faceFeature.hasTrackingFrameCount && faceFeature.trackingFrameCount > 10) {
@@ -155,7 +156,6 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
                     let face = Face(time: timestamp)
                     self.delegate?.addLiveFace(face, id: id)
                     self.faces[id] = face
-//                    isFirst = false
                 }
                 guard let face = self.faces[id] else { continue }
                 
