@@ -12,7 +12,7 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     
     var detector: CIDetector!
     //var detectorFeatures: [CIFeature]?
-    let context = CIContext()
+    let context = CIContext(mtlDevice: MTLCreateSystemDefaultDevice()!)
     var faces = [Int32 : Face]()
     var delegate: FaceTrackerProtocol?
     let captureQueue = DispatchQueue(label: "Capture Queue", qos: .userInitiated)
@@ -30,7 +30,7 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         super.init()
         
         _ = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true, block: {_ in
-            if self.frameCounter < 20 {
+            if self.frameCounter < 15 {
                 debug("FPS low: \(self.frameCounter)")
             }
             self.frameCounter = 0;
@@ -104,7 +104,7 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         let featureSize = UserDefaults.standard.float(forKey: "Feature Size")
         let angles = UserDefaults.standard.integer(forKey: "Angles")
         detector = CIDetector(ofType: CIDetectorTypeFace,
-                              context: nil,
+                              context: context,
                               options: [CIDetectorAccuracy : accuracy,
                                         CIDetectorTracking: true,
                                         CIDetectorMinFeatureSize: featureSize,
@@ -134,7 +134,7 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
             }
         }
         
-//        drawDebug(features) // only executed if connected
+        drawDebug(features) // only executed if connected
         
      
       

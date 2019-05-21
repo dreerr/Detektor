@@ -94,7 +94,7 @@ func uniqueURL() -> URL {
     }
     let dateFormatter : DateFormatter = DateFormatter()
     let date = Date()
-    dateFormatter.dateFormat = "yyyy.MM.dd - HH.mm.ss"
+    dateFormatter.dateFormat = "yyyy.MM.dd - HH.mm"
     let dateString = dateFormatter.string(from: date)
     var url = directory.appendingPathComponent(String(format:"%@.mp4", dateString), isDirectory: false)
     

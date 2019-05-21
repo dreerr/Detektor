@@ -9,7 +9,7 @@ class Face: NSObject {
     
     var assetWriter:AVAssetWriter!
     var writeInput:AVAssetWriterInput!
-    var bufferAdapter:AVAssetWriterInputPixelBufferAdaptor!
+    var adaptor:AVAssetWriterInputPixelBufferAdaptor!
     let faceSide: CIFaceSide = .right
     var startTime: CMTime
     var elapsedTime = CMTime.zero
@@ -44,7 +44,7 @@ class Face: NSObject {
         assert(self.assetWriter.canAdd(self.writeInput), "adding AVAssetWriterInput failed")
         assetWriter.add(self.writeInput)
         let bufferAttributes:[String: Any] = [kCVPixelBufferPixelFormatTypeKey as String: Int(kCVPixelFormatType_32ARGB)]
-        bufferAdapter = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: writeInput, sourcePixelBufferAttributes: bufferAttributes)
+        adaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: writeInput, sourcePixelBufferAttributes: bufferAttributes)
         
         assetWriter!.startWriting()
         assetWriter!.startSession(atSourceTime: CMTime.zero)
@@ -65,56 +65,44 @@ class Face: NSObject {
     
     func update(_ inputImage: CIImage, context: CIContext, faceFeature: CIFaceFeature, time timestamp: CMTime) {
         imageQueue.async { [weak self] in
-            guard let self = self, let pool = self.bufferAdapter?.pixelBufferPool else { return }
-            
+            guard let self = self else { return }
             let croppedImage = inputImage.croppedAndScaledToFace(faceFeature, faceSide: .right)
-            guard let buffer = self.createPixelBuffer(croppedImage, pool: pool, withContext: context) else { return }
             
             // If running add to preview layer
             if self.state == .running {
-                var cgImage: CGImage?
-                VTCreateCGImageFromCVPixelBuffer(buffer, options: nil, imageOut: &cgImage)
-                DispatchQueue.main.async { [weak self] in
-                    self?.preview.contents = cgImage
+                let cgImage = context.createCGImage(croppedImage, from:croppedImage.extent)
+                DispatchQueue.main.async {
+                    self.preview.contents = cgImage
                 }
             }
             
             // Add frame to buffer adapter
             self.recordQueue.async { [weak self] in
                 guard let self = self else { return }
+                guard let buffer = self.createPixelBuffer(croppedImage, withContext: context) else { NSLog("could not buffer!"); return }
                 let presentationTime =  CMTimeSubtract(timestamp, self.startTime)
                 self.elapsedTime = presentationTime
-                while !self.writeInput.isReadyForMoreMediaData { usleep(10) }
-                self.bufferAdapter.append(buffer, withPresentationTime: presentationTime)
+                while !self.writeInput.isReadyForMoreMediaData { NSLog("sleep"); usleep(400) }
+                self.adaptor.append(buffer, withPresentationTime: presentationTime)
             }
         }
     }
     
-    func createPixelBuffer(_ image:CIImage, pool: CVPixelBufferPool, withContext context : CIContext) -> CVPixelBuffer? {
+    func createPixelBuffer(_ image:CIImage, withContext context : CIContext) -> CVPixelBuffer? {
+        guard let pool = adaptor.pixelBufferPool else { NSLog("adaptor.pixelBufferPool is nil"); return nil }
+        
         var pixelBuffer: CVPixelBuffer? = nil
-        //        let options: [NSObject: Any] = [
-        //            kCVPixelBufferCGImageCompatibilityKey: false,
-        //            kCVPixelBufferCGBitmapContextCompatibilityKey: false,
-        //            ]
-        let size = image.extent.size
-        
         let status = CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault, pool, &pixelBuffer)
-        
-        //        let status = CVPixelBufferCreate(kCFAllocatorDefault,
-        //                                         Int(size.width),
-        //                                         Int(size.height),
-        //                                         Constants.pixelFormat,
-        //                                         options as CFDictionary,
-        //                                         &pixelBuffer)
         if(status == kCVReturnSuccess) {
             context.render(image, to: pixelBuffer!, bounds:CGRect(x: 0,
                                                                   y: 0,
-                                                                  width: size.width,
-                                                                  height: size.height),
+                                                                  width: image.extent.size.width,
+                                                                  height: image.extent.size.height),
                            colorSpace: image.colorSpace)
         }
         return pixelBuffer
     }
+    
     func cleanup() {
         state = .finishing
         //        if recordQueueSuspended {
