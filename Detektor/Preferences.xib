@@ -49,8 +49,8 @@
                                     <connections>
                                         <action selector="setCamera:" target="-2" id="wQM-LG-RRt"/>
                                         <binding destination="3rP-2Z-YST" name="content" keyPath="arrangedObjects" id="bPF-wd-mJ9"/>
-                                        <binding destination="3rP-2Z-YST" name="contentObjects" keyPath="arrangedObjects.object" previousBinding="bPF-wd-mJ9" id="0Gd-qW-FyH"/>
                                         <binding destination="3rP-2Z-YST" name="contentValues" keyPath="arrangedObjects.name" previousBinding="0Gd-qW-FyH" id="KoO-po-KYm"/>
+                                        <binding destination="3rP-2Z-YST" name="contentObjects" keyPath="arrangedObjects.object" previousBinding="bPF-wd-mJ9" id="0Gd-qW-FyH"/>
                                         <binding destination="B8E-hl-TRy" name="selectedObject" keyPath="values.Camera" previousBinding="KoO-po-KYm" id="vLq-79-ZDS"/>
                                     </connections>
                                 </popUpButton>
@@ -77,8 +77,8 @@
                                     </popUpButtonCell>
                                     <connections>
                                         <binding destination="hbw-xL-dBh" name="content" keyPath="arrangedObjects" id="Anp-rN-2kP"/>
-                                        <binding destination="hbw-xL-dBh" name="contentObjects" keyPath="arrangedObjects.object" previousBinding="Anp-rN-2kP" id="Zpg-6M-lHo"/>
                                         <binding destination="hbw-xL-dBh" name="contentValues" keyPath="arrangedObjects.name" previousBinding="Zpg-6M-lHo" id="kaY-OC-sU9"/>
+                                        <binding destination="hbw-xL-dBh" name="contentObjects" keyPath="arrangedObjects.object" previousBinding="Anp-rN-2kP" id="Zpg-6M-lHo"/>
                                         <binding destination="B8E-hl-TRy" name="selectedObject" keyPath="values.Camera Format" previousBinding="kaY-OC-sU9" id="RR1-Wp-nCc"/>
                                     </connections>
                                 </popUpButton>
@@ -170,6 +170,15 @@
                                                     <modifierMask key="keyEquivalentModifierMask"/>
                                                 </menuItem>
                                                 <menuItem title="0.03" id="AUh-e0-BpV">
+                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                </menuItem>
+                                                <menuItem title="0.04" id="HLT-mR-dJW">
+                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                </menuItem>
+                                                <menuItem title="0.05" id="H5h-vN-CSO">
+                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                </menuItem>
+                                                <menuItem title="0.06" id="HXM-pz-Ddc">
                                                     <modifierMask key="keyEquivalentModifierMask"/>
                                                 </menuItem>
                                             </items>
@@ -361,6 +370,17 @@
                             </subviews>
                         </view>
                     </box>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Wyf-tY-oP9">
+                        <rect key="frame" x="18" y="18" width="62" height="18"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="check" title="Debug" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="7f7-WI-v8M">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <binding destination="B8E-hl-TRy" name="value" keyPath="values.Debug" id="aFt-HY-akg"/>
+                        </connections>
+                    </button>
                 </subviews>
             </view>
             <connections>

@@ -89,6 +89,7 @@ class FaceLayer: CALayer {
             DispatchQueue.main.async {
                 CATransaction.begin()
                 CATransaction.setDisableActions(true)
+                self.sublayers = []
                 self.addSublayer(self.liveLayer!)
                 CATransaction.commit()
             }
@@ -101,20 +102,20 @@ class FaceLayer: CALayer {
             DispatchQueue.main.async {
                 CATransaction.begin()
                 CATransaction.setCompletionBlock({
-                    self.liveLayer = nil
+                    // self.liveLayer = nil
+                    if self.player.currentItem == nil {
+                        self.insertNextPlayerItem()
+                    } else {
+                        self.player.play()
+                    }
+                    self.setNeedsDisplay()
+                    self.setNeedsLayout()
                 })
                 CATransaction.setDisableActions(true)
-                self.liveLayer?.removeFromSuperlayer()
+                self.sublayers = []
+                self.addSublayer(self.playerLayer!)
                 CATransaction.commit()
             }
-        }
-        if player.currentItem == nil {
-            insertNextPlayerItem()
-        } else {
-            player.play()
-        }
-        DispatchQueue.main.async {
-            self.setNeedsLayout()
         }
     }
 }

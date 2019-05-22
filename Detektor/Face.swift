@@ -88,23 +88,23 @@ class Face: NSObject {
             self.recordQueue.async { [weak self] in
                 guard let self = self else { return }
                 if self.assetWriter!.status != .writing { return }
-                if !self.writeInput.isReadyForMoreMediaData { usleep(500) }
+                if self.writeInput.isReadyForMoreMediaData == false { debug("sleeping"); usleep(100) }
                 if self.writeInput.isReadyForMoreMediaData {
                     let elapsedTillLast = CMTimeGetSeconds(CMTimeSubtract(CMTimeSubtract(timestamp, self.startTime), self.elapsedTime))
-                    if elapsedTillLast > 0.9 { loggingPrint("too long of a pause, not continuing!"); return }
-                    guard let buffer = self.createPixelBuffer(croppedImage, withContext: context) else { loggingPrint("could not buffer!"); return }
+                    if elapsedTillLast > 0.9 { debug("too long of a pause, not continuing!"); return }
+                    guard let buffer = self.createPixelBuffer(croppedImage, withContext: context) else { debug("could not buffer!"); return }
                     let presentationTime =  CMTimeSubtract(timestamp, self.startTime)
                     self.elapsedTime = presentationTime
                     self.adaptor.append(buffer, withPresentationTime: presentationTime)
                 } else {
-                    loggingPrint("Dropping Frame!")
+                    debug("Dropping Frame!")
                 }
             }
         }
     }
     
     func createPixelBuffer(_ image:CIImage, withContext context : CIContext) -> CVPixelBuffer? {
-        guard let pool = adaptor.pixelBufferPool else { loggingPrint("adaptor.pixelBufferPool is nil"); return nil }
+        guard let pool = adaptor.pixelBufferPool else { debug("adaptor.pixelBufferPool is nil"); return nil }
         var pixelBuffer : CVPixelBuffer? = nil
         let status = CVPixelBufferPoolCreatePixelBuffer(nil, pool, &pixelBuffer)
         if(status == kCVReturnSuccess) {

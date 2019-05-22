@@ -62,17 +62,8 @@ public func alert(_ items: Any..., separator: String = " ", terminator: String =
 }
 
 public func debug(_ items: Any..., separator: String = " ", terminator: String = "\n") {
-    #if DEBUG
-    let output = items.map { "\($0)" }.joined(separator: separator)
-    alert(output, terminator: terminator, icon: "🐞")
-    #endif
-}
-func loggingPrint<T>(_ object: @autoclosure () -> T, _ file: String = #file, _ function: String = #function, _ line: Int = #line) {
-    #if DEBUG
-    let value = object()
-    let fileURL = NSURL(string: file)?.lastPathComponent ?? "Unknown file"
-    let queue = Thread.isMainThread ? "UI" : "BG"
-    
-    print("<\(queue)> \(fileURL) \(function)[\(line)]: " + String(reflecting: value))
-    #endif
+    if UserDefaults.standard.bool(forKey: "Debug") == true {
+        let output = items.map { "\($0)" }.joined(separator: separator)
+        alert(output, terminator: terminator, icon: "🐞")
+    }
 }
