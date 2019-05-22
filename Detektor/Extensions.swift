@@ -1,27 +1,5 @@
 import CoreImage
 extension CIImage {
-    func createPixelBuffer(withContext context : CIContext) -> CVPixelBuffer? {
-        var pixelBuffer: CVPixelBuffer? = nil
-        let options: [NSObject: Any] = [
-            kCVPixelBufferCGImageCompatibilityKey: false,
-            kCVPixelBufferCGBitmapContextCompatibilityKey: false,
-            ]
-        let size = self.extent.size
-        let status = CVPixelBufferCreate(kCFAllocatorDefault,
-                                         Int(size.width),
-                                         Int(size.height),
-                                         Constants.pixelFormat,
-                                         options as CFDictionary,
-                                         &pixelBuffer)
-        if(status == kCVReturnSuccess) {
-            context.render(self, to: pixelBuffer!, bounds:CGRect(x: 0,
-                                                                 y: 0,
-                                                                 width: size.width,
-                                                                 height: size.height),
-                           colorSpace: self.colorSpace)
-        }
-        return pixelBuffer
-    }
     func croppedAndScaledToFace(_ face:CIFaceFeature, faceSide:CIFaceSide) -> CIImage {
         // Calculate Rectangle and resize image
         let rect = face.boundsForFaceSide(faceSide, withAspectRatio: Constants.aspectRatio)

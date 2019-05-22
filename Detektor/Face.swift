@@ -15,7 +15,7 @@ class Face: NSObject {
     var elapsedTime = CMTime.zero
     let preview = CALayer()
     let imageQueue = DispatchQueue(label: "Image Queue", qos:.userInitiated)
-    let recordQueue = DispatchQueue(label: "Record Queue", qos:.background)
+    let recordQueue = DispatchQueue(label: "Record Queue", qos:.default)
 //    let lockQueue = DispatchQueue(label: "Lock queue")
     
     var layer: FaceLayer?
