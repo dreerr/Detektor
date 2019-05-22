@@ -91,20 +91,20 @@ class Face: NSObject {
                 if !self.writeInput.isReadyForMoreMediaData { usleep(500) }
                 if self.writeInput.isReadyForMoreMediaData {
                     let elapsedTillLast = CMTimeGetSeconds(CMTimeSubtract(CMTimeSubtract(timestamp, self.startTime), self.elapsedTime))
-                    if elapsedTillLast > 0.5 { NSLog("too long of a pause, not continuing"); return }
-                    guard let buffer = self.createPixelBuffer(croppedImage, withContext: context) else { NSLog("could not buffer!"); return }
+                    if elapsedTillLast > 0.9 { loggingPrint("too long of a pause, not continuing!"); return }
+                    guard let buffer = self.createPixelBuffer(croppedImage, withContext: context) else { loggingPrint("could not buffer!"); return }
                     let presentationTime =  CMTimeSubtract(timestamp, self.startTime)
                     self.elapsedTime = presentationTime
                     self.adaptor.append(buffer, withPresentationTime: presentationTime)
                 } else {
-                    NSLog("Dropping Frame!")
+                    loggingPrint("Dropping Frame!")
                 }
             }
         }
     }
     
     func createPixelBuffer(_ image:CIImage, withContext context : CIContext) -> CVPixelBuffer? {
-        guard let pool = adaptor.pixelBufferPool else { NSLog("adaptor.pixelBufferPool is nil"); return nil }
+        guard let pool = adaptor.pixelBufferPool else { loggingPrint("adaptor.pixelBufferPool is nil"); return nil }
         var pixelBuffer : CVPixelBuffer? = nil
         let status = CVPixelBufferPoolCreatePixelBuffer(nil, pool, &pixelBuffer)
         if(status == kCVReturnSuccess) {
