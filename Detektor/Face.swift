@@ -17,17 +17,19 @@ class Face: NSObject {
     let imageQueue = DispatchQueue(label: "Image Queue", qos:.userInitiated)
     let recordQueue = DispatchQueue(label: "Record Queue", qos:.default)
 //    let lockQueue = DispatchQueue(label: "Lock queue")
+//    var recordQueueSuspended = true
     
     var layer: FaceLayer?
-    
     var state  = FaceState.running
-    //var recordQueueSuspended = true
-    
-    
+
     init(time: CMTime) {
         startTime = time
         super.init()
-        //recordQueue.suspend()
+
+        // Setup preview layer
+        preview.contentsGravity = CALayerContentsGravity.resizeAspect
+        preview.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
+
         do {
             assetWriter = try AVAssetWriter(url:uniqueURL() , fileType: AVFileType.mp4)
         } catch {
@@ -36,6 +38,9 @@ class Face: NSObject {
         
         // Setup recordung
         let videoSettings: [String: Any] = [AVVideoCodecKey: AVVideoCodecType.h264,
+                                            AVVideoCompressionPropertiesKey: [
+                                                AVVideoProfileLevelKey:AVVideoProfileLevelH264Main31,
+                                                AVVideoMaxKeyFrameIntervalKey: 1],
                                             AVVideoWidthKey: Constants.videoSize.width,
                                             AVVideoHeightKey: Constants.videoSize.height]
         writeInput = AVAssetWriterInput(mediaType: AVMediaType.video, outputSettings: videoSettings)
@@ -43,7 +48,10 @@ class Face: NSObject {
         
         assert(self.assetWriter.canAdd(self.writeInput), "adding AVAssetWriterInput failed")
         assetWriter.add(self.writeInput)
-        let bufferAttributes:[String: Any] = [kCVPixelBufferPixelFormatTypeKey as String: Int(kCVPixelFormatType_32ARGB)]
+        let bufferAttributes:[String: Any] = [kCVPixelBufferPixelFormatTypeKey as String: Int(kCVPixelFormatType_32ARGB),
+                                              kCVPixelBufferWidthKey as String: Int(Constants.videoSize.width),
+                                              kCVPixelBufferHeightKey as String: Int(Constants.videoSize.height)]
+        
         adaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: writeInput, sourcePixelBufferAttributes: bufferAttributes)
         
         assetWriter!.startWriting()
@@ -79,20 +87,26 @@ class Face: NSObject {
             // Add frame to buffer adapter
             self.recordQueue.async { [weak self] in
                 guard let self = self else { return }
-                guard let buffer = self.createPixelBuffer(croppedImage, withContext: context) else { NSLog("could not buffer!"); return }
-                let presentationTime =  CMTimeSubtract(timestamp, self.startTime)
-                self.elapsedTime = presentationTime
-                while !self.writeInput.isReadyForMoreMediaData { NSLog("sleep"); usleep(400) }
-                self.adaptor.append(buffer, withPresentationTime: presentationTime)
+                if self.assetWriter!.status != .writing { return }
+                if !self.writeInput.isReadyForMoreMediaData { usleep(500) }
+                if self.writeInput.isReadyForMoreMediaData {
+                    let elapsedTillLast = CMTimeGetSeconds(CMTimeSubtract(CMTimeSubtract(timestamp, self.startTime), self.elapsedTime))
+                    if elapsedTillLast > 0.5 { NSLog("too long of a pause, not continuing"); return }
+                    guard let buffer = self.createPixelBuffer(croppedImage, withContext: context) else { NSLog("could not buffer!"); return }
+                    let presentationTime =  CMTimeSubtract(timestamp, self.startTime)
+                    self.elapsedTime = presentationTime
+                    self.adaptor.append(buffer, withPresentationTime: presentationTime)
+                } else {
+                    NSLog("Dropping Frame!")
+                }
             }
         }
     }
     
     func createPixelBuffer(_ image:CIImage, withContext context : CIContext) -> CVPixelBuffer? {
         guard let pool = adaptor.pixelBufferPool else { NSLog("adaptor.pixelBufferPool is nil"); return nil }
-        
-        var pixelBuffer: CVPixelBuffer? = nil
-        let status = CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault, pool, &pixelBuffer)
+        var pixelBuffer : CVPixelBuffer? = nil
+        let status = CVPixelBufferPoolCreatePixelBuffer(nil, pool, &pixelBuffer)
         if(status == kCVReturnSuccess) {
             context.render(image, to: pixelBuffer!, bounds:CGRect(x: 0,
                                                                   y: 0,
