@@ -109,7 +109,6 @@ class FaceLayer: CALayer {
             } else {
                 self.player.play()
             }
-
             CATransaction.begin()
             CATransaction.setCompletionBlock({ completion() })
             CATransaction.setDisableActions(true)

@@ -16,7 +16,7 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     var faces = [Int32 : Face]()
     var delegate: FaceTrackerProtocol?
     let captureQueue = DispatchQueue(label: "Capture Queue")
-//    let detectorQueue = DispatchQueue(label: "Detector Queue", qos:.userInteractive)
+    let detectorQueue = DispatchQueue(label: "Detector Queue", qos:.userInteractive)
 //    let recordQueue = DispatchQueue(label: "Record Queue", qos:.default)
     
 
@@ -129,19 +129,26 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
 //        let ciImageRaw = CIImage(cvImageBuffer: imageBuffer)
 
         
-//        if detectorFinished {
-//            detectorFinished = false
-//            detectorQueue.async {
+        if detectorFinished {
+            detectorFinished = false
+            detectorQueue.async {
+                let start = DispatchTime.now()
                 let featureOptions: [String : Any] = [CIDetectorTypeFace: true]
-                self.features = self.detector.features(in: ciImageRaw, options: featureOptions)
-//                self.detectorFinished = true
-//            }
-//        }
+                let result = self.detector.features(in: ciImageRaw, options: featureOptions)
+                self.captureQueue.async {
+                    self.features = result
+                    self.detectorFinished = true
+                }
+                let dur = DispatchTime.now().uptimeNanoseconds - start.uptimeNanoseconds
+                if dur > 20_000_000 {
+                    NSLog("Took %d ms", dur/1_000_000)
+                }
+            }
+        } else {
+            NSLog("detector not ready")
+        }
         
-        drawDebug(features) // only executed if connected
-        
-     
-      
+        drawDebug(features) // only executed if connected        
         
         // Collect all IDs to check for orphans
         var currentIDs = [Int32]()
