@@ -148,8 +148,11 @@ class MainView: NSView {
         super.init(coder: coder)!
     }
     override func mouseUp(with event: NSEvent) {
+        let appDelegate = NSApplication.shared.delegate as! AppDelegate
+        if event.clickCount == 1 {
+            appDelegate.display?.isPlaying = !(appDelegate.display!.isPlaying)
+        }
         if event.clickCount == 2 {
-            let appDelegate = NSApplication.shared.delegate as! AppDelegate
             appDelegate.toggleScreen(self)
         }
     }
