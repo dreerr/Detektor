@@ -3,10 +3,11 @@ extension CIImage {
     func croppedAndScaledToFace(_ face:CIFaceFeature, faceSide:CIFaceSide) -> CIImage {
         // Calculate Rectangle and resize image
         let rect = face.boundsForFaceSide(faceSide, withAspectRatio: Constants.aspectRatio)
-        let scaleFactor = Constants.videoSize.height / rect.size.height
-        let transform = CGAffineTransform(translationX:-rect.minX, y: -rect.minY)
+        let scaleFactor = (Constants.videoSize.height+3.0) / rect.size.height
+        let transform = CGAffineTransform(translationX:-rect.minX-0.5, y: -rect.minY-0.5)
             .concatenating(CGAffineTransform(scaleX: scaleFactor, y: scaleFactor))
-        let image = self.cropped(to: rect).transformed(by: transform)
+        let finalRect = CGRect(x: 0, y: 0, width: Constants.videoSize.width, height: Constants.videoSize.height)
+        let image = self.cropped(to: rect).transformed(by: transform).cropped(to: finalRect)
         return image
     }
 }
