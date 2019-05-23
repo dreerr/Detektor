@@ -11,29 +11,26 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     let defaults = UserDefaults.standard
     
     var detector: CIDetector!
-    //var detectorFeatures: [CIFeature]?
     let context = CIContext(mtlDevice: MTLCreateSystemDefaultDevice()!)
     var faces = [Int32 : Face]()
     var delegate: FaceTrackerProtocol?
     let captureQueue = DispatchQueue(label: "Capture Queue")
     let detectorQueue = DispatchQueue(label: "Detector Queue", qos:.userInteractive)
-//    let recordQueue = DispatchQueue(label: "Record Queue", qos:.default)
-    
 
     var isTracking = true
     var detectorFinished = true
     var features: [CIFeature] = []
     
-    var frameCounter = 0
+    var fpsCounter = 0
     
     override init() {
         super.init()
         
         _ = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true, block: {_ in
-            if self.frameCounter < 25 {
-                debug("FPS low: \(self.frameCounter)")
+            if self.fpsCounter < 25 {
+                debug("FPS low: \(self.fpsCounter)")
             }
-            self.frameCounter = 0;
+            self.fpsCounter = 0;
         })
 
         // Configure Capture Session
@@ -76,16 +73,6 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         if(!device.formats.contains(format)) { alert("Invalid format to connect to!") }
         captureSession.beginConfiguration()
         captureSession.inputs.forEach { captureSession.removeInput($0) } // remove old inputs
-        print(device.activeFormat)
-        // Configure device format
-        try! device.lockForConfiguration()
-        //        device.activeFormat = format
-//                let fps = CMTimeMake(value: 20, timescale: 600) // 30 fps
-//                device.activeVideoMinFrameDuration = fps
-//                device.activeVideoMaxFrameDuration = fps
-        //        device.exposureMode = .locked
-        device.unlockForConfiguration()
-        
         
         // Add to capture session
         do {
@@ -126,26 +113,18 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
                                                         attachmentMode: kCMAttachmentMode_ShouldPropagate)
         let ciImageRaw = CIImage(cvImageBuffer: imageBuffer,
                                  options: (attachments as! [CIImageOption : Any]))
-//        let ciImageRaw = CIImage(cvImageBuffer: imageBuffer)
-
         
+        // Detect face features on different queue and send back
         if detectorFinished {
             detectorFinished = false
             detectorQueue.async {
-                let start = DispatchTime.now()
                 let featureOptions: [String : Any] = [CIDetectorTypeFace: true]
                 let result = self.detector.features(in: ciImageRaw, options: featureOptions)
                 self.captureQueue.async {
                     self.features = result
                     self.detectorFinished = true
                 }
-                let dur = DispatchTime.now().uptimeNanoseconds - start.uptimeNanoseconds
-                if dur > 20_000_000 {
-                    NSLog("Took %d ms", dur/1_000_000)
-                }
             }
-        } else {
-            NSLog("detector not ready")
         }
         
         drawDebug(features) // only executed if connected        
@@ -155,6 +134,8 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         
         // Apply filter to image
         let ciImage = applyFilterChain(to: ciImageRaw)
+        
+        // Repeat with each face
         for feature in features {
             guard let faceFeature = feature as? CIFaceFeature else {continue}
             if(faceFeature.hasTrackingFrameCount && faceFeature.trackingFrameCount > 10) {
@@ -188,7 +169,7 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
                 }
             }
         }
-        frameCounter += 1
+        fpsCounter += 1
     }
     
     func applyFilterChain(to image: CIImage) -> CIImage {
@@ -205,6 +186,7 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     }
 }
 
+// Delegate Protocol connects to FaceDispatcher
 protocol FaceTrackerProtocol {
     func addLiveFace(_ face: Face, id: Int32)
     func removeLiveFace(id: Int32)

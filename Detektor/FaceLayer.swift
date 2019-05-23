@@ -9,14 +9,13 @@ enum PlayingState {
 class FaceLayer: CALayer {
     var liveLayer: CALayer?
     var playerLayer: AVPlayerLayer?
+    var player = AVPlayer()
+    var state = PlayingState.empty
     var dispatcher: FaceDispatcher? {
         didSet {
             insertNextPlayerItem()
         }
     }
-    var player = AVPlayer()
-    var isPlaying = true
-    var state = PlayingState.empty
     
     override init() {
         super.init()
@@ -53,7 +52,6 @@ class FaceLayer: CALayer {
         #endif
     }
     
-    
     func insertNextPlayerItem() {
         if player.currentItem != nil {
             dispatcher?.restoreAsset(player.currentItem?.asset as? AVURLAsset) // Return current item to queue
@@ -85,8 +83,7 @@ class FaceLayer: CALayer {
         // Connect a CALayer to display live preview
         guard live != self.liveLayer else { debug("live layer already on!"); return }
         DispatchQueue.main.async {
-            debug("switchLive")
-            self.isPlaying = false
+            debug("switch to live")
             self.state = .live
             self.liveLayer = live
             self.player.pause()
@@ -103,7 +100,7 @@ class FaceLayer: CALayer {
         guard liveLayer?.superlayer == self else { debug("superlayer is not self!"); return }
         
         DispatchQueue.main.async {
-            debug("switchPlay")
+            debug("switch to play")
             if self.player.currentItem == nil {
                 self.insertNextPlayerItem()
             } else {

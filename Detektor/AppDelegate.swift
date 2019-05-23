@@ -44,7 +44,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         layer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
         
         // Initialize CALayerMatrix
-        // TODO: FIXME KILLME
         var faceLayers = [FaceLayer]()
         for _ in 1...Constants.cols*Constants.rows {
             faceLayers.append(FaceLayer())

@@ -27,15 +27,6 @@ extension AppDelegate {
         guard shutdownHasStarted == false else { return }
         shutdownHasStarted = true
         __NSBeep()
-        let source = """
-        tell application "System Events"
-            tell application process "loginwindow"
-                click button 3 of window 1
-            end tell
-        end tell
-        """
-        let script = NSAppleScript(source: source)
-        script?.executeAndReturnError(nil)
         self.terminateAndShutdown(self)
     }
     
@@ -45,3 +36,4 @@ extension AppDelegate {
         script?.executeAndReturnError(nil)
     }
 }
+

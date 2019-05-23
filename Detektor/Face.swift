@@ -15,64 +15,42 @@ class Face: NSObject {
     var elapsedTime = CMTime.zero
     let preview = CALayer()
     let imageQueue = DispatchQueue(label: "Image Queue") //, qos:.userInitiated
-    let recordQueue = DispatchQueue(label: "Record Queue", qos:.background) //, qos:.default
-//    let lockQueue = DispatchQueue(label: "Lock queue")
-//    var recordQueueSuspended = true
-//    let recordQueue : DispatchQueue
+    let recordQueue = DispatchQueue(label: "Record Queue", qos:.background)
     var layer: FaceLayer?
     var state  = FaceState.running
 
     init(time: CMTime) {
         startTime = time
-//        recordQueue = queue
         super.init()
 
         // Setup preview layer
         preview.contentsGravity = CALayerContentsGravity.resizeAspect
         preview.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
-
+        
+        // Setup recording
         do {
             assetWriter = try AVAssetWriter(url:uniqueURL() , fileType: AVFileType.mp4)
-        } catch {
-            return
-        }
-        
-        // Setup recordung
+        } catch { return }
         let videoSettings: [String: Any] = [AVVideoCodecKey: AVVideoCodecType.jpeg,
-//                                            AVVideoCompressionPropertiesKey: [
-//                                                AVVideoProfileLevelKey:AVVideoProfileLevelH264Main31,
-//                                                AVVideoMaxKeyFrameIntervalKey: 1],
                                             AVVideoWidthKey: Constants.videoSize.width,
                                             AVVideoHeightKey: Constants.videoSize.height]
         writeInput = AVAssetWriterInput(mediaType: AVMediaType.video, outputSettings: videoSettings)
         writeInput.expectsMediaDataInRealTime = true
         
-        assert(self.assetWriter.canAdd(self.writeInput), "adding AVAssetWriterInput failed")
-        assetWriter.add(self.writeInput)
+        assert(assetWriter.canAdd(writeInput), "adding AVAssetWriterInput failed")
+        assetWriter.add(writeInput)
         let bufferAttributes:[String: Any] = [kCVPixelBufferPixelFormatTypeKey as String: Int(kCVPixelFormatType_32ARGB),
                                               kCVPixelBufferWidthKey as String: Int(Constants.videoSize.width),
                                               kCVPixelBufferHeightKey as String: Int(Constants.videoSize.height)]
         
         adaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: writeInput, sourcePixelBufferAttributes: bufferAttributes)
-        
         assetWriter!.startWriting()
         assetWriter!.startSession(atSourceTime: CMTime.zero)
-        
-//        writeInput.requestMediaDataWhenReady(on: lockQueue, using: { [weak self] in
-//            if (self?.recordQueueSuspended)! {
-//                self?.recordQueue.resume()
-//                self?.recordQueueSuspended = false
-//            }
-//        })
-        
-        // Setup preview layer
-        preview.contentsGravity = CALayerContentsGravity.resizeAspect
-        preview.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
-        preview.removeAllAnimations()
-        
     }
     
     func update(_ inputImage: CIImage, context: CIContext, faceFeature: CIFaceFeature, time timestamp: CMTime) {
+        
+        // Update the recieved frame in a DispatchQueue
         imageQueue.async { [weak self] in
             guard let self = self else { return }
             let croppedImage = inputImage.croppedAndScaledToFace(faceFeature, faceSide: .right)
@@ -85,7 +63,7 @@ class Face: NSObject {
                 }
             }
             
-            // Add frame to buffer adapter
+            // Add frame to buffer adaptor
             self.recordQueue.async { [weak self] in
                 guard let self = self else { return }
                 if self.assetWriter!.status != .writing { return }
@@ -115,10 +93,8 @@ class Face: NSObject {
     }
     
     func cleanup() {
+        // When a face is lost finish the recording and then set flag to finished
         state = .finishing
-        //        if recordQueueSuspended {
-        //            recordQueue.resume()
-        //        }
         recordQueue.async {
             self.finishRecording()
         }
