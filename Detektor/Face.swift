@@ -15,15 +15,16 @@ class Face: NSObject {
     var elapsedTime = CMTime.zero
     let preview = CALayer()
     let imageQueue = DispatchQueue(label: "Image Queue", qos:.userInitiated)
-    let recordQueue = DispatchQueue(label: "Record Queue", qos:.default)
+    //let recordQueue = DispatchQueue(label: "Record Queue", qos:.default)
 //    let lockQueue = DispatchQueue(label: "Lock queue")
 //    var recordQueueSuspended = true
-    
+    let recordQueue : DispatchQueue
     var layer: FaceLayer?
     var state  = FaceState.running
 
-    init(time: CMTime) {
+    init(time: CMTime, queue: DispatchQueue) {
         startTime = time
+        recordQueue = queue
         super.init()
 
         // Setup preview layer
@@ -37,10 +38,10 @@ class Face: NSObject {
         }
         
         // Setup recordung
-        let videoSettings: [String: Any] = [AVVideoCodecKey: AVVideoCodecType.h264,
-                                            AVVideoCompressionPropertiesKey: [
-                                                AVVideoProfileLevelKey:AVVideoProfileLevelH264Main31,
-                                                AVVideoMaxKeyFrameIntervalKey: 1],
+        let videoSettings: [String: Any] = [AVVideoCodecKey: AVVideoCodecType.jpeg,
+//                                            AVVideoCompressionPropertiesKey: [
+//                                                AVVideoProfileLevelKey:AVVideoProfileLevelH264Main31,
+//                                                AVVideoMaxKeyFrameIntervalKey: 1],
                                             AVVideoWidthKey: Constants.videoSize.width,
                                             AVVideoHeightKey: Constants.videoSize.height]
         writeInput = AVAssetWriterInput(mediaType: AVMediaType.video, outputSettings: videoSettings)

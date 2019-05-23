@@ -15,9 +15,9 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     let context = CIContext(mtlDevice: MTLCreateSystemDefaultDevice()!)
     var faces = [Int32 : Face]()
     var delegate: FaceTrackerProtocol?
-    let captureQueue = DispatchQueue(label: "Capture Queue", qos: .userInitiated)
-    let detectorQueue = DispatchQueue(label: "Detector Queue", qos: .userInteractive)
-    
+    let captureQueue = DispatchQueue(label: "Capture Queue")
+//    let detectorQueue = DispatchQueue(label: "Detector Queue", qos:.userInteractive)
+    let recordQueue = DispatchQueue(label: "Record Queue", qos:.default)
     
 
     var isTracking = true
@@ -30,7 +30,7 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         super.init()
         
         _ = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true, block: {_ in
-            if self.frameCounter < 15 {
+            if self.frameCounter < 25 {
                 debug("FPS low: \(self.frameCounter)")
             }
             self.frameCounter = 0;
@@ -79,9 +79,9 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         // Configure device format
         try! device.lockForConfiguration()
         //        device.activeFormat = format
-        //        let fps = CMTimeMake(value: 20, timescale: 600) // 30 fps
-        //        device.activeVideoMinFrameDuration = fps
-        //        device.activeVideoMaxFrameDuration = fps
+                let fps = CMTimeMake(value: 20, timescale: 600) // 30 fps
+                device.activeVideoMinFrameDuration = fps
+                device.activeVideoMaxFrameDuration = fps
         //        device.exposureMode = .locked
         device.unlockForConfiguration()
         
@@ -125,14 +125,14 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         let ciImageRaw = CIImage(cvImageBuffer: imageBuffer,
                                  options: (attachments as! [CIImageOption : Any]))
         
-        if detectorFinished {
-            detectorFinished = false
-            detectorQueue.async {
+//        if detectorFinished {
+//            detectorFinished = false
+//            detectorQueue.async {
                 let featureOptions: [String : Any] = [CIDetectorTypeFace: true]
                 self.features = self.detector.features(in: ciImageRaw, options: featureOptions)
-                self.detectorFinished = true
-            }
-        }
+//                self.detectorFinished = true
+//            }
+//        }
         
         drawDebug(features) // only executed if connected
         
@@ -153,7 +153,7 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
                 if(!self.faces.keys.contains(id)) {
                     // Initialize Face instance for each new face that stayed longer than 10 frames
                     debug("New Face #\(id)")
-                    let face = Face(time: timestamp)
+                    let face = Face(time: timestamp, queue: recordQueue)
                     self.delegate?.addLiveFace(face, id: id)
                     self.faces[id] = face
                 }
