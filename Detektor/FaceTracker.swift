@@ -17,7 +17,7 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     var delegate: FaceTrackerProtocol?
     let captureQueue = DispatchQueue(label: "Capture Queue")
 //    let detectorQueue = DispatchQueue(label: "Detector Queue", qos:.userInteractive)
-    let recordQueue = DispatchQueue(label: "Record Queue", qos:.default)
+//    let recordQueue = DispatchQueue(label: "Record Queue", qos:.default)
     
 
     var isTracking = true
@@ -44,6 +44,7 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         //output.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String : NSNumber(value: Constants.pixelFormat)]
         captureSession.addOutput(output)
         captureSession.commitConfiguration()
+        output.alwaysDiscardsLateVideoFrames = true
         output.setSampleBufferDelegate(self, queue: captureQueue)
         
         connectDefaultDevice()
@@ -75,13 +76,13 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         if(!device.formats.contains(format)) { alert("Invalid format to connect to!") }
         captureSession.beginConfiguration()
         captureSession.inputs.forEach { captureSession.removeInput($0) } // remove old inputs
-        
+        print(device.activeFormat)
         // Configure device format
         try! device.lockForConfiguration()
         //        device.activeFormat = format
-                let fps = CMTimeMake(value: 20, timescale: 600) // 30 fps
-                device.activeVideoMinFrameDuration = fps
-                device.activeVideoMaxFrameDuration = fps
+//                let fps = CMTimeMake(value: 20, timescale: 600) // 30 fps
+//                device.activeVideoMinFrameDuration = fps
+//                device.activeVideoMaxFrameDuration = fps
         //        device.exposureMode = .locked
         device.unlockForConfiguration()
         
@@ -117,13 +118,16 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         guard isTracking == true else {return}
         
         // Get Image Buffer
+        if !CMSampleBufferIsValid(sampleBuffer) { return }
         guard let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
         let timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
         let attachments = CMCopyDictionaryOfAttachments(allocator: kCFAllocatorDefault,
-                                                        target: sampleBuffer,
+                                                        target: imageBuffer,
                                                         attachmentMode: kCMAttachmentMode_ShouldPropagate)
         let ciImageRaw = CIImage(cvImageBuffer: imageBuffer,
                                  options: (attachments as! [CIImageOption : Any]))
+//        let ciImageRaw = CIImage(cvImageBuffer: imageBuffer)
+
         
 //        if detectorFinished {
 //            detectorFinished = false
@@ -153,7 +157,7 @@ class FaceTracker: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
                 if(!self.faces.keys.contains(id)) {
                     // Initialize Face instance for each new face that stayed longer than 10 frames
                     debug("New Face #\(id)")
-                    let face = Face(time: timestamp, queue: recordQueue)
+                    let face = Face(time: timestamp)
                     self.delegate?.addLiveFace(face, id: id)
                     self.faces[id] = face
                 }

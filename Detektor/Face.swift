@@ -14,17 +14,17 @@ class Face: NSObject {
     var startTime: CMTime
     var elapsedTime = CMTime.zero
     let preview = CALayer()
-    let imageQueue = DispatchQueue(label: "Image Queue", qos:.userInitiated)
-    //let recordQueue = DispatchQueue(label: "Record Queue", qos:.default)
+    let imageQueue = DispatchQueue(label: "Image Queue") //, qos:.userInitiated
+    let recordQueue = DispatchQueue(label: "Record Queue") //, qos:.default
 //    let lockQueue = DispatchQueue(label: "Lock queue")
 //    var recordQueueSuspended = true
-    let recordQueue : DispatchQueue
+//    let recordQueue : DispatchQueue
     var layer: FaceLayer?
     var state  = FaceState.running
 
-    init(time: CMTime, queue: DispatchQueue) {
+    init(time: CMTime) {
         startTime = time
-        recordQueue = queue
+//        recordQueue = queue
         super.init()
 
         // Setup preview layer
@@ -93,7 +93,8 @@ class Face: NSObject {
                 if self.writeInput.isReadyForMoreMediaData {
                     let elapsedTillLast = CMTimeGetSeconds(CMTimeSubtract(CMTimeSubtract(timestamp, self.startTime), self.elapsedTime))
                     if elapsedTillLast > 0.9 { debug("too long of a pause, not continuing!"); return }
-                    guard let buffer = self.createPixelBuffer(croppedImage, withContext: context) else { debug("could not buffer!"); return }
+                    guard let pool = self.adaptor.pixelBufferPool else { debug("adaptor.pixelBufferPool is nil"); return }
+                    guard let buffer = self.createPixelBuffer(croppedImage, pool: pool, context: context) else { debug("could not buffer!"); return }
                     let presentationTime =  CMTimeSubtract(timestamp, self.startTime)
                     self.elapsedTime = presentationTime
                     self.adaptor.append(buffer, withPresentationTime: presentationTime)
@@ -104,16 +105,11 @@ class Face: NSObject {
         }
     }
     
-    func createPixelBuffer(_ image:CIImage, withContext context : CIContext) -> CVPixelBuffer? {
-        guard let pool = adaptor.pixelBufferPool else { debug("adaptor.pixelBufferPool is nil"); return nil }
+    func createPixelBuffer(_ image:CIImage, pool: CVPixelBufferPool, context : CIContext) -> CVPixelBuffer? {
         var pixelBuffer : CVPixelBuffer? = nil
         let status = CVPixelBufferPoolCreatePixelBuffer(nil, pool, &pixelBuffer)
         if(status == kCVReturnSuccess) {
-            context.render(image, to: pixelBuffer!, bounds:CGRect(x: 0,
-                                                                  y: 0,
-                                                                  width: image.extent.size.width,
-                                                                  height: image.extent.size.height),
-                           colorSpace: image.colorSpace)
+            context.render(image, to: pixelBuffer!)
         }
         return pixelBuffer
     }
@@ -141,7 +137,7 @@ class Face: NSObject {
             state = .finished
         } else if (diskSpace/1024/1024/1024) < Constants.minFreeGB {
             assetWriter.cancelWriting()
-            alert("Not enough free space, only \((diskSpace/1024/1024/1024))GB left!")
+            debug("Not enough free space, only \((diskSpace/1024/1024/1024))GB left!")
             self.state = .finished
         } else {
             let url = assetWriter.outputURL

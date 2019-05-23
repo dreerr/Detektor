@@ -21,7 +21,7 @@ struct Constants {
     static let videoWidth = 144.0
     static let videoSize: CGSize = CGSize(width: videoWidth, height: round(videoWidth/Double(aspectRatio)))
     static let directoryName = Bundle.main.infoDictionary!["CFBundleName"] as! String
-    static let pixelFormat = kCVPixelFormatType_32ARGB
+    static let pixelFormat = kCVPixelFormatType_32BGRA
     static let minimumSecs : CFTimeInterval = 3.0
     static var pause = false
     static let minFreeGB = 4

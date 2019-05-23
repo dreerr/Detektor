@@ -48,6 +48,9 @@ class FaceLayer: CALayer {
         
         self.removeAllAnimations()
         self.transform = CATransform3DMakeScale(-1, 1, 1) // Mirror layer
+        #if DEBUG
+        self.playerLayer?.opacity = 0.3
+        #endif
     }
     
     
@@ -80,42 +83,39 @@ class FaceLayer: CALayer {
     
     func switchLive(_ live:CALayer) {
         // Connect a CALayer to display live preview
-        if live != liveLayer {
-            isPlaying = false
-            state = .live
-            liveLayer = live
-            player.pause()
-            liveLayer!.frame = self.bounds
-            DispatchQueue.main.async {
-                CATransaction.begin()
-                CATransaction.setDisableActions(true)
-                self.sublayers = []
-                self.addSublayer(self.liveLayer!)
-                CATransaction.commit()
-            }
+        guard live != self.liveLayer else { debug("live layer already on!"); return }
+        DispatchQueue.main.async {
+            debug("switchLive")
+            self.isPlaying = false
+            self.state = .live
+            self.liveLayer = live
+            self.player.pause()
+            self.liveLayer!.frame = self.bounds
+            CATransaction.begin()
+            CATransaction.setDisableActions(true)
+            self.sublayers = []
+            self.addSublayer(self.liveLayer!)
+            CATransaction.commit()
         }
     }
     
-    func switchPlay() {
-        if state == .live {
-            if liveLayer?.superlayer != self { debug("superlayer is not self!") }
-            DispatchQueue.main.async {
-                CATransaction.begin()
-                CATransaction.setCompletionBlock({
-                    // self.liveLayer = nil
-                    if self.player.currentItem == nil {
-                        self.insertNextPlayerItem()
-                    } else {
-                        self.player.play()
-                    }
-                    self.setNeedsDisplay()
-                    self.setNeedsLayout()
-                })
-                CATransaction.setDisableActions(true)
-                self.sublayers = []
-                self.addSublayer(self.playerLayer!)
-                CATransaction.commit()
+    func switchPlay(_ completion:@escaping () -> Void) {
+        guard liveLayer?.superlayer == self else { debug("superlayer is not self!"); return }
+        
+        DispatchQueue.main.async {
+            debug("switchPlay")
+            if self.player.currentItem == nil {
+                self.insertNextPlayerItem()
+            } else {
+                self.player.play()
             }
+
+            CATransaction.begin()
+            CATransaction.setCompletionBlock({ completion() })
+            CATransaction.setDisableActions(true)
+            self.sublayers = []
+            self.addSublayer(self.playerLayer!)
+            CATransaction.commit()
         }
     }
 }

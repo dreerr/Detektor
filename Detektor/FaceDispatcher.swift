@@ -145,8 +145,10 @@ extension FaceDispatcher: FaceTrackerProtocol {
     }
     func removeLiveFace(id: Int32) {
         if faces.keys.contains(id) {
-            faces[id]?.layer?.switchPlay()
-            faces.removeValue(forKey: id)
+            debug("removeLiveFace")
+            faces[id]?.layer?.switchPlay() {
+                self.faces.removeValue(forKey: id)
+            }
         }
     }
 }
