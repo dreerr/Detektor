@@ -108,10 +108,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         setFullScreen(windows[0].contentView?.isInFullScreenMode==false)
     }
     
+    var hideCursorTimer : Timer?
     func setFullScreen(_ setFullScreen:Bool) {
         UserDefaults.standard.set(setFullScreen, forKey: "Full Screen")
         if(setFullScreen) {
-            NSCursor.hide()
+            hideCursorTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true){_ in NSCursor.hide() }
+            hideCursorTimer?.fire()
             let presOptions: NSApplication.PresentationOptions = [
                 .fullScreen,
                 .autoHideMenuBar
@@ -120,18 +122,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 .fullScreenModeApplicationPresentationOptions: presOptions,
                 .fullScreenModeAllScreens: false
             ] as [NSView.FullScreenModeOptionKey : Any]
-            for (_, window) in windows.enumerated() {
+            for window in windows {
                 guard let view = window.contentView else {continue}
                 guard let screen = window.screen else {continue}
                 
                 view.enterFullScreenMode(screen, withOptions: optionsDictionary)
             }
         } else {
+            hideCursorTimer?.invalidate()
             NSCursor.unhide()
             NSApp.presentationOptions = []
-            windows.forEach({ (window) in
+            for window in windows {
                 window.contentView?.exitFullScreenMode(options: [NSView.FullScreenModeOptionKey.fullScreenModeSetting: false])
-            })
+            }
         }
         windows.first?.makeKeyAndOrderFront(self)
     }
