@@ -1,6 +1,7 @@
 import Foundation
 import AVFoundation
 import VideoToolbox
+import CoreImage
 
 class Face: NSObject {
     enum FaceState {

@@ -48,7 +48,7 @@ class FaceLayer: CALayer {
         self.removeAllAnimations()
         self.transform = CATransform3DMakeScale(-1, 1, 1) // Mirror layer
         #if DEBUG
-        self.playerLayer?.opacity = 0.3
+        //self.playerLayer?.opacity = 0.3
         #endif
     }
     
